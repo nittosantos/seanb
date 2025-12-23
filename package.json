@@ -1,0 +1,34 @@
+{
+  "name": "tripfinder",
+  "description": "react next template",
+  "version": "5.0.0",
+  "private": true,
+  "author": "RedQ, Inc",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "clean": "lerna clean --yes && rimraf node_modules",
+    "clean:build": "lerna exec -- rimraf \"{.next,dist,out,build,.docz,.firebase}\"",
+    "dev": "yarn workspace @tripfinder/boat run dev",
+    "start:boat": "yarn workspace @tripfinder/boat run dev",
+    "build": "yarn workspace @tripfinder/boat run build",
+    "build:boat": "yarn workspace @tripfinder/boat run build",
+    "start": "yarn workspace @tripfinder/boat run start",
+    "serve:boat": "yarn workspace @tripfinder/boat run start",
+    "lint": "yarn workspace @tripfinder/boat run lint",
+    "lint:boat": "yarn workspace @tripfinder/boat run lint",
+    "format": "prettier --write .",
+    "format:boat": "yarn workspace @tripfinder/boat run format",
+    "check-format": "prettier --check .",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "husky": "^8.0.1",
+    "lerna": "^5.5.1",
+    "prettier": "^2.5.0",
+    "rimraf": "^3.0.2",
+    "serve": "^14.0.1"
+  }
+}
