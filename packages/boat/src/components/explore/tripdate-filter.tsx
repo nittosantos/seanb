@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
+import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { useQueryParam } from '@/hooks/use-query-param';
 import DateTime from '@/components/ui/form-fields/date-time-picker';
@@ -10,6 +11,7 @@ import Input from '@/components/ui/form-fields/input';
 import clsx from 'clsx';
 
 export default function TripdateFilter() {
+  const t = useTranslations('explore');
   const searchparams = useSearchParams();
   const { clearFilter, updateQueryparams } = useQueryParam();
   const [state, setState] = useState(false);
@@ -49,7 +51,7 @@ export default function TripdateFilter() {
 
   return (
     <DateTime
-      label="Select Trip Date"
+      label={t('selectTripDate')}
       onFocus={(e) => e.target.blur()}
       selected={departureDate}
       onChange={handleRangeChange}

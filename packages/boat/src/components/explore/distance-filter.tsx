@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { useQueryParam } from '@/hooks/use-query-param';
 import SelectBox from '@/components/ui/select-box';
@@ -14,6 +15,7 @@ const options = [
 ];
 
 export default function DistanceFilter() {
+  const t = useTranslations('explore');
   const searchParams = useSearchParams();
   const dis = searchParams?.get('distance');
   const { clearFilter, updateQueryparams } = useQueryParam();
@@ -42,7 +44,7 @@ export default function DistanceFilter() {
   return (
     <SelectBox
       value={selected}
-      label="Distance"
+      label={t('distance')}
       options={options}
       onChange={(data: any) => setSelected(data)}
       labelClassName="mb-2 !text-sm lg:!text-base"

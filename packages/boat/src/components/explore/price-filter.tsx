@@ -2,12 +2,14 @@
 
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { useQueryParam } from '@/hooks/use-query-param';
 import RangeSlider from '@/components/ui/range-slider';
 import Text from '@/components/ui/typography/text';
 
 export default function PriceFilter() {
+  const t = useTranslations('explore');
   const { updateQueryparams } = useQueryParam();
   const searchParams = useSearchParams();
   const price = searchParams?.get('price');
@@ -54,7 +56,7 @@ export default function PriceFilter() {
         tag="span"
         className="mb-3 block text-sm font-bold capitalize text-gray-dark lg:text-base"
       >
-        Price per day
+        {t('pricePerDay')}
       </Text>
       <div className="xl:px-3">
         <RangeSlider
@@ -70,7 +72,7 @@ export default function PriceFilter() {
       </div>
       <div className="mt-5 grid grid-cols-2 items-center justify-between gap-5 text-sm font-bold">
         <div className="overflow-hidden rounded-lg border border-gray-lighter bg-gray-lightest py-2">
-          <p className="px-3 pt-1 text-gray-400">Min</p>
+          <p className="px-3 pt-1 text-gray-400">{t('min')}</p>
           <input
             type="number"
             value={range.min}
@@ -82,7 +84,7 @@ export default function PriceFilter() {
           />
         </div>
         <div className="overflow-hidden rounded-lg border border-gray-lighter bg-gray-lightest py-2">
-          <p className="px-3 pt-1 text-gray-400">Max</p>
+          <p className="px-3 pt-1 text-gray-400">{t('max')}</p>
           <input
             type="number"
             value={range.max}

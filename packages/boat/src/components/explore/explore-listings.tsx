@@ -1,11 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { topBoats } from 'public/data/top-boats';
 import ListingCard from '@/components/ui/cards/listing';
 import Button from '@/components/ui/button';
 
 export default function ExploreListings() {
+  const t = useTranslations('explore');
   const [list, setList] = useState(12);
   const [isLoading, setIsLoading] = useState(false);
   function handleLoadMore() {
@@ -42,7 +44,7 @@ export default function ExploreListings() {
           onClick={() => handleLoadMore()}
           className="relative bottom-0 left-1/2 z-30 mx-auto mt-16 -translate-x-1/2 py-2.5 px-6 md:sticky md:bottom-10 md:text-base xl:relative xl:bottom-0"
         >
-          Load more
+          {t('loadMore')}
         </Button>
       )}
     </div>

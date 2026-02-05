@@ -1,28 +1,28 @@
 'use client';
 
 import { useState } from 'react';
-import { useAtom } from 'jotai';
+import { useTranslations } from 'next-intl';
 import { AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
-import { drawerStateAtom } from '@/components/drawers/view';
+import { useDrawerState } from '@/stores/drawer-store';
 import Text from '@/components/ui/typography/text';
 import SelectBox from '@/components/ui/select-box';
 import Button from '@/components/ui/button';
 
-const sortingOptions = [
-  { id: 'opt-1', label: 'Recently listed', checked: true },
-  { id: 'opt-1', label: 'Previous listed', checked: true },
-  { id: 'opt-1', label: 'Newer listed', checked: true },
-];
-
 export default function FilterTopbar() {
-  let [drawerSate, setDrawerState] = useAtom(drawerStateAtom);
+  const t = useTranslations('explore');
+  const [drawerState, setDrawerState] = useDrawerState();
+  const sortingOptions = [
+    { id: 'opt-1', label: t('recentlyListed'), checked: true },
+    { id: 'opt-2', label: t('previousListed'), checked: true },
+    { id: 'opt-3', label: t('newerListed'), checked: true },
+  ];
   const [selected, setSelected] = useState(sortingOptions[0]);
   return (
     <div className="mb-8 flex items-center justify-between">
       <Text className="text-sm font-bold text-gray-dark md:text-base">
-        Showing 1 - 20{' '}
+        {t('showingXOfY', { min: 1, max: 20 })}{' '}
         <Text className="font-normal text-gray" tag="span">
-          out of 2356 Products{' '}
+          {t('outOfProducts', { total: 2356 })}{' '}
         </Text>
       </Text>
       <Button
@@ -31,7 +31,7 @@ export default function FilterTopbar() {
         className="!p-0 focus:!ring-0 xl:hidden"
         onClick={() =>
           setDrawerState({
-            ...drawerSate,
+            ...drawerState,
             isOpen: true,
             placement: 'right',
             view: 'FILTER_MENU',
@@ -42,7 +42,7 @@ export default function FilterTopbar() {
       </Button>
       <SelectBox
         value={selected}
-        label="Sort by:"
+        label={t('sortBy')}
         variant="outline"
         options={sortingOptions}
         optionIcon={false}

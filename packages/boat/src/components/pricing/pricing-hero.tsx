@@ -1,6 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 import Text from '@/components/ui/typography/text';
 import Button from '@/components/ui/button';
 
@@ -11,13 +12,15 @@ export default function PricingHero({
   state: string;
   onClick: (key: string) => void;
 }) {
+  const t = useTranslations('pricing');
+
   return (
     <div className="mt-8 text-center   lg:mt-20 2xl:mt-24">
       <Text tag="h1" className="text-[28px] font-bold leading-10">
-        Select your pricing plan
+        {t('selectPlan')}
       </Text>
       <Text className="mt-2 text-base 2xl:mt-4">
-        Simple Transparent pricing for everyone
+        {t('simplePricing')}
       </Text>
       <div className="mt-8 inline-block rounded-md bg-[#F2F4F7] p-1 2xl:mt-14">
         <Button
@@ -30,7 +33,7 @@ export default function PricingHero({
           )}
           onClick={() => onClick('monthly')}
         >
-          Monthly Plan
+          {t('monthlyPlan')}
         </Button>
         <Button
           size="lg"
@@ -42,7 +45,7 @@ export default function PricingHero({
           )}
           onClick={() => onClick('annually')}
         >
-          Annually Plan
+          {t('annuallyPlan')}
         </Button>
       </div>
     </div>

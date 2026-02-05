@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { useQueryParam } from '@/hooks/use-query-param';
 import { ManufacturerThreeIcon } from '@/components/icons/manufacturer/manufacturer-three';
@@ -52,6 +53,7 @@ interface ItemProps {
 }
 
 export default function Manufacturer() {
+  const t = useTranslations('explore');
   const searchParams = useSearchParams();
   const manf = searchParams?.get('manufacturer');
   const [selected, setSelected] = useState<ItemProps[]>(manufactures);
@@ -103,7 +105,7 @@ export default function Manufacturer() {
         tag="span"
         className="mb-2 block text-sm font-bold capitalize text-gray-dark lg:text-base"
       >
-        Manufacturer
+        {t('manufacturer')}
       </Text>
       <div className="grid grid-cols-3 gap-3">
         {selected.map((item, index: number) => (

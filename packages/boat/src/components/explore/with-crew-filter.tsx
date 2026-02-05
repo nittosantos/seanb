@@ -1,11 +1,13 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useQueryParam } from '@/hooks/use-query-param';
 import Switch from '@/components/ui/form-fields/switch';
 
 export default function WithCrewFilter() {
+  const t = useTranslations('explore');
   const searchParams = useSearchParams();
   const crew = searchParams?.get('withCrew');
   const [withCrew, setWithCrew] = useState<boolean>(Boolean(crew));
@@ -27,7 +29,7 @@ export default function WithCrewFilter() {
 
   return (
     <Switch
-      label="With Crew"
+      label={t('withCrew')}
       checked={withCrew}
       labelPlacement="left"
       onChange={() => setWithCrew(!withCrew)}

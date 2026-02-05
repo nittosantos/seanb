@@ -2,6 +2,7 @@
 
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 import Button from '@/components/ui/button';
 import { CrownIcon } from '@/components/icons/crown-icon';
 
@@ -19,6 +20,8 @@ interface PricingCardProps {
 }
 
 export default function PricingCard({ pricingData }: PricingCardProps) {
+  const t = useTranslations('pricing');
+
   return (
     <div
       className={clsx(
@@ -29,13 +32,13 @@ export default function PricingCard({ pricingData }: PricingCardProps) {
       {pricingData.isSuggested && (
         <div className="absolute right-4 top-4 inline-flex items-center gap-2 rounded-md bg-[#52ACFF] py-2 px-3 text-white sm:left-12 sm:right-auto sm:top-0 sm:-translate-y-1/2">
           <CrownIcon className="h-auto w-5" />
-          <span className="text-xs font-bold md:text-sm">Suggested</span>
+          <span className="text-xs font-bold md:text-sm">{t('suggested')}</span>
         </div>
       )}
       <div>
         <h2 className="text-3xl font-bold leading-[-2px] text-gray-dark lg:text-[40px]">
           $ {pricingData.price}
-          <span className="text-2xl font-normal">/month</span>{' '}
+          <span className="text-2xl font-normal">{t('perMonth')}</span>{' '}
         </h2>
         <h3 className="mt-4 text-2xl font-bold capitalize text-gray-dark lg:mt-6 lg:text-3xl">
           {pricingData.title}
@@ -47,7 +50,7 @@ export default function PricingCard({ pricingData }: PricingCardProps) {
           size="xl"
           className="mt-7 w-full !text-sm !font-bold capitalize lg:mt-9 lg:!text-base lg:!leading-[26px]"
         >
-          get started
+          {t('getStarted')}
         </Button>
       </div>
       <ul className="mt-8 lg:mt-6">

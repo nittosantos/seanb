@@ -1,9 +1,10 @@
 'use client';
 
 import clsx from 'clsx';
-import { useAtom } from 'jotai';
+import { useTranslations } from 'next-intl';
 import { Routes } from '@/config/routes';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
+import { useSearchParams } from 'next/navigation';
 import Manufacturer from '@/components/explore/manufacturer';
 import LocationInputFilter from '@/components/explore/location-input-filter';
 import FreeCancellation from '@/components/explore/free-cancellation-filter';
@@ -14,7 +15,7 @@ import CategoryFilter from '@/components/explore/category-filter';
 import DistanceFilter from '@/components/explore/distance-filter';
 import PriceFilter from '@/components/explore/price-filter';
 import GuestFilter from '@/components/explore/guest-filter';
-import { drawerStateAtom } from '@/components/drawers/view';
+import { useDrawerState } from '@/stores/drawer-store';
 import Text from '@/components/ui/typography/text';
 import Button from '@/components/ui/button';
 import { useEffect, useState } from 'react';
@@ -24,8 +25,9 @@ interface FilterTypes {
 }
 
 export default function Filter({ className }: FilterTypes) {
+  const t = useTranslations('explore');
   const router = useRouter();
-  let [drawerSate, setDrawerState] = useAtom(drawerStateAtom);
+  const [drawerState, setDrawerState] = useDrawerState();
   const searchParams = useSearchParams();
   let params = searchParams?.toString();
   const [state, setState] = useState(false);
@@ -45,7 +47,7 @@ export default function Filter({ className }: FilterTypes) {
     >
       <div className="mb-4 flex items-center justify-between py-2 px-5 pt-3 uppercase md:px-7 xl:px-0 xl:pt-0">
         <Text tag="h5" className="leading-8">
-          Filter
+          {t('filter')}
         </Text>
         {state && (
           <Button
@@ -54,7 +56,7 @@ export default function Filter({ className }: FilterTypes) {
             className="hidden !p-0 text-base text-gray focus:!ring-0 sm:block"
             onClick={() => router.push(Routes.public.explore)}
           >
-            Reset
+            {t('reset')}
           </Button>
         )}
         <Button
@@ -63,12 +65,12 @@ export default function Filter({ className }: FilterTypes) {
           className="!p-0 text-base text-gray focus:!ring-0 sm:hidden"
           onClick={() =>
             setDrawerState({
-              ...drawerSate,
+              ...drawerState,
               isOpen: false,
             })
           }
         >
-          Close
+          {t('close')}
         </Button>
       </div>
       <div className="grid grid-cols-1 gap-8 px-5 pb-3 md:px-7 xl:p-0 xl:pb-0">
@@ -92,7 +94,7 @@ export default function Filter({ className }: FilterTypes) {
               className="!p-0 text-base text-gray underline focus:!ring-0"
               onClick={() => router.push(Routes.public.explore)}
             >
-              Reset
+              {t('reset')}
             </Button>
           )}
         </div>
@@ -103,12 +105,12 @@ export default function Filter({ className }: FilterTypes) {
           className="!px-4 font-semibold"
           onClick={() =>
             setDrawerState({
-              ...drawerSate,
+              ...drawerState,
               isOpen: false,
             })
           }
         >
-          Show Items
+          {t('showItems')}
         </Button>
       </div>
     </div>

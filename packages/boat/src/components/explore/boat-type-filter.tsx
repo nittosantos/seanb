@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { useQueryParam } from '@/hooks/use-query-param';
 import { JetskiBoatIcon } from '@/components/icons/boat-types/jetski-boat';
@@ -39,6 +40,7 @@ const options = [
 ];
 
 export default function BoatTypeFilter() {
+  const t = useTranslations('explore');
   const searchParams = useSearchParams();
   const boatType = searchParams?.get('boatType');
   const { clearFilter, updateQueryparams } = useQueryParam();
@@ -68,7 +70,7 @@ export default function BoatTypeFilter() {
   return (
     <SelectBox
       value={selected}
-      label="Select Boat Type"
+      label={t('selectBoatType')}
       options={options}
       optionIcon={true}
       onChange={(data: any) => setSelected(data)}

@@ -1,12 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { useQueryParam } from '@/hooks/use-query-param';
 import Text from '@/components/ui/typography/text';
 import Counter from '@/components/ui/counter';
 
 export default function GuestFilter() {
+  const t = useTranslations('explore');
   const searchParams = useSearchParams();
   const p = searchParams?.get('guestCount');
   const [peopleCount, setPeopleCount] = useState(Number(p) ?? 0);
@@ -29,7 +31,7 @@ export default function GuestFilter() {
   return (
     <div className="flex items-center justify-between py-2">
       <Text className="block !text-sm font-bold capitalize text-gray-dark lg:!text-base">
-        Number of people
+        {t('numberOfPeople')}
       </Text>
       <Counter
         count={peopleCount}

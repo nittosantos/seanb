@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useQueryParam } from '@/hooks/use-query-param';
 import CheckboxGroup from '@/components/ui/checkbox-group';
 import { useSearchParams } from 'next/navigation';
@@ -21,6 +22,7 @@ interface ItemProps {
 }
 
 export default function CategoryFilter() {
+  const t = useTranslations('explore');
   const searchParams = useSearchParams();
   const manf = searchParams?.get('category');
   const [selected, setSelected] = useState<ItemProps[]>(categories);
@@ -68,7 +70,7 @@ export default function CategoryFilter() {
 
   return (
     <CheckboxGroup
-      label="Categories"
+      label={t('categories')}
       labelClassName="!text-sm lg:!text-base mb-4 lg:mb-2"
       data={selected}
       onChange={(item) => handleInputChange(item)}

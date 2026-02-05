@@ -1,11 +1,13 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useQueryParam } from '@/hooks/use-query-param';
 import Switch from '@/components/ui/form-fields/switch';
 
 export default function FreeCancellation() {
+  const t = useTranslations('explore');
   const searchParams = useSearchParams();
   const cancel = searchParams?.get('freeCancellation');
   const [freeCancellation, setFreeCancellation] = useState<boolean>(
@@ -30,7 +32,7 @@ export default function FreeCancellation() {
   return (
     <Switch
       labelPlacement="left"
-      label="Free Cancellation"
+      label={t('freeCancellation')}
       checked={freeCancellation}
       onChange={() => setFreeCancellation(!freeCancellation)}
       handlerClassName="w-full items-center justify-between"
