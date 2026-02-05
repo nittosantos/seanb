@@ -22,7 +22,12 @@ export const metadata: Metadata = {
   title: 'Boat Rental',
   description: 'Find your boat with the best experience.',
   icons: ['/images/logo.svg'],
-  viewport: { width: 'device-width', initialScale: 1, maximumScale: 1 },
+};
+
+export const viewport = {
+  width: 'device-width' as const,
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({ children }: React.PropsWithChildren<{}>) {

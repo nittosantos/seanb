@@ -1,0 +1,32 @@
+export const tripsData = [
+  {
+    id: '1',
+    boatTitle: 'Perfect set up for Lake Union cruising',
+    boatImage: '/images/top-boats/boat-twelve.png',
+    slug: 'perfect-set-up-for-lake-union-cruising',
+    date: 'Mar 15, 2024',
+    duration: '4 hours',
+    status: 'Upcoming',
+    price: '$260',
+  },
+  {
+    id: '2',
+    boatTitle: 'Smooth Sailing for Lake Union cruising',
+    boatImage: '/images/top-boats/boat-nine.png',
+    slug: 'smooth-sailing-for-lake-union-cruising',
+    date: 'Feb 28, 2024',
+    duration: '6 hours',
+    status: 'Completed',
+    price: '$345',
+  },
+  {
+    id: '3',
+    boatTitle: "Adventurer's Cove Lake Union cruising",
+    boatImage: '/images/top-boats/boat-ten.png',
+    slug: 'adventurers-cove-lake-union-cruising',
+    date: 'Feb 10, 2024',
+    duration: '3 hours',
+    status: 'Completed',
+    price: '$290',
+  },
+];
