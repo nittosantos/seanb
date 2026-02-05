@@ -1,6 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 import Input from '@/components/ui/form-fields/input';
 import Button from '@/components/ui/button';
 
@@ -9,6 +10,8 @@ interface SubscriptionFormProps {
 }
 
 export default function SubscriptionForm({ className }: SubscriptionFormProps) {
+  const t = useTranslations('subscriptionForm');
+
   return (
     <form
       noValidate
@@ -20,7 +23,7 @@ export default function SubscriptionForm({ className }: SubscriptionFormProps) {
           inputClassName="!bg-white h-[54px] md:!h-[56px] 3xl:!h-[60px] !pr-[140px]"
           labelClassName="!mb-0"
           rounded="DEFAULT"
-          placeholder="Your email address"
+          placeholder={t('emailPlaceholder')}
           className="mb-3 rounded-none border-none md:mb-0 lg:!rounded-xl"
         />
         <Button
@@ -29,7 +32,7 @@ export default function SubscriptionForm({ className }: SubscriptionFormProps) {
           rounded="DEFAULT"
           className="right-[5px] block w-full py-4 text-sm tracking-wide md:absolute md:top-[5px] md:h-[46px] md:w-auto md:px-7 lg:!rounded-lg 3xl:h-[50px]"
         >
-          Subscribe
+          {t('subscribe')}
         </Button>
       </div>
     </form>

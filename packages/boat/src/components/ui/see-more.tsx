@@ -1,10 +1,13 @@
 'use client';
 
 import clsx from 'clsx';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { Routes } from '@/config/routes';
 
 export default function SeeMore({ className }: { className?: string }) {
+  const t = useTranslations('common');
+
   return (
     <Link
       href={Routes.public.explore}
@@ -13,7 +16,7 @@ export default function SeeMore({ className }: { className?: string }) {
         className
       )}
     >
-      See More
+      {t('seeMore')}
     </Link>
   );
 }

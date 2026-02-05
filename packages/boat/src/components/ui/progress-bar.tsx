@@ -1,11 +1,10 @@
 'use client';
 
 import clsx from 'clsx';
-import { useAtomValue } from 'jotai';
-import { stepAtom } from '@/components/add-listing/add-listing';
+import { useAddListingStore } from '@/stores/add-listing-store';
 
 export default function ProgressBar() {
-  const step = useAtomValue(stepAtom);
+  const step = useAddListingStore((s) => s.step);
   return (
     <div
       className={clsx(

@@ -1,6 +1,5 @@
 import clsx from 'clsx';
-import RcTable from 'rc-table';
-import type { ExtractProps } from '@/types';
+import RcTable, { type TableProps as RCTableProps } from 'rc-table';
 import Empty from '@/components/ui/empty';
 
 const classes = {
@@ -21,8 +20,6 @@ const classes = {
   },
   striped: '[&_.rc-table-row:nth-child(2n)_.rc-table-cell]:bg-gray-100/50',
 };
-
-type RCTableProps = ExtractProps<typeof RcTable>;
 
 export interface TableProps
   extends Omit<RCTableProps, 'className' | 'emptyText'> {
@@ -57,7 +54,9 @@ export default function Table({
     return <>{skeleton}</>;
   }
   return (
+    // @ts-expect-error rc-table generic inference with React 19
     <RcTable
+      {...props}
       className={clsx(
         classes.table,
         classes.thead,
@@ -67,7 +66,6 @@ export default function Table({
         className
       )}
       emptyText={emptyText ? emptyText : <Empty />}
-      {...props}
     />
   );
 }

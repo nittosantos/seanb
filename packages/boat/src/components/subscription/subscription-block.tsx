@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import SubscriptionForm from '@/components/ui/form-fields/subscription-form';
 import BannerBlock from '@/components/banner-block/banner-block';
 
@@ -10,12 +11,13 @@ export default function SubscriptionBlock({
   className?: string;
   sectionClassName?: string;
 }) {
+  const t = useTranslations('subscription');
+
   return (
     <BannerBlock
       bgImg="/images/banner/3.jpg"
-      title="Subscribe and get exclusive deals & offer"
-      description="Find and book your dream boat. The world's leading luxury 
-      boat comparison site."
+      title={t('title')}
+      description={t('description')}
       className={className}
       sectionClassName={sectionClassName}
       titleClassName="!text-primary md:!text-white text-2xl 3xl:text-[44px] 3xl:leading-[64px] mb-2 xl:mb-5"

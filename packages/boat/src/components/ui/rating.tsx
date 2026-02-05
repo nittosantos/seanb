@@ -77,6 +77,7 @@ const Rate = forwardRef<any, RateProps>(
             {label}
           </div>
         )}
+        {/* @ts-expect-error rc-rate types incompatible with React 19 */}
         <RcRate
           ref={ref}
           disabled={disabled}
