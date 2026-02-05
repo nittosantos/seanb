@@ -1,5 +1,6 @@
 {
   "name": "tripfinder",
+  "packageManager": "yarn@1.22.22",
   "description": "react next template",
   "version": "5.0.0",
   "private": true,
@@ -8,27 +9,28 @@
     "packages/*"
   ],
   "scripts": {
-    "clean": "lerna clean --yes && rimraf node_modules",
-    "clean:build": "lerna exec -- rimraf \"{.next,dist,out,build,.docz,.firebase}\"",
-    "dev": "yarn workspace @tripfinder/boat run dev",
-    "start:boat": "yarn workspace @tripfinder/boat run dev",
-    "build": "yarn workspace @tripfinder/boat run build",
-    "build:boat": "yarn workspace @tripfinder/boat run build",
-    "start": "yarn workspace @tripfinder/boat run start",
-    "serve:boat": "yarn workspace @tripfinder/boat run start",
-    "lint": "yarn workspace @tripfinder/boat run lint",
-    "lint:boat": "yarn workspace @tripfinder/boat run lint",
+    "dev": "turbo run dev",
+    "dev:boat": "turbo run dev --filter=@tripfinder/boat",
+    "build": "turbo run build",
+    "build:boat": "turbo run build --filter=@tripfinder/boat",
+    "start": "turbo run start",
+    "start:boat": "turbo run start --filter=@tripfinder/boat",
+    "lint": "turbo run lint",
+    "lint:boat": "turbo run lint --filter=@tripfinder/boat",
     "format": "prettier --write .",
-    "format:boat": "yarn workspace @tripfinder/boat run format",
+    "format:boat": "turbo run format --filter=@tripfinder/boat",
     "check-format": "prettier --check .",
+    "clean": "turbo run clean --force && rimraf node_modules",
+    "clean:build": "turbo run clean:build",
     "prepare": "husky install"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
     "husky": "^8.0.1",
-    "lerna": "^5.5.1",
-    "prettier": "^2.5.0",
-    "rimraf": "^3.0.2",
-    "serve": "^14.0.1"
-  }
+    "prettier": "^3.3.0",
+    "rimraf": "^5.0.0",
+    "serve": "^14.0.1",
+    "turbo": "^2.3.0"
+  },
+  "dependencies": {}
 }
