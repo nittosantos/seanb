@@ -2,7 +2,11 @@
 
 import clsx from 'clsx';
 import { useState } from 'react';
-import DatePicker, { ReactDatePickerProps } from 'react-datepicker';
+import { useLocale } from 'next-intl';
+import DatePickerLib, { ReactDatePickerProps } from 'react-datepicker';
+import { getDatePickerLocale } from '@/lib/date-locale';
+
+const DatePicker = DatePickerLib as React.ComponentType<ReactDatePickerProps>;
 import 'react-datepicker/dist/react-datepicker.css';
 
 interface DatePickerInputType extends ReactDatePickerProps {
@@ -18,6 +22,8 @@ export default function DatePickerInput({
   ...props
 }: DatePickerInputType) {
   const [state, setState] = useState(false);
+  const locale = useLocale();
+  const dateLocale = getDatePickerLocale(locale);
 
   return (
     <div className={clsx('relative', containerClass)}>
@@ -41,6 +47,7 @@ export default function DatePickerInput({
         onCalendarOpen={() => setState(true)}
         onCalendarClose={() => setState(false)}
         {...props}
+        locale={dateLocale}
       />
     </div>
   );

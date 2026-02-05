@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { topBoats } from 'public/data/top-boats';
 import { useTimeout } from '@/hooks/use-timeout';
 import ListingCardLoader from '@/components/ui/loader/listing-card-loader';
@@ -31,13 +32,14 @@ function NewBoatsGrid() {
 }
 
 export default function NewBoats() {
+  const t = useTranslations('home');
   const { state } = useTimeout();
 
   return (
     <Section
       className="container-fluid mt-12 overflow-hidden lg:mt-16"
-      title="New boat rentals"
-      description="Unsatiable it considered invitation he traveling insensible."
+      title={t('newBoatsTitle')}
+      description={t('topDestinationsDesc')}
       headerClassName="items-end mb-4 lg:mb-5 xl:mb-6 gap-5"
       rightElement={<SeeMore />}
     >

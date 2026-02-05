@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { format, addDays } from 'date-fns';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { makeQueryString } from '@/utils/makeQueryString';
 import DatePickerInput from '@/components/home/search-form/daterange-picker';
 import LocationInput from '@/components/home/search-form/location-input';
@@ -20,6 +21,7 @@ type QueryStringType = {
 };
 
 export default function FindTripForm() {
+  const t = useTranslations('home');
   const router = useRouter();
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
@@ -58,18 +60,18 @@ export default function FindTripForm() {
     >
       <div className="mb-3 sm:mb-0">
         <span className="mb-2 hidden font-satisfy text-xl leading-7 text-gray-dark sm:block 4xl:text-[28px] 4xl:leading-[44px]">
-          Enjoy your trip
+          {t('enjoyYourTrip')}
         </span>
         <Text
           tag="h1"
           className="leading-12 mb-2 !text-xl !font-black uppercase text-gray-dark sm:!text-[28px] sm:!leading-9  4xl:!text-4xl 4xl:!leading-[52px]"
         >
-          Discover the <br className="hidden sm:block" />
-          new world
+          {t('discoverNewWorldLine1')}
+          <br className="hidden sm:block" />
+          {t('discoverNewWorldLine2')}
         </Text>
         <Text className="mb-5 hidden leading-6 !text-secondary sm:block 3xl:leading-8 4xl:mb-6 4xl:text-lg">
-          Compare prices from 200+ booking sites to help you find the lowest
-          price on the right hotel for you.
+          {t('comparePrices')}
         </Text>
       </div>
       <SearchAutocomplete
@@ -77,7 +79,7 @@ export default function FindTripForm() {
         onPlacesChanged={onPlacesChanged}
         loader={
           <LocationInput
-            label="Loading . . ."
+            label={t('loading')}
             icon={<MapMarkerIcon className="h-6 w-6 text-gray" />}
             className="mb-3"
             disabled
@@ -85,7 +87,7 @@ export default function FindTripForm() {
         }
       >
         <LocationInput
-          label="Location"
+          label={t('location')}
           icon={<MapMarkerIcon className="h-6 w-6 text-gray" />}
           className="mb-3"
           value={locationInput.searchedLocation || ''}
@@ -98,7 +100,7 @@ export default function FindTripForm() {
         />
       </SearchAutocomplete>
       <DatePickerInput
-        label="Departure"
+        label={t('departure')}
         selected={startDate}
         dateFormat="eee dd / LL / yy"
         icon={<CalenderIcon className="h-6 w-6 text-gray" />}
@@ -111,7 +113,7 @@ export default function FindTripForm() {
         popperClassName="homepage-datepicker"
       />
       <DatePickerInput
-        label="Return"
+        label={t('return')}
         selected={endDate}
         dateFormat="eee dd / LL / yy"
         icon={<CalenderIcon className="h-6 w-6 text-gray" />}
@@ -126,7 +128,7 @@ export default function FindTripForm() {
         rounded="lg"
         size="xl"
       >
-        Submit
+        {t('submit')}
       </Button>
     </form>
   );

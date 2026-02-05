@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { instructions } from 'public/data/instructions';
 import { useTimeout } from '@/hooks/use-timeout';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
@@ -88,13 +89,14 @@ function InstructionGrid() {
 }
 
 export default function InstructionBlock() {
+  const t = useTranslations('home');
   const { state } = useTimeout();
 
   return (
     <Section
       className="group/section instruction-section lg:container-fluid mt-12 pl-4 sm:pl-6 lg:mt-16"
-      title="How to rent a boat"
-      description="Unsatiable it considered invitation he traveling insensible."
+      title={t('howToRentTitle')}
+      description={t('topDestinationsDesc')}
       headerClassName="mb-4 md:mb-5 xl:mb-6"
     >
       {!state && <BlockLoader />}

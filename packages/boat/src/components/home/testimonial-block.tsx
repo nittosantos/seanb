@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useTimeout } from '@/hooks/use-timeout';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 import {
@@ -15,13 +16,14 @@ import ActionIcon from '@/components/ui/action-icon';
 import Section from '@/components/ui/section';
 
 export default function TestimonialBlock() {
+  const t = useTranslations('home');
   const { state } = useTimeout();
 
   return (
     <Section
       className="group/section lg:container-fluid mt-12 overflow-hidden pl-4 sm:pl-6 lg:mt-16"
-      title="Testimonial"
-      description="Unsatiable it considered invitation he travelling insensible."
+      title={t('testimonialTitle')}
+      description={t('testimonialDesc')}
       headerClassName="items-end mb-4 lg:mb-5 xl:mb-6"
     >
       {!state && <BlockLoader />}
