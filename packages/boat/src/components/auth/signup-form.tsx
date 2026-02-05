@@ -1,38 +1,44 @@
 'use client';
 
-import Link from 'next/link';
+import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { Routes } from '@/config/routes';
 import Input from '@/components/ui/form-fields/input';
 import Button from '@/components/ui/button';
 import Checkbox from '@/components/ui/form-fields/checkbox';
 
-const signUpSchema = z
-  .object({
-    firstName: z.string(),
-    lastName: z.string(),
-    email: z
-      .string()
-      .min(1, 'The email is required.')
-      .email({ message: 'The email is invalid.' }),
-    password: z
-      .string()
-      .min(8, { message: 'Password must be 8 character long.' }),
-    confirmPassword: z
-      .string()
-      .min(8, { message: 'Password must be 8 character long.' }),
-    acceptPolicy: z.boolean(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match.",
-    path: ['confirmPassword'],
-  });
-
-type SignUpType = z.infer<typeof signUpSchema>;
-
 export default function SignUpForm() {
+  const t = useTranslations('auth');
+
+  const signUpSchema = useMemo(
+    () =>
+      z
+        .object({
+          firstName: z.string(),
+          lastName: z.string(),
+          email: z
+            .string()
+            .min(1, t('validationEmailRequired'))
+            .email({ message: t('validationEmailInvalid') }),
+          password: z.string().min(8, { message: t('validationPasswordMin') }),
+          confirmPassword: z
+            .string()
+            .min(8, { message: t('validationPasswordMin') }),
+          acceptPolicy: z.boolean(),
+        })
+        .refine((data) => data.password === data.confirmPassword, {
+          message: t('validationPasswordsDontMatch'),
+          path: ['confirmPassword'],
+        }),
+    [t]
+  );
+
+  type SignUpType = z.infer<typeof signUpSchema>;
+
   const {
     register,
     handleSubmit,
@@ -108,20 +114,20 @@ export default function SignUpForm() {
         {...register('acceptPolicy')}
       />
       <Button type="submit" className="mb-2 w-full" size="xl">
-        Sign Up
+        {t('signUp')}
       </Button>
       <p className="text-sm leading-6 text-gray">
-        Already have an account? &nbsp;
+        {t('alreadyHaveAccount')}{' '}
         <Link
           href={Routes.auth.signIn}
           className="font-semibold text-primary underline"
         >
-          Sign In
+          {t('signIn')}
         </Link>
       </p>
       <div className="relative mt-7 mb-8 text-center before:absolute before:top-1/2 before:left-0 before:h-[1px] before:w-full before:bg-gray-200">
         <span className="relative z-10 m-auto inline-flex bg-white px-5">
-          Or
+          {t('or')}
         </span>
       </div>
     </form>

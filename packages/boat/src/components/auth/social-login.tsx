@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import useAuth from '@/hooks/use-auth';
 import Button from '@/components/ui/button';
 import { AppleIcon } from '@/components/icons/apple';
@@ -8,6 +9,7 @@ import { GoogleIcon } from '@/components/icons/google';
 import { useModal } from '@/components/modals/context';
 
 export default function SocialLogin() {
+  const t = useTranslations('auth');
   const { closeModal } = useModal();
   const { authorize } = useAuth();
 
@@ -26,7 +28,7 @@ export default function SocialLogin() {
         className="mb-3 w-full"
       >
         <FBIcon className="mr-5" />
-        Sign up with Facebook
+        {t('signUpWithFacebook')}
       </Button>
       <Button
         onClick={handleSocialLogin}
@@ -36,7 +38,7 @@ export default function SocialLogin() {
         className="mb-3 w-full"
       >
         <GoogleIcon className="mr-5" />
-        Sign up with Google
+        {t('signUpWithGoogle')}
       </Button>
 
       <Button
@@ -47,7 +49,7 @@ export default function SocialLogin() {
         className="w-full"
       >
         <AppleIcon className="mr-5" />
-        Sign up with Apple
+        {t('signUpWithApple')}
       </Button>
     </>
   );
