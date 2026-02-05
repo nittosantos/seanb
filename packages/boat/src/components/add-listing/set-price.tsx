@@ -1,6 +1,7 @@
 'use client';
 
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/solid';
+import { useTranslations } from 'next-intl';
 import ActionIcon from '@/components/ui/action-icon';
 import Text from '@/components/ui/typography/text';
 
@@ -11,13 +12,14 @@ interface SetPriceTypes {
 }
 
 export default function SetPrice({ value, countBy, onChange }: SetPriceTypes) {
+  const t = useTranslations('addListing');
   return (
     <div className="card-gradient flex items-center justify-between rounded-lg border border-gray-lighter py-5 px-6 text-sm text-gray md:text-base lg:rounded-xl lg:p-9">
       <div className="flex items-center gap-2">
         <Text tag="h3" className="text-2xl">
           ${value}
         </Text>
-        per day
+        {t('perDay')}
       </div>
       <div className="flex items-center gap-2">
         <ActionIcon

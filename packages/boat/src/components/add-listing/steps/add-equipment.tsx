@@ -3,27 +3,29 @@
 import { vendorData } from 'public/data/listing-details';
 import { z } from 'zod';
 import Image from 'next/image';
-import { useAtom, useSetAtom } from 'jotai';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from 'next-intl';
 import AdvancedCheckbox from '@/components/ui/form-fields/advanced-checkbox';
 import FieldHelperText from '@/components/ui/form-fields/field-helper-text';
 import CreateListingFooter from '@/components/footer/create-listing-footer';
-import { storeAtom, stepAtom } from '@/components/add-listing/add-listing';
+import { useAddListingForm, useAddListingStore } from '@/stores/add-listing-store';
 import Text from '@/components/ui/typography/text';
 
-const EquipmentSchema = z.object({
-  equipment: z
-    .string()
-    .array()
-    .min(5, { message: 'Minimum 5 items required!' }),
-});
-
-type EquipmentSchemaType = z.infer<typeof EquipmentSchema>;
-
 export default function AddEquipment() {
-  const setStep = useSetAtom(stepAtom);
-  const [store, setStore] = useAtom(storeAtom);
+  const t = useTranslations('addListing');
+  const setStep = useAddListingStore((s) => s.setStep);
+  const [store, setStore] = useAddListingForm();
+
+  const EquipmentSchema = z.object({
+    equipment: z
+      .string()
+      .array()
+      .min(5, { message: t('validationMin5Items') }),
+  });
+
+  type EquipmentSchemaType = z.infer<typeof EquipmentSchema>;
+
   const {
     handleSubmit,
     register,
@@ -35,7 +37,7 @@ export default function AddEquipment() {
     resolver: zodResolver(EquipmentSchema),
   });
 
-  function handleEquipment(data: any) {
+  function handleEquipment(data: EquipmentSchemaType) {
     setStore({
       ...store,
       equipment: data.equipment,
@@ -51,7 +53,7 @@ export default function AddEquipment() {
           tag="h3"
           className="mb-4 text-lg !font-medium md:!text-xl lg:mb-6 2xl:!text-2xl"
         >
-          On Board Equipments
+          {t('onBoardEquipments')}
         </Text>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
           {vendorData.equipment.map((item, index) => (

@@ -3,39 +3,40 @@
 import { boatTypes } from 'public/data/boat-types';
 import { z } from 'zod';
 import Image from 'next/image';
-import { useAtom, useSetAtom } from 'jotai';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from 'next-intl';
 import FieldHelperText from '@/components/ui/form-fields/field-helper-text';
 import CreateListingFooter from '@/components/footer/create-listing-footer';
-import { storeAtom, stepAtom } from '@/components/add-listing/add-listing';
+import { useAddListingForm, useAddListingStore } from '@/stores/add-listing-store';
 import AdvancedRadio from '@/components/ui/form-fields/advanced-radiobox';
 import Textarea from '@/components/ui/form-fields/textarea';
 import SetPrice from '@/components/add-listing/set-price';
 import Text from '@/components/ui/typography/text';
 import Counter from '@/components/ui/counter';
 
-const BoatSchema = z.object({
-  boatName: z
-    .string()
-    .min(1, { message: 'This field is required!' })
-    .max(24, { message: 'Reached your letter limit.' }),
-  boatType: z.string().min(1, { message: 'This field is required!' }),
-  pricePerDay: z.number().min(10, { message: 'Minimum price 10!' }),
-  boatDescription: z
-    .string()
-    .min(1, { message: 'This field is requred!' })
-    .max(450, { message: 'Reached your letter limit.' }),
-  beadRooms: z.number().optional(),
-  bathRooms: z.number().optional(),
-  guests: z.number().min(1, { message: 'Minimum 1 guest required!' }),
-});
-
-type BoatSchemaType = z.infer<typeof BoatSchema>;
-
 export default function BoatInfo() {
-  const setStep = useSetAtom(stepAtom);
-  const [store, setStore] = useAtom(storeAtom);
+  const t = useTranslations('addListing');
+
+  const BoatSchema = z.object({
+    boatName: z
+      .string()
+      .min(1, { message: t('validationFieldRequired') })
+      .max(24, { message: t('validationLetterLimit') }),
+    boatType: z.string().min(1, { message: t('validationFieldRequired') }),
+    pricePerDay: z.number().min(10, { message: t('validationMinPrice') }),
+    boatDescription: z
+      .string()
+      .min(1, { message: t('validationLetterLimitReq') })
+      .max(450, { message: t('validationLetterLimit') }),
+    beadRooms: z.number().optional(),
+    bathRooms: z.number().optional(),
+    guests: z.number().min(1, { message: t('validationMin1Guest') }),
+  });
+
+  type BoatSchemaType = z.infer<typeof BoatSchema>;
+  const setStep = useAddListingStore((s) => s.setStep);
+  const [store, setStore] = useAddListingForm();
   const {
     handleSubmit,
     register,
@@ -78,7 +79,7 @@ export default function BoatInfo() {
       >
         <Textarea
           variant="outline"
-          label="Now, let's give your boat a title"
+          label={t('boatTitle')}
           labelClassName="!mb-4 !text-lg !font-medium md:!text-xl lg:!mb-6 2xl:!text-2xl"
           textareaClassName="h-[72px] lg:h-20 w-full resize-none lg:rounded-xl"
           maxLength={24}
@@ -93,7 +94,7 @@ export default function BoatInfo() {
           tag="h3"
           className="mt-12 mb-4 text-lg !font-medium md:!text-xl lg:mb-6 2xl:!text-2xl"
         >
-          What type of boat you will have?
+          {t('boatType')}
         </Text>
         <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {boatTypes.map((item) => (
@@ -125,7 +126,7 @@ export default function BoatInfo() {
           tag="h3"
           className="mt-12 mb-4 text-lg !font-medium md:!text-xl lg:mb-6 2xl:!text-2xl"
         >
-          Now, Set your price
+          {t('setPrice')}
         </Text>
         <Controller
           name="pricePerDay"
@@ -140,7 +141,7 @@ export default function BoatInfo() {
         <Textarea
           variant="outline"
           className="mt-12"
-          label="Create your description"
+          label={t('createDescription')}
           maxLength={450}
           labelClassName="!mb-4 !text-lg !font-medium md:!text-xl lg:!mb-6 2xl:!text-2xl"
           textareaClassName="h-[72px] lg:h-20 w-full resize-none lg:rounded-xl"
@@ -155,7 +156,7 @@ export default function BoatInfo() {
           tag="h3"
           className="mt-12 mb-4 text-lg !font-medium md:!text-xl lg:mb-6 2xl:!text-2xl"
         >
-          Share some basic about your boat
+          {t('shareBasic')}
         </Text>
         <div className="grid grid-cols-1 gap-2 lg:gap-3">
           <Controller
@@ -163,7 +164,7 @@ export default function BoatInfo() {
             control={control}
             render={({ field: { onChange, value } }) => (
               <div className="card-gradient flex items-center justify-between rounded-lg border border-gray-lighter p-6 lg:rounded-xl lg:p-8">
-                <Text className="text-base !font-semibold">Bed rooms</Text>
+                <Text className="text-base !font-semibold">{t('bedRooms')}</Text>
                 <Counter
                   count={value ? value : 0}
                   onCount={onChange}
@@ -178,7 +179,7 @@ export default function BoatInfo() {
             control={control}
             render={({ field: { onChange, value } }) => (
               <div className="card-gradient flex items-center justify-between rounded-lg border border-gray-lighter p-6 lg:rounded-xl lg:p-8">
-                <Text className="text-base !font-semibold">Bathrooms</Text>
+                <Text className="text-base !font-semibold">{t('bathRooms')}</Text>
                 <Counter
                   count={value ? value : 0}
                   onCount={onChange}
@@ -193,7 +194,7 @@ export default function BoatInfo() {
             control={control}
             render={({ field: { onChange, value } }) => (
               <div className="card-gradient flex items-center justify-between rounded-lg border border-gray-lighter p-6 lg:rounded-xl lg:p-8">
-                <Text className="text-base !font-semibold">Guests</Text>
+                <Text className="text-base !font-semibold">{t('guests')}</Text>
                 <Counter
                   count={value ? value : 0}
                   onCount={onChange}

@@ -2,14 +2,17 @@
 
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
-import { useAtom, useSetAtom } from 'jotai';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from 'next-intl';
 import CreateListingFooter from '@/components/footer/create-listing-footer';
-import { storeAtom, stepAtom } from '@/components/add-listing/add-listing';
+import { useAddListingForm, useAddListingStore } from '@/stores/add-listing-store';
 import Input from '@/components/ui/form-fields/input';
 import Text from '@/components/ui/typography/text';
 
-const EquipmentSchema = z
+export default function AddSpecification() {
+  const t = useTranslations('addListing');
+
+  const EquipmentSchema = z
   .object({
     engine: z.string(),
     engineTorque: z.string(),
@@ -27,9 +30,8 @@ const EquipmentSchema = z
 
 type EquipmentSchemaType = z.infer<typeof EquipmentSchema>;
 
-export default function AddSpecification() {
-  const setStep = useSetAtom(stepAtom);
-  const [store, setStore] = useAtom(storeAtom);
+  const setStep = useAddListingStore((s) => s.setStep);
+  const [store, setStore] = useAddListingForm();
   const {
     handleSubmit,
     register,
@@ -58,16 +60,16 @@ export default function AddSpecification() {
           tag="h3"
           className="mb-4 text-lg !font-medium md:!text-xl lg:mb-6 2xl:!text-2xl"
         >
-          Now, set your boat specifications
+          {t('setSpecifications')}
         </Text>
         <div className="grid grid-cols-1 gap-4">
           <div className="gap-2 lg:grid lg:items-center xl:grid-cols-2">
             <Text className="mb-2 font-medium md:font-bold lg:mb-0">
-              Engine
+              {t('engine')}
             </Text>
             <Input
               type="text"
-              placeholder="Milwaukee-Eight 107"
+              placeholder={t('placeholderEngine')}
               inputClassName="!h-10 lg:!h-12"
               {...register('engine')}
               error={errors?.engine?.message}
@@ -75,11 +77,11 @@ export default function AddSpecification() {
           </div>
           <div className="gap-2 lg:grid lg:items-center xl:grid-cols-2">
             <Text className="mb-2 font-medium md:font-bold lg:mb-0">
-              Engine Torque
+              {t('engineTorque')}
             </Text>
             <Input
               type="text"
-              placeholder="111 ft-lb"
+              placeholder={t('placeholderTorque')}
               inputClassName="!h-10 lg:!h-12"
               {...register('engineTorque')}
               error={errors?.engineTorque?.message}
@@ -87,11 +89,11 @@ export default function AddSpecification() {
           </div>
           <div className="gap-2 lg:grid lg:items-center xl:grid-cols-2">
             <Text className="mb-2 font-medium md:font-bold lg:mb-0">
-              Fuel System
+              {t('fuelSystem')}
             </Text>
             <Input
               type="text"
-              placeholder="Milwaukee-Eight 107"
+              placeholder={t('placeholderEngine')}
               inputClassName="!h-10 lg:!h-12"
               {...register('fuelSystem')}
               error={errors?.fuelSystem?.message}
@@ -99,11 +101,11 @@ export default function AddSpecification() {
           </div>
           <div className="gap-2 lg:grid lg:items-center xl:grid-cols-2">
             <Text className="mb-2 font-medium md:font-bold lg:mb-0">
-              Bore x Stroke
+              {t('boreStroke')}
             </Text>
             <Input
               type="text"
-              placeholder="111 ft-lb"
+              placeholder={t('placeholderTorque')}
               inputClassName="!h-10 lg:!h-12"
               {...register('boreStroke')}
               error={errors?.boreStroke?.message}
@@ -111,11 +113,11 @@ export default function AddSpecification() {
           </div>
           <div className="gap-2 lg:grid lg:items-center xl:grid-cols-2">
             <Text className="mb-2 font-medium md:font-bold lg:mb-0">
-              Infotainment System
+              {t('infotainmentSystem')}
             </Text>
             <Input
               type="text"
-              placeholder="Milwaukee-Eight 107"
+              placeholder={t('placeholderEngine')}
               inputClassName="!h-10 lg:!h-12"
               {...register('infotainmentSystem')}
               error={errors?.infotainmentSystem?.message}
@@ -123,11 +125,11 @@ export default function AddSpecification() {
           </div>
           <div className="gap-2 lg:grid lg:items-center xl:grid-cols-2">
             <Text className="mb-2 font-medium md:font-bold lg:mb-0">
-              Displacement
+              {t('displacement')}
             </Text>
             <Input
               type="text"
-              placeholder="111 ft-lb"
+              placeholder={t('placeholderTorque')}
               inputClassName="!h-10 lg:!h-12"
               {...register('displacement')}
               error={errors?.displacement?.message}
@@ -135,11 +137,11 @@ export default function AddSpecification() {
           </div>
           <div className="gap-2 lg:grid lg:items-center xl:grid-cols-2">
             <Text className="mb-2 font-medium md:font-bold lg:mb-0">
-              Fuel Capacity
+              {t('fuelCapacity')}
             </Text>
             <Input
               type="text"
-              placeholder="Milwaukee-Eight 107"
+              placeholder={t('placeholderEngine')}
               inputClassName="!h-10 lg:!h-12"
               {...register('fuelCapacity')}
               error={errors?.fuelCapacity?.message}
@@ -147,11 +149,11 @@ export default function AddSpecification() {
           </div>
           <div className="gap-2 lg:grid lg:items-center xl:grid-cols-2">
             <Text className="mb-2 font-medium md:font-bold lg:mb-0">
-              Compression Ratio
+              {t('compressionRatio')}
             </Text>
             <Input
               type="text"
-              placeholder="111 ft-lb"
+              placeholder={t('placeholderTorque')}
               inputClassName="!h-10 lg:!h-12"
               {...register('compressionRatio')}
               error={errors?.compressionRatio?.message}
@@ -159,11 +161,11 @@ export default function AddSpecification() {
           </div>
           <div className="gap-2 lg:grid lg:items-center xl:grid-cols-2">
             <Text className="mb-2 font-medium md:font-bold lg:mb-0">
-              Luggage Capacity -Volume
+              {t('luggageCapacity')}
             </Text>
             <Input
               type="text"
-              placeholder="Milwaukee-Eight 107"
+              placeholder={t('placeholderEngine')}
               inputClassName="!h-10 lg:!h-12"
               {...register('luggageCapacity')}
               error={errors?.luggageCapacity?.message}
@@ -171,11 +173,11 @@ export default function AddSpecification() {
           </div>
           <div className="gap-2 lg:grid lg:items-center xl:grid-cols-2">
             <Text className="mb-2 font-medium md:font-bold lg:mb-0">
-              Fuel Economy
+              {t('fuelEconomy')}
             </Text>
             <Input
               type="text"
-              placeholder="111 ft-lb"
+              placeholder={t('placeholderTorque')}
               inputClassName="!h-10 lg:!h-12"
               {...register('fuelEconomy')}
               error={errors?.fuelEconomy?.message}
@@ -183,11 +185,11 @@ export default function AddSpecification() {
           </div>
           <div className="gap-2 lg:grid lg:items-center xl:grid-cols-2">
             <Text className="mb-2 font-medium md:font-bold lg:mb-0">
-              Weight
+              {t('weight')}
             </Text>
             <Input
               type="text"
-              placeholder="Milwaukee-Eight 107"
+              placeholder={t('placeholderEngine')}
               inputClassName="!h-10 lg:!h-12"
               {...register('weight')}
               error={errors?.weight?.message}

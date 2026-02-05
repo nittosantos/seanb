@@ -1,8 +1,7 @@
 'use client';
 
-import { atomWithStorage } from 'jotai/utils';
-import { atom, useAtomValue } from 'jotai';
 import dynamic from 'next/dynamic';
+import { useAddListingStore } from '@/stores/add-listing-store';
 
 const CreateListing = dynamic(
   () => import('@/components/add-listing/steps/create-listing')
@@ -26,37 +25,10 @@ const StepsEnd = dynamic(
   () => import('@/components/add-listing/steps/steps-end')
 );
 
-export const stepAtom = atom(1);
-export const storeAtom = atomWithStorage('addNewBoat', {
-  boatName: '',
-  boatType: '',
-  pricePerDay: 10,
-  boatDescription: '',
-  beadRooms: 0,
-  bathRooms: 0,
-  guests: 1,
-  location: '',
-  phoneNumber: '',
-  equipment: [],
-  images: [],
-  specification: {
-    engine: '',
-    engineTorque: '',
-    fuelSystem: '',
-    boreStroke: '',
-    infotainmentSystem: '',
-    displacement: '',
-    fuelCapacity: '',
-    compressionRatio: '',
-    luggageCapacity: '',
-    fuelEconomy: '',
-    weight: '',
-  },
-});
-
 export default function AddListing() {
+  const step = useAddListingStore((s) => s.step);
+
   let stepComponent;
-  const step = useAtomValue(stepAtom);
   switch (step) {
     case 1:
       stepComponent = <CreateListing />;
@@ -79,6 +51,8 @@ export default function AddListing() {
     case 7:
       stepComponent = <StepsEnd />;
       break;
+    default:
+      stepComponent = null;
   }
 
   return (

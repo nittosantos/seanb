@@ -1,6 +1,7 @@
 'use client';
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
+import { useTranslations } from 'next-intl';
 import Button from '@/components/ui/button';
 
 interface BackNextFooterTypes {
@@ -12,6 +13,7 @@ export default function CreateListingFooter({
   onNext,
   onBack,
 }: BackNextFooterTypes) {
+  const t = useTranslations('addListing');
   return (
     <div className="fixed inset-x-0 bottom-0 z-20 w-full bg-white">
       <div className="container-fluid flex items-center justify-between py-3 lg:py-4">
@@ -22,14 +24,14 @@ export default function CreateListingFooter({
           onClick={onBack}
         >
           <ChevronLeftIcon className="mr-2 h-auto w-4" />
-          Back
+          {t('back')}
         </Button>
         <Button
           type="submit"
           className="text-sm !font-bold capitalize focus:!ring-0 lg:text-base"
           onClick={onNext}
         >
-          Next <ChevronRightIcon className="ml-2 h-auto w-4" />
+          {t('next')} <ChevronRightIcon className="ml-2 h-auto w-4" />
         </Button>
       </div>
     </div>
