@@ -3,30 +3,33 @@
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from 'next-intl';
 import Input from '@/components/ui/form-fields/input';
 import Text from '@/components/ui/typography/text';
 import Button from '@/components/ui/button';
 
-const changePasswordSchema = z
-  .object({
-    currentPassword: z
-      .string()
-      .min(8, { message: 'Password must be 8 character long.' }),
-    newPassword: z
-      .string()
-      .min(8, { message: 'Password must be 8 character long.' }),
-    confirmPassword: z
-      .string()
-      .min(8, { message: 'Password must be 8 character long.' }),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords don't match.",
-    path: ['confirmPassword'],
-  });
-
-type ChangePasswordType = z.infer<typeof changePasswordSchema>;
-
 export default function ChangePassword() {
+  const t = useTranslations('settings');
+
+  const changePasswordSchema = z
+    .object({
+      currentPassword: z
+        .string()
+        .min(8, { message: t('validationPasswordLength') }),
+      newPassword: z
+        .string()
+        .min(8, { message: t('validationPasswordLength') }),
+      confirmPassword: z
+        .string()
+        .min(8, { message: t('validationPasswordLength') }),
+    })
+    .refine((data) => data.newPassword === data.confirmPassword, {
+      message: t('validationPasswordsDontMatch'),
+      path: ['confirmPassword'],
+    });
+
+  type ChangePasswordType = z.infer<typeof changePasswordSchema>;
+
   const {
     register,
     handleSubmit,
@@ -34,7 +37,8 @@ export default function ChangePassword() {
   } = useForm<ChangePasswordType>({
     resolver: zodResolver(changePasswordSchema),
   });
-  function handleChangePassword(data: any) {
+
+  function handleChangePassword(data: ChangePasswordType) {
     console.log('Data:', data);
   }
 
@@ -44,7 +48,7 @@ export default function ChangePassword() {
         tag="h3"
         className="mb-4 border-b border-b-gray-lighter pb-4 text-xl lg:mb-6"
       >
-        Change Password
+        {t('changePassword')}
       </Text>
       <form
         noValidate
@@ -53,21 +57,21 @@ export default function ChangePassword() {
         <div className="grid grid-cols-2 gap-x-3 gap-y-3 md:gap-y-4">
           <Input
             type="password"
-            label="Current password"
+            label={t('currentPassword')}
             labelClassName="!font-normal lg:text-base"
             {...register('currentPassword')}
             error={errors.currentPassword?.message}
           />
           <Input
             type="password"
-            label="New password"
+            label={t('newPassword')}
             labelClassName="!font-normal lg:text-base"
             {...register('newPassword')}
             error={errors.newPassword?.message}
           />
           <Input
             type="password"
-            label="Confirm password"
+            label={t('confirmPassword')}
             labelClassName="!font-normal lg:text-base"
             {...register('confirmPassword')}
             error={errors.confirmPassword?.message}
@@ -80,7 +84,7 @@ export default function ChangePassword() {
             size="xl"
             className="w-full transition-transform duration-100 focus:!ring-0 active:scale-95 md:w-auto"
           >
-            Update password
+            {t('updatePassword')}
           </Button>
         </div>
       </form>
