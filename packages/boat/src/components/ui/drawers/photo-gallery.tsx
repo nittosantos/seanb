@@ -2,8 +2,7 @@
 
 import { vendorData } from 'public/data/listing-details';
 import Image from 'next/image';
-import { useAtom } from 'jotai';
-import { drawerStateAtom } from '@/components/drawers/view';
+import { useDrawerState } from '@/stores/drawer-store';
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
 import { ShareIcon } from '@/components/icons/share-icon';
 import { useGallery } from '@/components/gallery/context';
@@ -14,7 +13,7 @@ import Button from '@/components/ui/button';
 
 export default function PhotoGallery() {
   const { gallary } = vendorData;
-  const [drawerSate, setDrawerState] = useAtom(drawerStateAtom);
+  const [, setDrawerState] = useDrawerState();
   const { openModal } = useModal();
   const { openGallery } = useGallery();
 
@@ -27,12 +26,7 @@ export default function PhotoGallery() {
             size="sm"
             rounded="full"
             className="border-none focus:ring-0 md:h-8 md:w-8"
-            onClick={() =>
-              setDrawerState({
-                ...drawerSate,
-                isOpen: false,
-              })
-            }
+            onClick={() => setDrawerState({ isOpen: false })}
           >
             <ChevronLeftIcon className="h-auto w-6" />
           </ActionIcon>

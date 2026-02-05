@@ -2,13 +2,12 @@
 
 import { vendorData } from 'public/data/listing-details';
 import { reviewsData } from 'public/data/reviews';
-import { useAtom } from 'jotai';
-import { drawerStateAtom } from '@/components/drawers/view';
+import { useDrawerState } from '@/stores/drawer-store';
 import { Staricon } from '@/components/icons/star-icon';
 import Button from '@/components/ui/button';
 
 export default function ReserveBottomMenu() {
-  const [drawerSate, setDrawerState] = useAtom(drawerStateAtom);
+  const [drawerState, setDrawerState] = useDrawerState();
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 flex w-full items-center justify-between bg-white py-3 px-4 shadow-menu-shadow sm:px-6 lg:hidden">
       <div>
@@ -26,7 +25,7 @@ export default function ReserveBottomMenu() {
         variant="solid"
         onClick={() =>
           setDrawerState({
-            ...drawerSate,
+            ...drawerState,
             isOpen: true,
             placement: 'bottom',
             view: 'BOOKING_FORM',

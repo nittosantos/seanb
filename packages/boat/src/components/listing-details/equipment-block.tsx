@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import RevealContent from '@/components/ui/revel-content';
 import Section from '@/components/ui/section';
 import { EquipmentsTypes } from '@/types';
@@ -10,13 +11,16 @@ interface EquipmentTypes {
 }
 
 export default function EquipmentBlock({ equipment }: EquipmentTypes) {
+  const t = useTranslations('listing');
+  const tCommon = useTranslations('common');
+
   return (
     <Section
       className="py-5 pt-2 xl:py-7"
-      title="On Board Equipment"
+      title={t('onBoardEquipment')}
       titleClassName="text-xl md:!text-[22px] 2xl:!text-2xl mb-2"
     >
-      <RevealContent defaultHeight={100} buttonText="View more">
+      <RevealContent defaultHeight={100} buttonText={tCommon('viewMore')}>
         <div className="mt-4 grid grid-cols-2 gap-6 md:grid-cols-3">
           {equipment.map((item) => (
             <div key={item.img} className="flex items-center">

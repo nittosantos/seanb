@@ -1,8 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useAtom } from 'jotai';
-import { drawerStateAtom } from '@/components/drawers/view';
+import { useDrawerState } from '@/stores/drawer-store';
 import { GridIcon } from '@/components/icons/grid';
 import Button from '@/components/ui/button';
 
@@ -11,11 +10,11 @@ interface GallaryBlockProps {
 }
 
 export default function GallaryBlock({ images }: GallaryBlockProps) {
-  const [drawerSate, setDrawerState] = useAtom(drawerStateAtom);
+  const [drawerState, setDrawerState] = useDrawerState();
 
   function handleClick() {
     setDrawerState({
-      ...drawerSate,
+      ...drawerState,
       isOpen: true,
       placement: 'bottom',
       view: 'PHOTO_GALLERY',

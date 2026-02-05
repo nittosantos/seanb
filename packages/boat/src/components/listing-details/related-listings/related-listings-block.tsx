@@ -1,16 +1,19 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { topBoats } from 'public/data/top-boats';
 import ListingCard from '@/components/ui/cards/listing';
 import SeeMore from '@/components/ui/see-more';
 import Section from '@/components/ui/section';
 
 export default function RelatedListingBlock() {
+  const t = useTranslations('listing');
+
   return (
     <Section
       className="pt-5 xl:pt-7"
       headerClassName="items-end gap-5"
-      title="Similar yachts you may like"
+      title={t('similarYachts')}
       titleClassName="text-xl md:!text-[22px] 2xl:!text-2xl"
       rightElement={<SeeMore className="hidden md:block" />}
     >

@@ -3,6 +3,7 @@
 import { z } from 'zod';
 import clsx from 'clsx';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import SelectBox from '@/components/listing-details/booking-form/select-box';
@@ -68,6 +69,7 @@ export default function BookingForm({
   totalReviews,
   className,
 }: BookingFormProps) {
+  const t = useTranslations('listing');
   const {
     control,
     getValues,
@@ -147,7 +149,7 @@ export default function BookingForm({
                 setFocus(true);
               }}
               onClickOutside={() => setFocus(false)}
-              placeholderText="Add date"
+              placeholderText={t('addDate')}
               minDate={new Date()}
               selected={value}
               onChange={(date: Date) => {
@@ -173,7 +175,7 @@ export default function BookingForm({
                 setFocus(true);
               }}
               onClickOutside={() => setFocus(false)}
-              placeholderText="Add date"
+              placeholderText={t('addDate')}
               selected={value}
               onChange={onChange}
               selectsEnd

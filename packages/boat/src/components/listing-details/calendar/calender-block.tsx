@@ -1,9 +1,11 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import Calendar from '@/components/listing-details/calendar/calendar';
 import Section from '@/components/ui/section';
 
 export default function CalenderBlock() {
+  const t = useTranslations('listing');
   const dates = {
     checkin: new Date(),
     checkout: new Date(new Date().setDate(new Date().getDate() + 12)),
@@ -12,7 +14,7 @@ export default function CalenderBlock() {
   return (
     <Section
       className="py-5 xl:py-7"
-      title="Availability"
+      title={t('availability')}
       titleClassName="text-xl md:!text-[22px] 2xl:!text-2xl mb-2"
       description="Santa Maria Maggiore, Milazzo"
       descriptionClassName="!text-gray !text-base"
@@ -21,7 +23,7 @@ export default function CalenderBlock() {
         <li className="flex items-center gap-3 text-sm text-gray-dark">
           {' '}
           <span className="block h-4 w-4 rounded-sm bg-[#eaeaea]"></span>
-          Booked Dates
+          {t('bookedDates')}
         </li>
       </ul>
       <Calendar

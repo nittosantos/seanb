@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { SpecificationTypes } from '@/types';
 import RevealContent from '@/components/ui/revel-content';
 import Section from '@/components/ui/section';
@@ -11,13 +12,16 @@ interface SpecificationsProps {
 export default function SpecificationBlock({
   specifications,
 }: SpecificationsProps) {
+  const t = useTranslations('listing');
+  const tCommon = useTranslations('common');
+
   return (
     <Section
       className="py-5 xl:py-7"
-      title="specifications"
+      title={t('specifications')}
       titleClassName="text-xl md:!text-[22px] 2xl:!text-2xl mb-2 md:mb-0"
     >
-      <RevealContent defaultHeight={290} buttonText="View more">
+      <RevealContent defaultHeight={290} buttonText={tCommon('viewMore')}>
         <div className="mt-1">
           {specifications.map((item) => (
             <div
