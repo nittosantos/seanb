@@ -1,7 +1,8 @@
 'use client';
 
 import clsx from 'clsx';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { Fragment } from 'react';
 import useAuth from '@/hooks/use-auth';
 import { Menu, Transition } from '@headlessui/react';
@@ -9,53 +10,23 @@ import Avatar from '@/components/ui/avatar';
 import { Routes } from '@/config/routes';
 
 interface MenuItemProps {
-  text: string;
+  textKey: 'message' | 'trips' | 'wishlist' | 'dashboard' | 'settings' | 'help';
   link?: string;
 }
 
-const menu = {
-  top: [
-    {
-      path: Routes.private.inbox,
-      text: 'Message',
-    },
-    {
-      path: Routes.private.trips,
-      text: 'Trips',
-    },
-    {
-      path: Routes.private.wishlist,
-      text: 'Wishlist',
-    },
-  ],
-  bottom: [
-    {
-      path: Routes.private.dashboard,
-      text: 'Dashboard',
-    },
-    {
-      path: Routes.private.accountSettings,
-      text: 'settings',
-    },
-    {
-      path: Routes.public.help,
-      text: 'Help',
-    },
-  ],
-};
-
-function MenuItem({ text, link }: MenuItemProps) {
+function MenuItem({ textKey, link }: MenuItemProps) {
+  const t = useTranslations('common');
   return (
     <Menu.Item>
       {({ active }) => (
         <Link
-          href={`${link}`}
+          href={link ?? '#'}
           className={clsx(
             'block rounded-sm py-2 px-5   text-base font-normal capitalize text-gray-dark',
             active && 'bg-gray-lightest'
           )}
         >
-          {text}
+          {t(textKey)}
         </Link>
       )}
     </Menu.Item>
@@ -63,7 +34,21 @@ function MenuItem({ text, link }: MenuItemProps) {
 }
 
 export default function ProfileMenu({ className }: { className?: string }) {
+  const t = useTranslations('common');
   const { user, unauthorize } = useAuth();
+
+  const menu = {
+    top: [
+      { path: Routes.private.inbox, textKey: 'message' as const },
+      { path: Routes.private.trips, textKey: 'trips' as const },
+      { path: Routes.private.wishlist, textKey: 'wishlist' as const },
+    ],
+    bottom: [
+      { path: Routes.private.dashboard, textKey: 'dashboard' as const },
+      { path: Routes.private.accountSettings, textKey: 'settings' as const },
+      { path: Routes.public.help, textKey: 'help' as const },
+    ],
+  };
 
   return (
     <>
@@ -94,19 +79,19 @@ export default function ProfileMenu({ className }: { className?: string }) {
           <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-lighter rounded-md bg-white py-2 shadow-card focus:outline-none">
             <div className="pb-1">
               {menu.top.map((item) => (
-                <MenuItem key={item.text} text={item.text} link={item.path} />
+                <MenuItem key={item.textKey} textKey={item.textKey} link={item.path} />
               ))}
             </div>
             <div className="pt-1">
               {menu.bottom.map((item) => (
-                <MenuItem key={item.text} text={item.text} link={item.path} />
+                <MenuItem key={item.textKey} textKey={item.textKey} link={item.path} />
               ))}
               <Menu.Item
                 className="block w-full rounded-sm py-2 px-5 text-left   text-base font-normal text-gray-dark hover:bg-gray-lightest"
                 as="button"
                 onClick={() => unauthorize()}
               >
-                Log out
+                {t('logOut')}
               </Menu.Item>
             </div>
           </Menu.Items>

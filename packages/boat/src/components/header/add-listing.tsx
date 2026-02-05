@@ -1,19 +1,31 @@
 'use client';
 
 import { useRef } from 'react';
-import { useAtomValue } from 'jotai';
 import { useRouter } from 'next/navigation';
 import { addScrollingClass } from '@/utils/add-scrolling-class';
-import { storeAtom } from '@/components/add-listing/add-listing';
+import { useAddListingStore } from '@/stores/add-listing-store';
 import Button from '@/components/ui/button';
 import { Routes } from '@/config/routes';
 import Logo from '@/components/ui/logo';
 
 export default function AddListingHeader() {
   const router = useRouter();
-  const headerRef = useRef(null);
+  const headerRef = useRef<HTMLElement | null>(null);
   addScrollingClass(headerRef);
-  const store = useAtomValue(storeAtom);
+  const store = useAddListingStore((s) => ({
+    boatName: s.boatName,
+    boatType: s.boatType,
+    pricePerDay: s.pricePerDay,
+    boatDescription: s.boatDescription,
+    beadRooms: s.beadRooms,
+    bathRooms: s.bathRooms,
+    guests: s.guests,
+    location: s.location,
+    phoneNumber: s.phoneNumber,
+    equipment: s.equipment,
+    images: s.images,
+    specification: s.specification,
+  }));
 
   function handleSaveExit() {
     console.log(store);

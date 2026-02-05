@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import dynamic from 'next/dynamic';
 import { Fragment, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { Dialog, Transition } from '@headlessui/react';
+import { Dialog, DialogPanel, Transition } from '@headlessui/react';
 import { useModal, MODAL_VIEW } from '@/components/modals/context';
 import Button from '@/components/ui/button';
 
@@ -46,7 +46,9 @@ export default function ModalContainer() {
   const { open, view, closeModal } = useModal();
   const pathName = usePathname();
   useEffect(() => {
-    closeModal();
+    if (open) {
+      closeModal();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathName]);
   return (
@@ -68,40 +70,42 @@ export default function ModalContainer() {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <Dialog.Overlay className="fixed inset-0 z-[9999] cursor-pointer" />
+          <div className="fixed inset-0 z-[9999] cursor-pointer" />
         </Transition.Child>
 
-        {/* This element is to trick the browser into centering the modal contents. */}
-        {view && view !== 'SEARCH_MODAL' && (
-          <span className="inline-block h-full align-middle" aria-hidden="true">
-            &#8203;
-          </span>
-        )}
+        <DialogPanel className="relative z-[9999] w-full text-center">
+          {/* This element is to trick the browser into centering the modal contents. */}
+          {view && view !== 'SEARCH_MODAL' && (
+            <span className="inline-block h-full align-middle" aria-hidden="true">
+              &#8203;
+            </span>
+          )}
 
-        {/* This element is need to fix FocusTap headless-ui warning issue */}
-        <div className="sr-only">
-          <Button
-            size="sm"
-            onClick={closeModal}
-            className="opacity-50 hover:opacity-80 "
-          >
-            <span></span>
-          </Button>
-        </div>
-
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0 scale-105"
-          enterTo="opacity-100 scale-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100 scale-100"
-          leaveTo="opacity-0 scale-105"
-        >
-          <div className="relative z-[9999] inline-block w-full text-left align-middle sm:w-auto">
-            {view && renderModalContent(view)}
+          {/* This element is need to fix FocusTap headless-ui warning issue */}
+          <div className="sr-only">
+            <Button
+              size="sm"
+              onClick={closeModal}
+              className="opacity-50 hover:opacity-80 "
+            >
+              <span></span>
+            </Button>
           </div>
-        </Transition.Child>
+
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0 scale-105"
+            enterTo="opacity-100 scale-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100 scale-100"
+            leaveTo="opacity-0 scale-105"
+          >
+            <div className="relative z-[9999] inline-block w-full text-left align-middle sm:w-auto">
+              {view && renderModalContent(view)}
+            </div>
+          </Transition.Child>
+        </DialogPanel>
       </Dialog>
     </Transition>
   );

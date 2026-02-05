@@ -1,6 +1,7 @@
 'use client';
 
-import { useRef } from 'react';
+import { Suspense, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { addScrollingClass } from '@/utils/add-scrolling-class';
 import SearchIconBtn from '@/components/ui/search-icon-btn';
 import SideNavButton from '@/components/ui/side-nav-button';
@@ -13,6 +14,7 @@ import useAuth from '@/hooks/use-auth';
 import { useIsMounted } from '@/hooks/use-is-mounted';
 
 export default function Header() {
+  const t = useTranslations('common');
   const mounted = useIsMounted();
   const { openModal } = useModal();
   const { isAuthorized } = useAuth();
@@ -29,7 +31,9 @@ export default function Header() {
           <SideNavButton />
           <Logo className="!text-gray-dark" />
         </div>
-        <Searchbox className="hidden lg:block" />
+        <Suspense fallback={<div className="hidden h-10 max-w-sm animate-pulse rounded-full bg-gray-200 lg:block" />}>
+          <Searchbox className="hidden lg:block" />
+        </Suspense>
         <div className="flex items-center justify-end gap-5">
           <SearchIconBtn />
           {mounted ? (
@@ -42,7 +46,7 @@ export default function Header() {
                   onClick={() => openModal('SIGN_IN')}
                   className="rounded-lg !px-4 py-2 text-sm capitalize md:text-base"
                 >
-                  Log in
+                  {t('logIn')}
                 </Button>
               )}
             </>

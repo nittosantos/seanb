@@ -1,9 +1,7 @@
 'use client';
 
-import Link from 'next/link';
-import { useAtom } from 'jotai';
+import { Link, useRouter } from '@/i18n/navigation';
 import useAuth from '@/hooks/use-auth';
-import { useRouter } from 'next/navigation';
 import {
   HomeIcon,
   UserCircleIcon,
@@ -12,7 +10,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { Routes } from '@/config/routes';
 import { MobileMenuSearchIcon } from '@/components/icons/mobile-menu-search';
-import { drawerStateAtom } from '@/components/drawers/view';
+import { useDrawerState } from '@/stores/drawer-store';
 import { useModal } from '@/components/modals/context';
 import ActionIcon from '@/components/ui/action-icon';
 
@@ -20,7 +18,7 @@ export default function MobileNav() {
   const { isAuthorized } = useAuth();
   const router = useRouter();
   const { openModal } = useModal();
-  const [drawerSate, setDrawerState] = useAtom(drawerStateAtom);
+  const [drawerState, setDrawerState] = useDrawerState();
   return (
     <div className="sticky inset-x-0 bottom-0 z-30 grid h-16 w-full grid-cols-5 items-center justify-center gap-2 bg-white shadow-menu-shadow md:hidden">
       <div className="flex items-center justify-center">
@@ -62,7 +60,7 @@ export default function MobileNav() {
           className="inline-block hover:text-red focus:!ring-0"
           onClick={() =>
             setDrawerState({
-              ...drawerSate,
+              ...drawerState,
               isOpen: true,
               placement: 'right',
               view: 'SIDE_MENU',

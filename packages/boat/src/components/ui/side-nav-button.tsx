@@ -1,13 +1,12 @@
 'use client';
 
 import clsx from 'clsx';
-import { useAtom } from 'jotai';
 import { Bars3CenterLeftIcon } from '@heroicons/react/24/solid';
-import { drawerStateAtom } from '@/components/drawers/view';
+import { useDrawerState } from '@/stores/drawer-store';
 import ActionIcon from '@/components/ui/action-icon';
 
 export default function SideNavButton({ className }: { className?: string }) {
-  const [drawerSate, setDrawerState] = useAtom(drawerStateAtom);
+  const [drawerState, setDrawerState] = useDrawerState();
 
   return (
     <ActionIcon
@@ -19,7 +18,7 @@ export default function SideNavButton({ className }: { className?: string }) {
       )}
       onClick={() =>
         setDrawerState({
-          ...drawerSate,
+          ...drawerState,
           isOpen: true,
           placement: 'left',
           view: 'SIDE_MENU',

@@ -2,7 +2,7 @@
 
 import clsx from 'clsx';
 import { Fragment } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
+import { Dialog, DialogPanel, Transition } from '@headlessui/react';
 
 const drawerClasses = {
   placement: {
@@ -94,13 +94,14 @@ export default function Drawer({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <Dialog.Overlay
+          <div
             className={clsx(
               'fixed inset-0 cursor-pointer bg-gray-1000 bg-opacity-60 backdrop-blur transition-opacity dark:bg-opacity-80',
               overlayClassName
             )}
           />
         </Transition.Child>
+        <DialogPanel className="contents">
         {/* 
           - Please do not remove this Sr Only button.
           - It's required this button to tackle the HeadlessUI's FocusTap Warnings 
@@ -147,6 +148,7 @@ export default function Drawer({
             {children}
           </div>
         </Transition.Child>
+        </DialogPanel>
       </Dialog>
     </Transition>
   );

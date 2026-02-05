@@ -1,9 +1,8 @@
 'use client';
 
 import clsx from 'clsx';
-import Link from 'next/link';
-import { useAtom } from 'jotai';
-import { usePathname } from 'next/navigation';
+import { Link, usePathname } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import {
   HomeIcon,
   MagnifyingGlassIcon,
@@ -12,54 +11,27 @@ import {
   CubeIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
-import { drawerStateAtom } from '@/components/drawers/view';
+import { useDrawerState } from '@/stores/drawer-store';
 import ActionIcon from '@/components/ui/action-icon';
 import { Routes } from '@/config/routes';
 import Logo from '@/components/ui/logo';
 
-const menu = [
-  {
-    name: 'home',
-    icon: <HomeIcon className="h-auto w-5" />,
-    path: Routes.public.home,
-  },
-  {
-    name: 'explore',
-    icon: <MagnifyingGlassIcon className="h-auto w-5" />,
-    path: Routes.public.explore,
-  },
-  {
-    name: 'pricing',
-    icon: <CubeIcon className="h-auto w-5" />,
-    path: Routes.public.pricing,
-  },
-  {
-    name: 'settings',
-    icon: <Cog6ToothIcon className="h-auto w-5" />,
-    path: Routes.private.accountSettings,
-  },
-  {
-    name: 'help',
-    icon: <InformationCircleIcon className="h-auto w-5" />,
-    path: Routes.public.help,
-  },
+const menuItems = [
+  { key: 'home' as const, icon: HomeIcon, path: Routes.public.home },
+  { key: 'explore' as const, icon: MagnifyingGlassIcon, path: Routes.public.explore },
+  { key: 'pricing' as const, icon: CubeIcon, path: Routes.public.pricing },
+  { key: 'settings' as const, icon: Cog6ToothIcon, path: Routes.private.accountSettings },
+  { key: 'help' as const, icon: InformationCircleIcon, path: Routes.public.help },
 ];
 
-interface navListTypes {
-  navListItem: {
-    name: string;
-    icon?: React.ReactNode;
-    path: string;
-  }[];
-}
-
-function List({ navListItem }: navListTypes) {
+function NavList() {
+  const t = useTranslations('common');
   const pathname = usePathname();
   return (
     <ul className="pt-4">
-      {navListItem.map((item) => (
+      {menuItems.map((item) => (
         <li
-          key={item.name}
+          key={item.key}
           className="border-b border-gray-lightest last:border-b-0"
         >
           <Link
@@ -71,8 +43,8 @@ function List({ navListItem }: navListTypes) {
               }
             )}
           >
-            {item.icon}
-            {item.name}
+            <item.icon className="h-auto w-5" />
+            {t(item.key)}
           </Link>
         </li>
       ))}
@@ -81,7 +53,7 @@ function List({ navListItem }: navListTypes) {
 }
 
 export default function SideMenu() {
-  const [drawerSate, setDrawerState] = useAtom(drawerStateAtom);
+  const [drawerState, setDrawerState] = useDrawerState();
   return (
     <div className="ml-auto h-full bg-white md:ml-0">
       <div className="flex h-14 items-center justify-between px-10 pt-6 md:h-20 xl:h-24">
@@ -90,12 +62,12 @@ export default function SideMenu() {
           size="sm"
           variant="outline"
           className="border-none !p-0 focus:!ring-0"
-          onClick={() => setDrawerState({ ...drawerSate, isOpen: false })}
+          onClick={() => setDrawerState({ isOpen: false })}
         >
           <XMarkIcon className="h-6 w-6" />
         </ActionIcon>
       </div>
-      <List navListItem={menu} />
+      <NavList />
     </div>
   );
 }

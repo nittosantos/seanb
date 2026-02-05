@@ -1,14 +1,13 @@
 'use client';
 
-import { atom, useAtom } from 'jotai';
 import { Routes } from '@/config/routes';
 import { useRouter } from 'next/navigation';
 import { makeQueryString } from '@/utils/makeQueryString';
-
-const queryAtom = atom('');
+import { useQueryParamStore } from '@/stores/query-param-store';
 
 export function useQueryParam(pathname: string = Routes.public.explore) {
-  const [query, setQuery] = useAtom(queryAtom);
+  const query = useQueryParamStore((s) => s.query);
+  const setQuery = useQueryParamStore((s) => s.setQuery);
   const router = useRouter();
 
   const clearFilter = (key: string[]) => {

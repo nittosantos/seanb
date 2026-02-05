@@ -3,7 +3,7 @@
 /* eslint-disable */
 import { useEffect, RefObject } from 'react';
 export function addScrollingClass<T extends HTMLElement = HTMLElement>(
-  ref: RefObject<T>,
+  ref: RefObject<T | null>,
   topOffset: number = 80
 ) {
   useEffect(() => {

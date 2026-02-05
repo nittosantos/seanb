@@ -1,42 +1,19 @@
 'use client';
 
-import { atom, useSetAtom, useAtomValue } from 'jotai';
+import { useModalStore } from '@/stores/modal-store';
+import type { MODAL_VIEW } from '@/stores/modal-store';
 
-export type MODAL_VIEW =
-  | 'SIGN_IN'
-  | 'SIGN_UP'
-  | 'ADD_REVIEW'
-  | 'REPORT_LISTING'
-  | 'CONTACT_HOST'
-  | 'SEARCH_MODAL'
-  | 'SHARE';
-
-const modalAtom = atom({
-  open: false,
-  view: 'ADD_REVIEW_VIEW',
-});
+export type { MODAL_VIEW };
 
 export function useModal() {
-  let modal = useAtomValue(modalAtom);
-  let setModal = useSetAtom(modalAtom);
-
-  function openModal(view: MODAL_VIEW) {
-    setModal({
-      ...modal,
-      view,
-      open: true,
-    });
-  }
-
-  function closeModal() {
-    setModal({
-      ...modal,
-      open: false,
-    });
-  }
+  const open = useModalStore((s) => s.open);
+  const view = useModalStore((s) => s.view);
+  const openModal = useModalStore((s) => s.openModal);
+  const closeModal = useModalStore((s) => s.closeModal);
 
   return {
-    ...modal,
+    open,
+    view,
     openModal,
     closeModal,
   };
