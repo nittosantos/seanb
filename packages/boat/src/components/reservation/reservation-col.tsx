@@ -25,6 +25,7 @@ export function getStatus(status: string) {
 }
 
 export const reservationColumn = (
+  t: (key: string) => string,
   order: string,
   column: string,
   onSelectAll: (key: boolean) => any,
@@ -64,7 +65,7 @@ export const reservationColumn = (
   {
     title: (
       <HeaderCell
-        title={'SL.'}
+        title={t('sl')}
         sortable={true}
         ascending={order === 'asc' && column === 'id'}
       />
@@ -75,29 +76,30 @@ export const reservationColumn = (
     width: 100,
   },
   {
-    title: <HeaderCell title={'Date'} />,
+    title: <HeaderCell title={t('date')} />,
     dataIndex: 'date',
     key: 'date',
     width: 150,
     render: (date: any) => <p className="whitespace-nowrap">{date}</p>,
   },
   {
-    title: <HeaderCell title={'Status'} />,
+    title: <HeaderCell title={t('status')} />,
     dataIndex: 'status',
     key: 'status',
     width: 150,
     render: (status: string) => {
       if (!status) return '__';
+      const statusKey = status === 'Received' ? 'received' : status === 'Pending' ? 'pending' : 'refund';
       return (
         // @ts-ignore
         <Badge variant="flat" className="uppercase" color={getStatus(status)}>
-          {status}
+          {t(statusKey)}
         </Badge>
       );
     },
   },
   {
-    title: <HeaderCell title={'Customer'} />,
+    title: <HeaderCell title={t('customer')} />,
     dataIndex: 'customer',
     key: 'customer',
     width: 200,
@@ -109,7 +111,7 @@ export const reservationColumn = (
     ),
   },
   {
-    title: <HeaderCell title={'Purchased'} />,
+    title: <HeaderCell title={t('purchased')} />,
     dataIndex: 'purchased',
     key: 'purchased',
     width: 200,
@@ -118,7 +120,7 @@ export const reservationColumn = (
     ),
   },
   {
-    title: <HeaderCell title={'Revenue'} />,
+    title: <HeaderCell title={t('revenue')} />,
     dataIndex: 'revenue',
     key: 'revenue',
     width: 100,

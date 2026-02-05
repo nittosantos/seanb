@@ -1,6 +1,7 @@
 'use client';
 
 import { Fragment } from 'react';
+import { useTranslations } from 'next-intl';
 import { Menu, Transition } from '@headlessui/react';
 import {
   EllipsisHorizontalIcon,
@@ -13,9 +14,10 @@ interface MenuItemProps {
   onClick?: (e: any) => void;
 }
 
-const dropdown = ['edit', 'preview', 'delete'];
+const dropdownKeys = ['edit', 'preview', 'delete'] as const;
 
 export default function DotsDropdown({ onClick }: MenuItemProps) {
+  const t = useTranslations('account');
   return (
     <>
       <Menu as="div" className="relative inline-block">
@@ -35,7 +37,7 @@ export default function DotsDropdown({ onClick }: MenuItemProps) {
         >
           <Menu.Items className="absolute right-0 top-full z-10 min-w-[160px] rounded-lg bg-white shadow-lg xl:mt-2 xl:min-w-[192px]">
             <div className="rounded-lg p-2">
-              {dropdown.map((item) => (
+              {dropdownKeys.map((item) => (
                 <Menu.Item
                   key={`reservation-${item}`}
                   as="button"
@@ -49,7 +51,7 @@ export default function DotsDropdown({ onClick }: MenuItemProps) {
                     <ViewfinderCircleIcon className="h-auto w-5" />
                   )}
                   {item === 'delete' && <TrashIcon className="h-auto w-5" />}{' '}
-                  {item}
+                  {t(item)}
                 </Menu.Item>
               ))}
             </div>

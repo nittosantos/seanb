@@ -1,38 +1,27 @@
 'use client';
 
 import clsx from 'clsx';
-import Link from 'next/link';
+import { Link, usePathname } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
-import { usePathname } from 'next/navigation';
 import { Routes } from '@/config/routes';
 
 const menuData = [
-  {
-    text: 'overview',
-    path: Routes.private.dashboard,
-  },
-  {
-    text: 'inbox',
-    path: Routes.private.inbox,
-  },
-  {
-    text: 'reservation',
-    path: Routes.private.reservations,
-  },
-  {
-    text: 'listings',
-    path: Routes.private.listings,
-  },
+  { textKey: 'overview' as const, path: Routes.private.dashboard },
+  { textKey: 'inbox' as const, path: Routes.private.inbox },
+  { textKey: 'reservation' as const, path: Routes.private.reservations },
+  { textKey: 'listings' as const, path: Routes.private.listings },
 ];
 
 export default function DashboardMenu() {
+  const t = useTranslations('common');
   const pathname = usePathname();
 
   return (
     <div className="hidden md:block">
       <ul className="flex items-center gap-6 lg:gap-8 xl:gap-12 3xl:gap-12">
         {menuData.map((item) => (
-          <li key={item.text} className="relative">
+          <li key={item.textKey} className="relative">
             <Link
               href={item.path}
               className={clsx(
@@ -40,7 +29,7 @@ export default function DashboardMenu() {
                 pathname === item.path && '!font-bold'
               )}
             >
-              {item.text}
+              {t(item.textKey)}
             </Link>
             {pathname === item.path && (
               <motion.div

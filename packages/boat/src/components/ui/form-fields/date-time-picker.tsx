@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import clsx from 'clsx';
+import { useLocale } from 'next-intl';
 import DatePicker from 'react-datepicker';
 import type { ReactDatePickerProps } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Input from '@/components/ui/form-fields/input';
+import { getDatePickerLocale } from '@/lib/date-locale';
 
 const calendarContainerClasses = {
   base: '[&.react-datepicker]:shadow-lg [&.react-datepicker]:border-gray-100 [&.react-datepicker]:rounded-md',
@@ -76,6 +78,8 @@ const DateTime = ({
   ...props
 }: DateTimeProps<boolean>) => {
   const [isCalenderOpen, setIsCalenderOpen] = useState(false);
+  const locale = useLocale();
+  const dateLocale = getDatePickerLocale(locale);
   const handleCalenderOpen = () => setIsCalenderOpen(true);
   const handleCalenderClose = () => setIsCalenderOpen(false);
 
@@ -89,6 +93,7 @@ const DateTime = ({
       >
         {label}
       </label>
+      {/* @ts-expect-error react-datepicker types incompatible with React 19 */}
       <DatePicker
         customInput={
           customInput || (
@@ -121,6 +126,7 @@ const DateTime = ({
           calendarClassName
         )}
         {...props}
+        locale={dateLocale}
       />
     </div>
   );

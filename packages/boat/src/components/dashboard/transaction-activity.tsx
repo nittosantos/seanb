@@ -2,6 +2,7 @@
 
 import { reservationData } from 'public/data/orders';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import { reservationColumn } from '@/components/reservation/reservation-col';
 import Input from '@/components/ui/form-fields/input';
@@ -10,6 +11,7 @@ import Text from '@/components/ui/typography/text';
 import Table from '@/components/ui/table';
 
 export default function TransactionActivity() {
+  const t = useTranslations('account');
   const [order, setOrder] = useState<string>('desc');
   const [column, setColumn] = useState<string>('');
   const [data, setData] = useState<typeof reservationData>([]);
@@ -108,6 +110,7 @@ export default function TransactionActivity() {
   const columns: any = useMemo(
     () =>
       reservationColumn(
+        t,
         order,
         column,
         onSelectAll,
@@ -115,19 +118,19 @@ export default function TransactionActivity() {
         onMore,
         onHeaderClick
       ),
-    [order, column, onSelectAll, onChange, onMore, onHeaderClick]
+    [t, order, column, onSelectAll, onChange, onMore, onHeaderClick]
   );
 
   return (
     <>
       <div className="mb-4 grid grid-cols-1 items-center gap-3 sm:grid-cols-[1fr_262px] md:gap-5 xl:gap-10">
         <Text tag="h4" className="text-xl">
-          Transaction Activity
+          {t('transactionActivity')}
         </Text>
         <Input
           type="text"
           variant="outline"
-          placeholder="Search by name"
+          placeholder={t('searchByName')}
           startIcon={<MagnifyingGlassIcon className="h-auto w-5" />}
           value={searchfilter}
           onChange={(e) => setSearchFilter(e.target.value)}
@@ -145,8 +148,8 @@ export default function TransactionActivity() {
           current={current}
           total={reservationData.length}
           pageSize={10}
-          nextIcon="Next"
-          prevIcon="Previous"
+          nextIcon={t('next')}
+          prevIcon={t('previous')}
           variant="solid"
           prevIconClassName="!text-gray-dark"
           nextIconClassName="!text-gray-dark"

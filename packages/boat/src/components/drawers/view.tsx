@@ -1,11 +1,13 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { atom, useAtom } from 'jotai';
 import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Drawer from '@/components/ui/drawer';
 import clsx from 'clsx';
+import { useDrawerStore } from '@/stores/drawer-store';
+import { useShallow } from 'zustand/react/shallow';
+import type { DRAWER_VIEW } from '@/stores/drawer-store';
 
 const PhotoGallery = dynamic(
   () => import('@/components/ui/drawers/photo-gallery')
@@ -16,11 +18,7 @@ const BookingFormModal = dynamic(
   () => import('@/components/ui/drawers/booking-form-drawer')
 );
 
-export type DRAWER_VIEW =
-  | 'PHOTO_GALLERY'
-  | 'SIDE_MENU'
-  | 'BOOKING_FORM'
-  | 'FILTER_MENU';
+export type { DRAWER_VIEW };
 
 // render drawer contents
 function renderDrawerContent(view: DRAWER_VIEW | string) {
@@ -38,40 +36,38 @@ function renderDrawerContent(view: DRAWER_VIEW | string) {
   }
 }
 
-type DrawerPropsType = {
-  isOpen: boolean;
-  placement?: 'top' | 'right' | 'bottom' | 'left';
-  view: string;
-  customSize?: string;
-};
-
-export const drawerStateAtom = atom<DrawerPropsType>({
-  isOpen: false,
-  placement: 'left',
-  view: 'SIDE_MENU',
-});
-
 export default function DrawerContainer() {
-  let [drawerSate, setDrawerState] = useAtom(drawerStateAtom);
+  const drawerState = useDrawerStore(
+    useShallow((s) => ({
+      isOpen: s.isOpen,
+      placement: s.placement,
+      view: s.view,
+      customSize: s.customSize,
+    }))
+  );
+  const setDrawerState = useDrawerStore((s) => s.setDrawerState);
   const pathName = usePathname();
+
   useEffect(() => {
-    setDrawerState({ ...drawerSate, isOpen: false });
+    if (drawerState.isOpen) {
+      setDrawerState({ isOpen: false });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathName]);
 
   return (
     <>
       <Drawer
-        isOpen={drawerSate.isOpen}
-        placement={drawerSate.placement}
-        customSize={drawerSate.customSize}
+        isOpen={drawerState.isOpen}
+        placement={drawerState.placement}
+        customSize={drawerState.customSize}
         containerClassName={clsx(
-          drawerSate.view === 'BOOKING_FORM' && 'bg-white',
-          drawerSate.view === 'PHOTO_GALLERY' && 'bg-white overflow-y-auto'
+          drawerState.view === 'BOOKING_FORM' && 'bg-white',
+          drawerState.view === 'PHOTO_GALLERY' && 'bg-white overflow-y-auto'
         )}
-        onClose={() => setDrawerState({ ...drawerSate, isOpen: false })}
+        onClose={() => setDrawerState({ isOpen: false })}
       >
-        {renderDrawerContent(drawerSate.view)}
+        {renderDrawerContent(drawerState.view)}
       </Drawer>
     </>
   );

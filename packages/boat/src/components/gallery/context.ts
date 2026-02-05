@@ -1,37 +1,21 @@
 'use client';
 
-import { atom, useSetAtom, useAtomValue } from 'jotai';
+import { useGalleryStore } from '@/stores/gallery-store';
+import type { GALLERY_VIEW } from '@/stores/gallery-store';
 
-export type GALLERY_VIEW = 'MODAL_GALLERY';
-
-const galleryAtom = atom({
-  open: false,
-  view: 'MODAL_GALLERY',
-  initialSlide: 1,
-});
+export type { GALLERY_VIEW };
 
 export function useGallery() {
-  let gallery = useAtomValue(galleryAtom);
-  let setGallery = useSetAtom(galleryAtom);
-
-  function openGallery(view: GALLERY_VIEW, initialSlide?: number) {
-    setGallery({
-      ...gallery,
-      view,
-      open: true,
-      initialSlide: initialSlide ?? 1,
-    });
-  }
-
-  function closeGallery() {
-    setGallery({
-      ...gallery,
-      open: false,
-    });
-  }
+  const open = useGalleryStore((s) => s.open);
+  const view = useGalleryStore((s) => s.view);
+  const initialSlide = useGalleryStore((s) => s.initialSlide);
+  const openGallery = useGalleryStore((s) => s.openGallery);
+  const closeGallery = useGalleryStore((s) => s.closeGallery);
 
   return {
-    ...gallery,
+    open,
+    view,
+    initialSlide,
     openGallery,
     closeGallery,
   };

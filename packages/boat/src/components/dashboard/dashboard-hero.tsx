@@ -1,18 +1,20 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { PlusIcon } from '@heroicons/react/24/solid';
+import { useTranslations } from 'next-intl';
 import Text from '@/components/ui/typography/text';
 import Button from '@/components/ui/button';
 import { Routes } from '@/config/routes';
 
 export default function DashboardHero() {
+  const t = useTranslations('account');
   const router = useRouter();
   return (
     <div className="mt-8 flex items-center justify-between lg:mt-12 2xl:mt-16">
       <div>
         <Text tag="h3" className="text-xl">
-          Hello, Helene
+          {t('hello', { name: 'Helene' })}
         </Text>
         <Text className="mt-2 text-sm text-gray lg:mt-3">@frankiehelene</Text>
       </div>
@@ -24,7 +26,7 @@ export default function DashboardHero() {
           onClick={() => router.push(Routes.private.addListing)}
         >
           <PlusIcon className="h-auto w-5 sm:mr-3" />
-          <span className="hidden sm:block">Add listing</span>
+          <span className="hidden sm:block">{t('addListing')}</span>
         </Button>
       </div>
     </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import Input from '@/components/ui/form-fields/input';
 import ActionIcon from '@/components/ui/action-icon';
@@ -15,6 +16,8 @@ export default function ChatInput({
   onChange,
   onSubmit,
 }: ChatInputType) {
+  const t = useTranslations('inbox');
+
   return (
     <div className="border-t border-gray-lighter pt-2 xl:pt-3">
       <form noValidate onSubmit={onSubmit} className="relative">
@@ -22,7 +25,7 @@ export default function ChatInput({
           type="text"
           value={value}
           variant="outline"
-          placeholder="Type your message..."
+          placeholder={t('typeMessage')}
           className="rounded-lg border-gray-lighter"
           inputClassName="pr-16 pl-2 md:pl-4 lg:pr-24"
           onChange={onChange}

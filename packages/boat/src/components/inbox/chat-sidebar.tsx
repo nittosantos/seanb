@@ -2,6 +2,7 @@
 
 import { chatData } from 'public/data/chatData';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import Input from '@/components/ui/form-fields/input';
@@ -23,6 +24,7 @@ export default function ChatSidebar({
   currentChat,
   className,
 }: Props) {
+  const t = useTranslations('inbox');
   const [searchfilter, setSearchFilter] = useState('');
   const [people, setPeople] = useState(chatData);
 
@@ -32,7 +34,7 @@ export default function ChatSidebar({
         <Input
           type="text"
           size="DEFAULT"
-          placeholder="Search by name"
+          placeholder={t('searchByName')}
           startIcon={<MagnifyingGlassIcon className="h-auto w-4" />}
           value={searchfilter}
           className="rounded-lg bg-white"
