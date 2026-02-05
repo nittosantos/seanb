@@ -9,6 +9,7 @@ import { addDays } from 'date-fns';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from 'next-intl';
 import DateTime from '@/components/ui/form-fields/date-time-picker';
 import PhoneNumber from '@/components/ui/form-fields/phone-number';
 import Textarea from '@/components/ui/form-fields/textarea';
@@ -23,23 +24,24 @@ import { Routes } from '@/config/routes';
 import { useState } from 'react';
 import clsx from 'clsx';
 
-const ContactHostSchema = z.object({
-  startDate: z.date().min(new Date(), { message: 'Select a date.' }),
-  endDate: z.date().min(new Date(), { message: 'Select end date!' }),
-  firstName: z.string().min(1, { message: 'First name is required!' }),
-  lastName: z.string().min(1, { message: 'Last name is required!' }),
-  email: z
-    .string()
-    .min(1, { message: 'The email is required!' })
-    .email({ message: 'The email is invalid!' }),
-  phoneNumber: z.string().min(7, { message: 'Minimum 7 digits!' }),
-  message: z.string().min(1, { message: 'Message field is required!' }),
-});
-
-type ContactHostModalType = z.infer<typeof ContactHostSchema>;
-
 export default function ContactHost() {
+  const t = useTranslations('modals');
   const { closeModal } = useModal();
+
+  const ContactHostSchema = z.object({
+    startDate: z.date().min(new Date(), { message: t('selectDateError') }),
+    endDate: z.date().min(new Date(), { message: t('selectEndDateError') }),
+    firstName: z.string().min(1, { message: t('firstNameRequired') }),
+    lastName: z.string().min(1, { message: t('lastNameRequired') }),
+    email: z
+      .string()
+      .min(1, { message: t('validationEmailRequired') })
+      .email({ message: t('validationEmailInvalid') }),
+    phoneNumber: z.string().min(7, { message: t('validationMin7Digits') }),
+    message: z.string().min(1, { message: t('messageRequired') }),
+  });
+
+  type ContactHostModalType = z.infer<typeof ContactHostSchema>;
   const { vendor } = vendorData;
   const { stats } = reviewsData;
   const [state, setState] = useState(false);
@@ -62,7 +64,7 @@ export default function ContactHost() {
     <div className="mx-auto w-full max-w-full rounded-lg bg-white p-4 xs:w-[480px] sm:w-[600px] sm:p-6 md:w-[648px] md:rounded-xl md:p-8 xl:p-12">
       <div className="flex items-center justify-between">
         <Text tag="h3" className="text-base leading-8 md:!text-xl">
-          Contact
+          {t('contact')}
         </Text>
         <ActionIcon
           size="sm"
@@ -106,8 +108,8 @@ export default function ContactHost() {
             control={control}
             render={({ field: { onChange, value } }) => (
               <DateTime
-                label="Trip start date"
-                placeholderText="Select Date"
+                label={t('tripStartDate')}
+                placeholderText={t('selectDate')}
                 minDate={new Date()}
                 selected={value}
                 onChange={onChange}
@@ -134,8 +136,8 @@ export default function ContactHost() {
             control={control}
             render={({ field: { onChange, value } }) => (
               <DateTime
-                label="Trip end date"
-                placeholderText="Select Date"
+                label={t('tripEndDate')}
+                placeholderText={t('selectDate')}
                 minDate={addDays(new Date(), 1)}
                 selected={value}
                 onFocus={(e) => e.target.blur()}
@@ -160,23 +162,23 @@ export default function ContactHost() {
         </div>
         <div className="grid grid-cols-1 gap-x-3 gap-y-3 sm:grid-cols-2 md:mt-6 md:gap-y-4">
           <Input
-            label="First name"
-            placeholder="Fabio"
+            label={t('firstName')}
+            placeholder={t('firstNamePlaceholder')}
             labelClassName="!text-sm md:!text-base"
             {...register('firstName')}
             error={errors?.firstName?.message}
           />
           <Input
-            label="Last name"
-            placeholder="Jaction"
+            label={t('lastName')}
+            placeholder={t('lastNamePlaceholder')}
             labelClassName="!text-sm md:!text-base"
             {...register('lastName')}
             error={errors?.lastName?.message}
           />
           <Input
             type="email"
-            label="Email"
-            placeholder="dummy@dummy.com"
+            label={t('email')}
+            placeholder={t('emailPlaceholder')}
             labelClassName="!text-sm md:!text-base"
             {...register('email')}
             error={errors?.email?.message}
@@ -188,7 +190,7 @@ export default function ContactHost() {
               <PhoneNumber
                 size="DEFAULT"
                 country="us"
-                label="Phone Number"
+                label={t('phoneNumber')}
                 labelClassName="!text-sm md:!text-base font-bold mb-[6px]"
                 buttonClassName="contact-host-phone-input"
                 inputClassName="!pl-14"
@@ -201,7 +203,7 @@ export default function ContactHost() {
         </div>
         <Textarea
           className="mt-4"
-          label="Your message"
+          label={t('yourMessage')}
           textareaClassName="w-full min-h-[100px] md:min-h-[160px] focus:border-gray-dark py-3 !px-5"
           labelClassName="!text-sm md:!text-base font-bold text-gray-dark"
           {...register('message')}
@@ -213,7 +215,7 @@ export default function ContactHost() {
             size="lg"
             className="ml-auto !w-24 py-[9px] !font-bold"
           >
-            Send
+            {t('send')}
           </Button>
         </div>
       </form>

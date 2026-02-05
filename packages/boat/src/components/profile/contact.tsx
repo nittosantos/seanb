@@ -3,25 +3,27 @@
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
+import { useTranslations } from 'next-intl';
 import PhoneNumber from '@/components/ui/form-fields/phone-number';
 import Checkbox from '@/components/ui/form-fields/checkbox';
 import Textarea from '@/components/ui/form-fields/textarea';
 import Input from '@/components/ui/form-fields/input';
 import Button from '@/components/ui/button';
 
-const contactSchema = z.object({
-  message: z.string().min(1, { message: 'This field is required!' }),
-  email: z
-    .string()
-    .min(1, { message: 'The email is required!' })
-    .email({ message: 'The email is invalid!' }),
-  phoneNumber: z.string().min(7, { message: 'Minimum 7 digits!' }),
-  remember: z.boolean().optional(),
-});
-
-type ContactSchemaType = z.infer<typeof contactSchema>;
-
 export default function Contact() {
+  const t = useTranslations('profile');
+
+  const contactSchema = z.object({
+    message: z.string().min(1, { message: t('validationFieldRequired') }),
+    email: z
+      .string()
+      .min(1, { message: t('validationEmailRequired') })
+      .email({ message: t('validationEmailInvalid') }),
+    phoneNumber: z.string().min(7, { message: t('validationMin7Digits') }),
+    remember: z.boolean().optional(),
+  });
+
+  type ContactSchemaType = z.infer<typeof contactSchema>;
   const {
     control,
     register,
@@ -46,10 +48,10 @@ export default function Contact() {
         className="mt-4 lg:mt-6"
       >
         <Textarea
-          label="Your message"
+          label={t('yourMessage')}
           variant="outline"
           className="w-full"
-          placeholder="Your message . . ."
+          placeholder={t('yourMessagePlaceholder')}
           labelClassName="font-bold lg:text-base text-gray-dark"
           textareaClassName="w-full lg:rounded-xl h-24 md:h-32 xl:h-40"
           {...register('message')}
@@ -58,8 +60,8 @@ export default function Contact() {
         <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2 lg:mt-6 lg:gap-5">
           <Input
             type="email"
-            label="Your Email"
-            placeholder="Email"
+            label={t('yourEmail')}
+            placeholder={t('emailPlaceholder')}
             labelClassName="lg:text-base text-gray-dark"
             {...register('email')}
             error={errors.email?.message}
@@ -72,7 +74,7 @@ export default function Contact() {
                 country="us"
                 value={value}
                 onChange={onChange}
-                label="Phone Number"
+                label={t('phoneNumber')}
                 error={errors?.phoneNumber?.message}
                 buttonClassName="vendor-contact-phone-input"
                 labelClassName="font-bold lg:text-base text-gray-dark"
@@ -83,7 +85,7 @@ export default function Contact() {
         </div>
         <div className="mt-4 lg:mt-6">
           <Checkbox
-            label="Save my email in the browser fro the next time I contact"
+            label={t('saveEmailCheckbox')}
             variant="outline"
             inputClassName="lg:h-6 lg:w-6"
             iconClassName="bg-gray-dark rounded-lg lg:h-6 lg:w-6"
@@ -95,7 +97,7 @@ export default function Contact() {
           size="xl"
           className="mt-4 w-full md:w-auto lg:mt-6"
         >
-          Submit
+          {t('submit')}
         </Button>
       </form>
     </>

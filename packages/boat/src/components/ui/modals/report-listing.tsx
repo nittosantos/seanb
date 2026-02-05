@@ -11,20 +11,22 @@ import Textarea from '@/components/ui/form-fields/textarea';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from 'next-intl';
 import { useModal } from '@/components/modals/context';
 
-const feedbackSchema = z.object({
-  email: z
-    .string()
-    .min(1, { message: 'The email is required!' })
-    .email({ message: 'The email is invalid!' }),
-  message: z.string().min(1, { message: 'Message field is required!' }),
-});
-
-type FeedbackSchemaType = z.infer<typeof feedbackSchema>;
-
 function ReportForm() {
+  const t = useTranslations('modals');
   const { closeModal } = useModal();
+
+  const feedbackSchema = z.object({
+    email: z
+      .string()
+      .min(1, { message: t('validationEmailRequired') })
+      .email({ message: t('validationEmailInvalid') }),
+    message: z.string().min(1, { message: t('messageRequired') }),
+  });
+
+  type FeedbackSchemaType = z.infer<typeof feedbackSchema>;
   const {
     register,
     handleSubmit,
@@ -47,13 +49,13 @@ function ReportForm() {
         type="email"
         size="lg"
         variant="outline"
-        label="Email"
+        label={t('email')}
         {...register('email')}
         error={errors.email?.message}
       />
       <Textarea
         className="mt-4"
-        label="Feedback"
+        label={t('feedback')}
         textareaClassName="w-full min-h-[160px] focus:border-gray-dark py-3 !px-5"
         labelClassName="font-bold text-gray-dark"
         {...register('message')}
@@ -66,40 +68,32 @@ function ReportForm() {
           variant="solid"
           className="ml-auto !w-24 !font-bold"
         >
-          Submit
+          {t('submit')}
         </Button>
       </div>
     </form>
   );
 }
 
-const report = [
-  {
-    title: 'It’s inaccurate or incorrect',
-  },
-  {
-    title: 'It’s not a real place to stay',
-  },
-  {
-    title: 'It’s a scam',
-  },
-  {
-    title: 'It’s offensive',
-  },
-  {
-    title: 'It’s something else',
-  },
-];
-
 export default function ReportListing() {
+  const t = useTranslations('modals');
   const { closeModal } = useModal();
+
+  const report = [
+    { title: t('inaccurate') },
+    { title: t('notRealPlace') },
+    { title: t('scam') },
+    { title: t('offensive') },
+    { title: t('somethingElse') },
+  ];
+
   const [selected, setSelected] = useState(report[0].title);
   const [step, setStep] = useState(1);
   return (
     <div className="mx-auto w-full max-w-full overflow-hidden rounded-xl bg-white p-12 xs:w-[480px] sm:w-[520px]">
       <div className="flex items-center justify-between">
         <Text tag="h3" className="text-xl leading-8 md:!text-xl">
-          Why are you reporting this listing?
+          {t('whyReporting')}
         </Text>
         <ActionIcon
           size="sm"
@@ -111,7 +105,7 @@ export default function ReportListing() {
         </ActionIcon>
       </div>
       <Text className="mt-4 !text-base !text-gray">
-        This won’t be shared with the host.
+        {t('wontBeShared')}
       </Text>
       {step === 1 && (
         <>
@@ -144,7 +138,7 @@ export default function ReportListing() {
               className="ml-auto !w-24 !font-bold"
               onClick={() => setStep(2)}
             >
-              Next
+              {t('next')}
             </Button>
           </div>
         </>

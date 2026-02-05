@@ -3,28 +3,20 @@
 import { topBoats } from 'public/data/top-boats';
 import { useState } from 'react';
 import { Tab } from '@headlessui/react';
+import { useTranslations } from 'next-intl';
 import { TabItem, Tablist, TabPanel, TabPanels } from '@/components/ui/tab';
 import DirectContactCard from '@/components/profile//direct-contact-card';
 import ListingCard from '@/components/ui/cards/listing';
 import Contact from '@/components/profile/contact';
 import Text from '@/components/ui/typography/text';
 
-const tabData = [
-  {
-    title: 'Listing',
-    path: 'listing',
-  },
-  {
-    title: 'Favourite',
-    path: 'favourite',
-  },
-  {
-    title: 'Contact',
-    path: 'contact',
-  },
-];
-
 export default function ProfileListBlock() {
+  const t = useTranslations('profile');
+  const tabData = [
+    { title: t('listing'), path: 'listing' },
+    { title: t('favourite'), path: 'favourite' },
+    { title: t('contact'), path: 'contact' },
+  ];
   const [selected, setSelected] = useState(0);
 
   return (
@@ -79,7 +71,7 @@ export default function ProfileListBlock() {
           </TabPanel>
           <TabPanel>
             <Text tag="h4" className="text-xl">
-              Send Message
+              {t('sendMessage')}
             </Text>
             <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-[1fr_0.5fr]">
               <Contact />
