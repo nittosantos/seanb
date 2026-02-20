@@ -39,7 +39,23 @@
     "yourCareDesc": "Encontre e reserve o barco dos seus sonhos através da Yacht. Charter Fleet, o principal site de comparação de barcos de luxo do mundo.",
     "viewBoats": "Ver barcos",
     "testimonialTitle": "Depoimentos",
-    "testimonialDesc": "Uma experiência inesquecível compartilhada por nossos clientes."
+    "testimonialDesc": "Uma experiência inesquecível compartilhada por nossos clientes.",
+    "destinations": {
+      "miami": { "name": "Miami", "location": "Cidade de Long Island" },
+      "seattleBeach": { "name": "Praia de Seattle", "location": "Cidade de Long Island" },
+      "atlantisDubai": { "name": "Atlantis Dubai", "location": "Cidade de Long Island" },
+      "australianBeach": { "name": "Praia Australiana", "location": "Cidade de Long Island" },
+      "bolCroatia": { "name": "Bol Croácia", "location": "Cidade de Long Island" },
+      "atollMaldives": { "name": "Atol Maldivas", "location": "Cidade de Long Island" },
+      "kijalMalaysia": { "name": "Kijal Malásia", "location": "Cidade de Long Island" },
+      "dalmatiaCroatia": { "name": "Dalmácia Croácia", "location": "Cidade de Long Island" }
+    },
+    "instructions": {
+      "findBoat": { "title": "Encontre o barco ideal", "description": "Navegue pelo nosso catálogo de barcos para alugar. Filtre por tipo, local e preço para encontrar exatamente o que precisa." },
+      "selectCaptain": { "title": "Escolha um capitão", "description": "Opte por pilotar você mesmo ou contar com um capitão profissional. Muitos barcos oferecem ambas as opções." },
+      "pickupLocations": { "title": "Diversos Pontos de Retirada", "description": "Retire seu barco em marinas e piers convenientes. Temos locais em destinos populares no mundo todo." },
+      "satisfiedCustomers": { "title": "Clientes Satisfeitos", "description": "Junte-se a milhares de clientes que descobriram a experiência ideal de aluguel de barco conosco." }
+    }
   },
   "explore": {
     "loading": "Carregando...",
@@ -92,6 +108,21 @@
     "suggested": "Sugerido",
     "perMonth": "/mês",
     "getStarted": "começar",
+    "litePlanTitle": "Plano Lite",
+    "litePlanDesc": "Perfeito para começar",
+    "proPlanTitle": "Plano Pro",
+    "proPlanDesc": "Melhor para profissionais",
+    "ultimatePlanTitle": "Plano Ultimate",
+    "ultimatePlanDesc": "Melhor para profissionais",
+    "featureUltimateCampaigns": "Campanhas ilimitadas",
+    "featureBasicDonorData": "Dados básicos de doadores",
+    "featureTeamFundraising": "Arrecadação em equipe",
+    "featureMultiTasking": "Múltiplas tarefas",
+    "featureMultiTeamTasking": "Tarefas multi-equipe",
+    "featureBasicRegistration": "Registro e ingressos básicos",
+    "featureBasicTheming": "Temas básicos",
+    "featureEmailReceipt": "Recibo por e-mail",
+    "featureExpensiveDonorData": "Dados avançados de doadores",
     "faqTitle": "Perguntas frequentes",
     "faqSubtitle": "Tudo o que você precisa saber sobre o produto e cobrança",
     "pricingFaq0Title": "Existe período de teste gratuito?",
@@ -200,6 +231,10 @@
     "typeMessage": "Digite sua mensagem..."
   },
   "settings": {
+    "tabPersonalInfo": "Informações pessoais",
+    "tabLoginSecurity": "Login e segurança",
+    "tabPaymentsPayouts": "Pagamentos",
+    "tabNotifications": "Notificações",
     "personalInfo": "Informações pessoais",
     "changePassword": "Alterar senha",
     "updatePassword": "Atualizar senha",

@@ -12,6 +12,11 @@ const nextConfig = {
         hostname: 'randomuser.me',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'flagcdn.com',
+        pathname: '/**',
+      },
     ],
   },
 };

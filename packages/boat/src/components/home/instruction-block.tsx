@@ -10,11 +10,20 @@ import BlockLoader from '@/components/ui/loader/block-loader';
 import ActionIcon from '@/components/ui/action-icon';
 import Section from '@/components/ui/section';
 
-function InstructionGrid() {
+function InstructionGrid({
+  instructionsWithTranslations,
+}: {
+  instructionsWithTranslations: Array<{
+    id: string;
+    icon: React.ReactNode;
+    title: string;
+    description: string;
+  }>;
+}) {
   return (
     <>
       <div className="hidden grid-cols-1 gap-5 md:grid-cols-2 xl:grid xl:grid-cols-4">
-        {instructions?.map((item, index) => (
+        {instructionsWithTranslations?.map((item, index) => (
           <InstructionCard
             key={`instruction-${index}`}
             icon={item.icon}
@@ -58,7 +67,7 @@ function InstructionGrid() {
             },
           }}
         >
-          {instructions?.map((item, index) => (
+          {instructionsWithTranslations?.map((item, index) => (
             <SwiperSlide key={`instruction-${index}`}>
               <InstructionCard
                 key={`instruction-${index}`}
@@ -92,6 +101,12 @@ export default function InstructionBlock() {
   const t = useTranslations('home');
   const { state } = useTimeout();
 
+  const instructionsWithTranslations = instructions.map((item) => ({
+    ...item,
+    title: t(`instructions.${item.id}.title`),
+    description: t(`instructions.${item.id}.description`),
+  }));
+
   return (
     <Section
       className="group/section instruction-section lg:container-fluid mt-12 pl-4 sm:pl-6 lg:mt-16"
@@ -100,7 +115,9 @@ export default function InstructionBlock() {
       headerClassName="mb-4 md:mb-5 xl:mb-6"
     >
       {!state && <BlockLoader />}
-      {state && <InstructionGrid />}
+      {state && (
+        <InstructionGrid instructionsWithTranslations={instructionsWithTranslations} />
+      )}
     </Section>
   );
 }

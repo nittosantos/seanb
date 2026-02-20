@@ -2,9 +2,7 @@ import clsx from 'clsx';
 import type { Metadata } from 'next';
 import { Satisfy, Lato } from 'next/font/google';
 import '@/styles/globals.css';
-import GalleryCarouselView from '@/components/gallery/view';
-import DrawerContainer from '@/components/drawers/view';
-import ModalContainer from '@/components/modals/view';
+import { GoogleMapsProvider } from '@/components/providers/google-maps-provider';
 
 const lato = Lato({
   subsets: ['latin'],
@@ -42,10 +40,9 @@ export default function RootLayout({ children }: React.PropsWithChildren<{}>) {
     >
       <head />
       <body className="flex min-h-full flex-col">
-        {children}
-        <ModalContainer />
-        <DrawerContainer />
-        <GalleryCarouselView />
+        <GoogleMapsProvider>
+          {children}
+        </GoogleMapsProvider>
       </body>
     </html>
   );

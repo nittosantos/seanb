@@ -11,6 +11,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "dev:boat": "turbo run dev --filter=@tripfinder/boat",
+    "dev:api": "turbo run dev --filter=api",
     "build": "turbo run build",
     "build:boat": "turbo run build --filter=@tripfinder/boat",
     "start": "turbo run start",

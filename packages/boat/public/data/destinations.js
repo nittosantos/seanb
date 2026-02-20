@@ -1,51 +1,11 @@
 export const destinations = [
-  {
-    name: "Miami",
-    slug: "/explore?location=Miami",
-    location: "Long Island city",
-    thumbnail: "/images/destinations/miami.png"
-  },
-  {
-    name: "Seattle Beach",
-    slug: "/explore?location=Long-Island",
-    location: "Long Island city",
-    thumbnail: "/images/destinations/longIsland.png"
-  },
-  {
-    name: "Atlantis Dubai",
-    slug: "/explore?location=Dubai",
-    location: "Long Island city",
-    thumbnail: "/images/destinations/dubai.png"
-  },
-  {
-    name: "Australian Beach",
-    slug: "/explore?location=Australia",
-    location: "Long Island city",
-    thumbnail: "/images/destinations/australia.png"
-  },
-  {
-    name: "Bol Croatia",
-    slug: "/explore?location=croatia",
-    location: "Long Island city",
-    thumbnail: "/images/destinations/croatia.jpg"
-  },
-  {
-    name: "Atoll Maldives",
-    slug: "/explore?location=maldive",
-    location: "Long Island city",
-    thumbnail: "/images/destinations/maldive.jpg"
-  },
-  {
-    name: "Kijal Malaysia",
-    slug: "/explore?location=malaysia",
-    location: "Long Island city",
-    thumbnail: "/images/destinations/malaysia.jpg"
-  },
-  {
-    name: "Dalmatia Croatia",
-    slug: "/explore?location=croatia",
-    location: "Long Island city",
-    thumbnail: "/images/destinations/dalmatia.jpg"
-  }
+  { id: 'miami', slug: "/explore?location=Miami", thumbnail: "/images/destinations/miami.png" },
+  { id: 'seattleBeach', slug: "/explore?location=Long-Island", thumbnail: "/images/destinations/longIsland.png" },
+  { id: 'atlantisDubai', slug: "/explore?location=Dubai", thumbnail: "/images/destinations/dubai.png" },
+  { id: 'australianBeach', slug: "/explore?location=Australia", thumbnail: "/images/destinations/australia.png" },
+  { id: 'bolCroatia', slug: "/explore?location=croatia", thumbnail: "/images/destinations/croatia.jpg" },
+  { id: 'atollMaldives', slug: "/explore?location=maldive", thumbnail: "/images/destinations/maldive.jpg" },
+  { id: 'kijalMalaysia', slug: "/explore?location=malaysia", thumbnail: "/images/destinations/malaysia.jpg" },
+  { id: 'dalmatiaCroatia', slug: "/explore?location=croatia", thumbnail: "/images/destinations/dalmatia.jpg" }
 ]
   

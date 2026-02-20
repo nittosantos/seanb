@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import useAuth from '@/hooks/use-auth';
 import { Routes } from '@/config/routes';
 import ProfileMenu from '@/components/header/profile-menu';
+import LocaleSwitcher from '@/components/header/locale-switcher';
 import { useModal } from '@/components/modals/context';
 import { useIsMounted } from '@/hooks/use-is-mounted';
 import Button from '@/components/ui/button';
@@ -33,22 +34,23 @@ export default function Menu() {
           </li>
         ))}
       </ul>
-      {mounted ? (
-        <>
-          {isAuthorized ? (
-            <div className="ml-7 flex justify-end">
+      <div className="ml-5 flex items-center gap-3">
+        {mounted ? (
+          <>
+            {isAuthorized ? (
               <ProfileMenu className="hidden md:block" />
-            </div>
-          ) : (
+            ) : (
             <Button
               onClick={() => openModal('SIGN_IN')}
-              className="ml-5 rounded-lg px-6 py-2 text-sm capitalize md:text-base 4xl:px-8 4xl:py-2.5"
+              className="rounded-lg px-6 py-2 text-sm capitalize md:text-base 4xl:px-8 4xl:py-2.5"
             >
               {t('logIn')}
             </Button>
           )}
-        </>
-      ) : null}
+          </>
+        ) : null}
+        <LocaleSwitcher variant="transparent" />
+      </div>
     </nav>
   );
 }

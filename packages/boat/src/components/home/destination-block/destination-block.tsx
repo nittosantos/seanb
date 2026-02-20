@@ -11,6 +11,12 @@ export default function DestinationBlock() {
   const t = useTranslations('home');
   const { state } = useTimeout();
 
+  const destinationsWithTranslations = destinations.map((item) => ({
+    ...item,
+    name: t(`destinations.${item.id}.name`),
+    location: t(`destinations.${item.id}.location`),
+  }));
+
   return (
     <Section
       title={t('topDestinationsTitle')}
@@ -19,7 +25,7 @@ export default function DestinationBlock() {
       headerClassName="mb-4 md:mb-5 xl:mb-6"
     >
       {!state && <BlockLoader />}
-      {state && <DestinationCarousel data={destinations} />}
+      {state && <DestinationCarousel data={destinationsWithTranslations} />}
     </Section>
   );
 }

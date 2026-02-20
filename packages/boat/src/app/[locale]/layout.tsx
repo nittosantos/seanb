@@ -3,6 +3,9 @@ import { getMessages, setRequestLocale } from 'next-intl/server';
 import { hasLocale } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
+import GalleryCarouselView from '@/components/gallery/view';
+import DrawerContainer from '@/components/drawers/view';
+import ModalContainer from '@/components/modals/view';
 
 type Props = {
   children: React.ReactNode;
@@ -27,6 +30,9 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     <NextIntlClientProvider messages={messages}>
       {children}
+      <ModalContainer />
+      <DrawerContainer />
+      <GalleryCarouselView />
     </NextIntlClientProvider>
   );
 }

@@ -12,6 +12,7 @@ import Button from '@/components/ui/button';
 import Logo from '@/components/ui/logo';
 import useAuth from '@/hooks/use-auth';
 import { useIsMounted } from '@/hooks/use-is-mounted';
+import LocaleSwitcher from '@/components/header/locale-switcher';
 
 export default function Header() {
   const t = useTranslations('common');
@@ -51,6 +52,7 @@ export default function Header() {
               )}
             </>
           ) : null}
+          <LocaleSwitcher variant="solid" />
         </div>
       </div>
     </header>

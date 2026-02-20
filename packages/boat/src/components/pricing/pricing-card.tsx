@@ -10,10 +10,10 @@ interface PricingCardProps {
   pricingData: {
     isSuggested: boolean;
     price: number;
-    title: string;
-    description: string;
+    titleKey: string;
+    descriptionKey: string;
     list: {
-      text: string;
+      textKey: string;
       inPlan: boolean;
     }[];
   };
@@ -41,10 +41,10 @@ export default function PricingCard({ pricingData }: PricingCardProps) {
           <span className="text-2xl font-normal">{t('perMonth')}</span>{' '}
         </h2>
         <h3 className="mt-4 text-2xl font-bold capitalize text-gray-dark lg:mt-6 lg:text-3xl">
-          {pricingData.title}
+          {t(pricingData.titleKey)}
         </h3>
         <p className="mt-3 text-base font-normal text-gray-dark first-letter:capitalize">
-          {pricingData.description}
+          {t(pricingData.descriptionKey)}
         </p>
         <Button
           size="xl"
@@ -56,7 +56,7 @@ export default function PricingCard({ pricingData }: PricingCardProps) {
       <ul className="mt-8 lg:mt-6">
         {pricingData.list.map((item) => (
           <li
-            key={item.text}
+            key={item.textKey}
             className="flex items-center py-2 text-sm font-normal capitalize leading-6 first:pt-0 last:pb-0 lg:text-base"
           >
             {item.inPlan ? (
@@ -67,7 +67,7 @@ export default function PricingCard({ pricingData }: PricingCardProps) {
               </span>
             )}
             <span className="ml-3 inline-block text-gray-dark">
-              {item.text}
+              {t(item.textKey)}
             </span>
           </li>
         ))}

@@ -1,6 +1,7 @@
 'use client';
 
-import { StandaloneSearchBox, useLoadScript } from '@react-google-maps/api';
+import { StandaloneSearchBox } from '@react-google-maps/api';
+import { useGoogleMaps } from '@/components/providers/google-maps-provider';
 
 type QueryStringType = {
   children: React.ReactNode;
@@ -9,19 +10,13 @@ type QueryStringType = {
   onPlacesChanged: () => void;
 };
 
-type l = 'places'[];
-const libraries: l = ['places'];
-
 export default function SearchAutocomplete({
   children,
   loader,
   onLoad,
   onPlacesChanged,
 }: QueryStringType) {
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: `${process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY}`,
-    libraries,
-  });
+  const { isLoaded } = useGoogleMaps();
 
   return (
     <div className="map_autocomplete">

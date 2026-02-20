@@ -6,6 +6,7 @@ import DashboardMenu from '@/components/ui/dashboard-menu';
 import SearchIconBtn from '@/components/ui/search-icon-btn';
 import ProfileMenu from '@/components/header/profile-menu';
 import Logo from '@/components/ui/logo';
+import LocaleSwitcher from '@/components/header/locale-switcher';
 
 export default function DashboardHeader() {
   const headerRef = useRef(null);
@@ -20,6 +21,7 @@ export default function DashboardHeader() {
         <DashboardMenu />
         <SearchIconBtn className="md:hidden" />
         <ProfileMenu className="hidden md:block" />
+        <LocaleSwitcher variant="solid" />
       </div>
     </header>
   );

@@ -1,6 +1,7 @@
 'use client';
 
-import { GoogleMap, useLoadScript } from '@react-google-maps/api';
+import { GoogleMap } from '@react-google-maps/api';
+import { useGoogleMaps } from '@/components/providers/google-maps-provider';
 
 interface MapTypes {
   mapContainerClassName?: string;
@@ -13,9 +14,7 @@ const options = {
 };
 
 export default function MapView({ mapContainerClassName }: MapTypes) {
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: `${process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY}`,
-  });
+  const { isLoaded } = useGoogleMaps();
 
   if (!isLoaded) {
     return <span>Loading...</span>;

@@ -11,6 +11,7 @@ import Searchbox from '@/components/ui/search-box';
 import Button from '@/components/ui/button';
 import Logo from '@/components/ui/logo';
 import { useIsMounted } from '@/hooks/use-is-mounted';
+import LocaleSwitcher from '@/components/header/locale-switcher';
 
 export default function ListingDetailsHeader() {
   const mounted = useIsMounted();
@@ -47,6 +48,7 @@ export default function ListingDetailsHeader() {
               )}
             </>
           ) : null}
+          <LocaleSwitcher variant="solid" />
         </div>
       </div>
     </header>

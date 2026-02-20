@@ -39,7 +39,23 @@
     "yourCareDesc": "Find and book your dream boat through Yacht. Charter Fleet, the world's leading luxury boat comparison site.",
     "viewBoats": "View Boats",
     "testimonialTitle": "Testimonial",
-    "testimonialDesc": "Unsatiable it considered invitation he travelling insensible."
+    "testimonialDesc": "Unsatiable it considered invitation he travelling insensible.",
+    "destinations": {
+      "miami": { "name": "Miami", "location": "Long Island city" },
+      "seattleBeach": { "name": "Seattle Beach", "location": "Long Island city" },
+      "atlantisDubai": { "name": "Atlantis Dubai", "location": "Long Island city" },
+      "australianBeach": { "name": "Australian Beach", "location": "Long Island city" },
+      "bolCroatia": { "name": "Bol Croatia", "location": "Long Island city" },
+      "atollMaldives": { "name": "Atoll Maldives", "location": "Long Island city" },
+      "kijalMalaysia": { "name": "Kijal Malaysia", "location": "Long Island city" },
+      "dalmatiaCroatia": { "name": "Dalmatia Croatia", "location": "Long Island city" }
+    },
+    "instructions": {
+      "findBoat": { "title": "Find the perfect boat", "description": "Browse our extensive catalog of boats for rent. Filter by type, location, and price to find exactly what you need." },
+      "selectCaptain": { "title": "Select a captain", "description": "Choose between self-drive or with a professional captain. Many boats offer both options to suit your experience level." },
+      "pickupLocations": { "title": "Many Pickup Locations", "description": "Pick up your boat at convenient marinas and docks. We have locations in popular destinations worldwide." },
+      "satisfiedCustomers": { "title": "Satisfied Customers", "description": "Join thousands of happy customers who have discovered their perfect boat rental experience with us." }
+    }
   },
   "explore": {
     "loading": "Loading...",
@@ -92,6 +108,21 @@
     "suggested": "Suggested",
     "perMonth": "/month",
     "getStarted": "get started",
+    "litePlanTitle": "Lite Plan",
+    "litePlanDesc": "Perfect to get started",
+    "proPlanTitle": "Pro Plan",
+    "proPlanDesc": "Best for professionals",
+    "ultimatePlanTitle": "Ultimate Plan",
+    "ultimatePlanDesc": "Best for professionals",
+    "featureUltimateCampaigns": "Ultimate campaigns",
+    "featureBasicDonorData": "Basic donor data",
+    "featureTeamFundraising": "Team fundraising",
+    "featureMultiTasking": "Multi tasking",
+    "featureMultiTeamTasking": "Multi team tasking",
+    "featureBasicRegistration": "Basic registration & Ticketing",
+    "featureBasicTheming": "Basic theming",
+    "featureEmailReceipt": "Email receipt",
+    "featureExpensiveDonorData": "Expensive donor data",
     "faqTitle": "Frequently asked questions",
     "faqSubtitle": "Everything you need to know about the product and billing",
     "pricingFaq0Title": "Is there a free trail available?",
@@ -200,6 +231,10 @@
     "typeMessage": "Type your message..."
   },
   "settings": {
+    "tabPersonalInfo": "Personal Information",
+    "tabLoginSecurity": "Login & Security",
+    "tabPaymentsPayouts": "Payments & Payouts",
+    "tabNotifications": "Notifications",
     "personalInfo": "Personal Information",
     "changePassword": "Change Password",
     "updatePassword": "Update password",

@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Button from '@/components/ui/button';
 import Logo from '@/components/ui/logo';
+import LocaleSwitcher from '@/components/header/locale-switcher';
 
 export default function NotFoundHeader() {
   const router = useRouter();
@@ -12,7 +13,8 @@ export default function NotFoundHeader() {
     <header className="sticky top-0 z-30 flex h-14 w-full bg-white py-5 md:flex md:h-20 md:items-center md:bg-transparent xl:h-24">
       <div className="container-fluid flex w-full items-center justify-between">
         <Logo className="!text-gray-dark" />
-        <Button
+        <div className="flex items-center gap-2">
+          <Button
           size="sm"
           variant="outline"
           className="!bg-white !py-[6px] !px-3 text-xs !font-semibold capitalize text-gray-dark md:!px-4 md:!py-2 md:text-sm 2xl:!py-[10px] 2xl:!px-6 2xl:text-base"
@@ -20,6 +22,8 @@ export default function NotFoundHeader() {
         >
           {t('backToHome')}
         </Button>
+          <LocaleSwitcher variant="solid" />
+        </div>
       </div>
     </header>
   );

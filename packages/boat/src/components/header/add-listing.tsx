@@ -7,6 +7,7 @@ import { useAddListingStore } from '@/stores/add-listing-store';
 import Button from '@/components/ui/button';
 import { Routes } from '@/config/routes';
 import Logo from '@/components/ui/logo';
+import LocaleSwitcher from '@/components/header/locale-switcher';
 
 export default function AddListingHeader() {
   const router = useRouter();
@@ -55,6 +56,7 @@ export default function AddListingHeader() {
           >
             Save & Exit
           </Button>
+          <LocaleSwitcher variant="solid" />
         </div>
       </div>
     </header>
