@@ -183,11 +183,14 @@ Review
 - [ ] Integrar add-listing wizard com POST `/listings`
 - [ ] Upload real de imagens (hoje URLs locais)
 
-### Fase 4: Reservas
-- [ ] POST `/reservations`
-- [ ] GET `/reservations` (minhas reservas)
-- [ ] PATCH `/reservations/:id` (cancelar, etc.)
-- [ ] Integrar frontend
+### Fase 4: Reservas ✅ (parcial)
+- [x] POST `/reservations`
+- [x] GET `/reservations` (viagens do guest)
+- [x] GET `/reservations/host` (reservas recebidas pelo host)
+- [x] PATCH `/reservations/:id` (cancelar, confirmar, concluir)
+- [x] Integrar frontend (booking form, trips, painel do host)
+- [ ] Calendário com datas bloqueadas reais
+- [ ] Pagamentos no checkout
 
 ### Fase 5: Extras
 - [ ] Reviews (API dedicada)

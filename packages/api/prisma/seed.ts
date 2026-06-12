@@ -148,6 +148,22 @@ async function main() {
     },
   });
 
+  const checkIn = new Date();
+  checkIn.setDate(checkIn.getDate() + 14);
+  const checkOut = new Date(checkIn);
+  checkOut.setDate(checkOut.getDate() + 3);
+
+  await prisma.reservation.create({
+    data: {
+      listingId: listing1.id,
+      guestId: guestUser.id,
+      checkIn,
+      checkOut,
+      totalPrice: 215 * 3,
+      status: 'CONFIRMED',
+    },
+  });
+
   // Reviews
   await prisma.review.createMany({
     data: [
@@ -172,6 +188,7 @@ async function main() {
   console.log('   - 3 planos (Lite, Pro, Ultimate)');
   console.log('   - 2 usuários (1 Host, 1 Guest) - senha: password123');
   console.log('   - 2 listings');
+  console.log('   - 1 reservation');
   console.log('   - 2 reviews');
 }
 

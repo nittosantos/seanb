@@ -187,7 +187,9 @@
     "noTripsYet": "You have no trips yet",
     "exploreBoats": "Explore Boats",
     "upcoming": "Upcoming",
-    "past": "Past"
+    "past": "Past",
+    "loginRequired": "Sign in to view your trips",
+    "signIn": "Sign In"
   },
   "wishlist": {
     "title": "My Wishlist",
@@ -206,7 +208,15 @@
     "availability": "Availability",
     "bookedDates": "Booked Dates",
     "addDate": "Add date",
-    "selectDate": "Select Date"
+    "selectDate": "Select Date",
+    "tripStart": "Trip Start",
+    "tripEnd": "Trip End",
+    "reserve": "Reserve",
+    "nights": "nights",
+    "total": "Total",
+    "minAdultRequired": "Minimum 1 adult required",
+    "invalidDateRange": "End date must be after start date",
+    "reservationError": "Could not create reservation. Please try again."
   },
   "account": {
     "hello": "Hello, {name}",

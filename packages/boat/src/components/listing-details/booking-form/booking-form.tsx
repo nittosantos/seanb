@@ -2,14 +2,21 @@
 
 import { z } from 'zod';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { differenceInCalendarDays } from 'date-fns';
+import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import SelectBox from '@/components/listing-details/booking-form/select-box';
 import DateTime from '@/components/ui/form-fields/date-time-picker';
 import { Staricon } from '@/components/icons/star-icon';
 import Button from '@/components/ui/button';
+import { useListingDetail } from '@/contexts/listing-detail-context';
+import useAuth from '@/hooks/use-auth';
+import { Routes } from '@/config/routes';
+import { createReservation } from '@/lib/reservations-api';
+import { ApiError } from '@/lib/api-client';
 
 interface BookingFormProps {
   price: number;
@@ -18,50 +25,15 @@ interface BookingFormProps {
   className?: string;
 }
 
-const list = [
-  {
-    title: '$215 * 3 nights',
-    money: 762,
-    type: 'price',
-  },
-  {
-    title: 'Weekly discount',
-    money: 117,
-    type: 'discount',
-  },
-  {
-    title: 'Cleaning fee',
-    money: 52,
-    type: 'cleanfee',
-  },
-  {
-    title: 'Service fee',
-    money: 65,
-    type: 'servicefee',
-  },
-  {
-    title: 'Total fee',
-    money: 702,
-    type: 'total',
-  },
-];
-
-const BookingSchema = z
-  .object({
-    startDate: z.date().min(new Date(), { message: 'Invalid Start Date!' }),
-    endDate: z.date().min(new Date(), { message: 'Invalid End Date!' }),
-    selected: z.object({
-      adults: z.number().min(1, 'Minimum 1 Adult required!'),
-      child: z.number(),
-      pets: z.boolean(),
-    }),
-  })
-  .refine(({ startDate, endDate }) => startDate < endDate, {
-    message: 'End Date must be greater then Start Date.',
-    path: ['startDate'],
-  });
-
-type BookingSchemaType = z.infer<typeof BookingSchema>;
+type BookingSchemaType = {
+  startDate: Date;
+  endDate: Date;
+  selected: {
+    adults: number;
+    child: number;
+    pets: boolean;
+  };
+};
 
 export default function BookingForm({
   price,
@@ -70,15 +42,41 @@ export default function BookingForm({
   className,
 }: BookingFormProps) {
   const t = useTranslations('listing');
+  const router = useRouter();
+  const listing = useListingDetail();
+  const { isAuthorized, accessToken } = useAuth();
+  const [formError, setFormError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const BookingSchema = useMemo(
+    () =>
+      z
+        .object({
+          startDate: z.date({ required_error: t('selectDate') }),
+          endDate: z.date({ required_error: t('selectDate') }),
+          selected: z.object({
+            adults: z.number().min(1, t('minAdultRequired')),
+            child: z.number(),
+            pets: z.boolean(),
+          }),
+        })
+        .refine(({ startDate, endDate }) => startDate < endDate, {
+          message: t('invalidDateRange'),
+          path: ['endDate'],
+        }),
+    [t],
+  );
+
   const {
     control,
     getValues,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<BookingSchemaType>({
     defaultValues: {
       selected: {
-        adults: 0,
+        adults: 1,
         child: 0,
         pets: false,
       },
@@ -86,11 +84,47 @@ export default function BookingForm({
     resolver: zodResolver(BookingSchema),
   });
 
-  const [minEndDate, setMinEndDate] = useState(getValues('startDate'));
-  const [focus, setFocus] = useState<boolean>(false);
+  const [minEndDate, setMinEndDate] = useState<Date | undefined>();
+  const [focus, setFocus] = useState(false);
 
-  function handleBooking(data: any) {
-    console.log(data);
+  const startDate = watch('startDate');
+  const endDate = watch('endDate');
+
+  const nights =
+    startDate && endDate
+      ? Math.max(1, differenceInCalendarDays(endDate, startDate))
+      : 0;
+  const subtotal = nights > 0 ? price * nights : 0;
+
+  async function handleBooking(data: BookingSchemaType) {
+    setFormError(null);
+
+    if (!isAuthorized || !accessToken) {
+      router.push(Routes.auth.signIn);
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await createReservation(
+        {
+          listingId: listing.id,
+          checkIn: data.startDate.toISOString(),
+          checkOut: data.endDate.toISOString(),
+        },
+        accessToken,
+      );
+      router.push(Routes.private.trips);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setFormError(error.message);
+      } else {
+        setFormError(t('reservationError'));
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -99,7 +133,7 @@ export default function BookingForm({
       onSubmit={handleSubmit((data) => handleBooking(data))}
       className={clsx(
         'rounded-xl border border-gray-lighter bg-white p-8 shadow-card',
-        className
+        className,
       )}
     >
       <div className="flex items-center justify-between gap-3  ">
@@ -120,24 +154,29 @@ export default function BookingForm({
           </span>
         </p>
       </div>
+      {formError && (
+        <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
+          {formError}
+        </p>
+      )}
       <div
         className={clsx(
           'relative mt-6 grid grid-cols-2 gap-3 rounded-t-lg border border-b-0 border-gray-lighter',
-          focus && '!border-b !border-gray-dark ring-[1px] ring-gray-900/20'
+          focus && '!border-b !border-gray-dark ring-[1px] ring-gray-900/20',
         )}
         onBlur={() => setFocus(false)}
       >
         <span
           className={clsx(
             'absolute inset-y-0 left-1/2 translate-x-1/2 border-r border-gray-lighter',
-            focus && '!border-gray-dark'
+            focus && '!border-gray-dark',
           )}
         ></span>
         <span className="absolute left-4 top-3 inline-block -translate-x-3 scale-75 text-sm font-semibold uppercase text-gray-dark">
-          Trip Start
+          {t('tripStart')}
         </span>
         <span className="absolute right-4 top-3 inline-block translate-x-2 scale-75 text-sm font-semibold uppercase text-gray-dark">
-          Trip End
+          {t('tripEnd')}
         </span>
         <Controller
           name="startDate"
@@ -179,7 +218,7 @@ export default function BookingForm({
               selected={value}
               onChange={onChange}
               selectsEnd
-              minDate={minEndDate}
+              minDate={minEndDate ?? new Date()}
               endDate={getValues('endDate')}
               startDate={getValues('startDate')}
               dateFormat="eee dd / LL / yy"
@@ -206,25 +245,26 @@ export default function BookingForm({
         rounded="lg"
         type="submit"
         variant="solid"
+        isLoading={isSubmitting}
+        disabled={isSubmitting}
         className="mt-4 w-full !py-[14px] text-base !font-bold uppercase tracking-widest"
       >
-        reserve
+        {t('reserve')}
       </Button>
-      <ul className="mt-3 xl:mt-5">
-        {list.map((item) => (
-          <li
-            key={item.title}
-            className="flex items-center justify-between py-1.5 text-base capitalize text-gray-dark first:pt-0 last:border-t last:border-gray-lighter last:pb-0"
-          >
-            <span className="font-normal">{item.title}</span>
-            {item.type === 'discount' ? (
-              <span className="font-bold text-red">-${item.money}</span>
-            ) : (
-              <span className="font-bold">${item.money}</span>
-            )}
+      {nights > 0 && (
+        <ul className="mt-3 xl:mt-5">
+          <li className="flex items-center justify-between py-1.5 text-base text-gray-dark">
+            <span className="font-normal">
+              ${price} × {nights} {t('nights')}
+            </span>
+            <span className="font-bold">${subtotal}</span>
           </li>
-        ))}
-      </ul>
+          <li className="flex items-center justify-between border-t border-gray-lighter py-1.5 text-base text-gray-dark">
+            <span className="font-normal">{t('total')}</span>
+            <span className="font-bold">${subtotal}</span>
+          </li>
+        </ul>
+      )}
     </form>
   );
 }

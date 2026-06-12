@@ -2,8 +2,9 @@
 
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { Link } from '@/i18n/navigation';
-import { tripsData } from 'public/data/trips';
+import { Link, useRouter } from '@/i18n/navigation';
+import { useMyTrips } from '@/hooks/use-reservations';
+import useAuth from '@/hooks/use-auth';
 import Text from '@/components/ui/typography/text';
 import Button from '@/components/ui/button';
 import { Routes } from '@/config/routes';
@@ -11,6 +12,34 @@ import { CalendarIcon, ClockIcon } from '@heroicons/react/24/outline';
 
 export default function TripsPage() {
   const t = useTranslations('trips');
+  const router = useRouter();
+  const { isAuthorized, isHydrating } = useAuth();
+  const { trips, isLoading } = useMyTrips();
+
+  if (isHydrating || isLoading) {
+    return (
+      <div className="container-fluid mb-12 lg:mb-16">
+        <div className="pt-8 lg:pt-12">
+          <Text tag="h1" className="mb-2 text-2xl md:!text-3xl xl:!text-4xl">
+            {t('title')}
+          </Text>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthorized) {
+    return (
+      <div className="container-fluid mb-12 lg:mb-16">
+        <div className="rounded-xl border border-gray-lighter bg-gray-50 py-16 text-center">
+          <Text className="mb-4 text-gray">{t('loginRequired')}</Text>
+          <Button onClick={() => router.push(Routes.auth.signIn)}>
+            {t('signIn')}
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container-fluid mb-12 lg:mb-16">
@@ -18,12 +47,10 @@ export default function TripsPage() {
         <Text tag="h1" className="mb-2 text-2xl md:!text-3xl xl:!text-4xl">
           {t('title')}
         </Text>
-        <Text className="mb-8 text-gray">
-          {t('subtitle')}
-        </Text>
+        <Text className="mb-8 text-gray">{t('subtitle')}</Text>
       </div>
       <div className="space-y-6">
-        {tripsData.map((trip) => (
+        {trips.map((trip) => (
           <div
             key={trip.id}
             className="flex flex-col overflow-hidden rounded-xl border border-gray-lighter bg-white shadow-card transition-shadow hover:shadow-card-hover md:flex-row"
@@ -81,7 +108,7 @@ export default function TripsPage() {
           </div>
         ))}
       </div>
-      {tripsData.length === 0 && (
+      {trips.length === 0 && (
         <div className="rounded-xl border border-gray-lighter bg-gray-50 py-16 text-center">
           <Text className="mb-4 text-gray">{t('noTripsYet')}</Text>
           <Link href={Routes.public.explore}>

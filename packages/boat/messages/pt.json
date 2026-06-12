@@ -187,7 +187,9 @@
     "noTripsYet": "Você ainda não tem viagens",
     "exploreBoats": "Explorar barcos",
     "upcoming": "Próximas",
-    "past": "Anteriores"
+    "past": "Anteriores",
+    "loginRequired": "Entre para ver suas viagens",
+    "signIn": "Entrar"
   },
   "wishlist": {
     "title": "Meus Favoritos",
@@ -206,7 +208,15 @@
     "availability": "Disponibilidade",
     "bookedDates": "Datas reservadas",
     "addDate": "Adicionar data",
-    "selectDate": "Selecionar data"
+    "selectDate": "Selecionar data",
+    "tripStart": "Início",
+    "tripEnd": "Fim",
+    "reserve": "Reservar",
+    "nights": "noites",
+    "total": "Total",
+    "minAdultRequired": "Mínimo 1 adulto obrigatório",
+    "invalidDateRange": "A data final deve ser após a inicial",
+    "reservationError": "Não foi possível criar a reserva. Tente novamente."
   },
   "account": {
     "hello": "Olá, {name}",
