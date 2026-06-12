@@ -33,14 +33,19 @@ export class ListingsController {
     return this.listingsService.findAll(query);
   }
 
+  @Get('mine')
+  @UseGuards(JwtAuthGuard)
+  findMine(@CurrentUser('id') userId: string) {
+    return this.listingsService.findMine(userId);
+  }
+
   @Get(':slug')
   findBySlug(@Param('slug') slug: string) {
     return this.listingsService.findBySlug(slug);
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.HOST, UserRole.ADMIN)
+  @UseGuards(JwtAuthGuard)
   create(@CurrentUser() user: AuthUser, @Body() dto: CreateListingDto) {
     return this.listingsService.create(user.id, dto);
   }

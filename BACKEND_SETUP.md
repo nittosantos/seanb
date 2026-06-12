@@ -180,8 +180,9 @@ Review
 - [x] POST `/listings` (só HOST/ADMIN)
 - [x] PATCH/DELETE `/listings/:id` (dono ou ADMIN)
 - [x] Integrar frontend (home, explore, detalhe, wishlist, perfil)
-- [ ] Integrar add-listing wizard com POST `/listings`
-- [ ] Upload real de imagens (hoje URLs locais)
+- [x] Integrar add-listing wizard com POST `/listings`
+- [x] GET `/listings/mine` (anúncios do host)
+- [ ] Upload real de imagens (hoje URLs locais / placeholders)
 
 ### Fase 4: Reservas ✅ (parcial)
 - [x] POST `/reservations`

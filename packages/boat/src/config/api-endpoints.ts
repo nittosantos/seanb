@@ -8,6 +8,7 @@ export const API_ENDPOINTS = {
     ME: `${API_BASE_URL}/auth/me`,
   },
   LISTINGS: `${API_BASE_URL}/listings`,
+  LISTINGS_MINE: `${API_BASE_URL}/listings/mine`,
   LISTING_DETAIL: (slug: string) => `${API_BASE_URL}/listings/${slug}`,
   RESERVATIONS: `${API_BASE_URL}/reservations`,
   RESERVATIONS_HOST: `${API_BASE_URL}/reservations/host`,

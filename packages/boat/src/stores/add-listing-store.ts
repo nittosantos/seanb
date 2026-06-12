@@ -34,7 +34,9 @@ export type AddListingStore = typeof initialStore;
 
 interface AddListingState extends AddListingStore {
   step: number;
+  createdListingSlug: string | null;
   setStep: (step: number) => void;
+  setCreatedListingSlug: (slug: string | null) => void;
   setStore: (data: Partial<AddListingStore> | ((prev: AddListingStore) => AddListingStore)) => void;
   resetStore: () => void;
 }
@@ -61,7 +63,9 @@ export const useAddListingStore = create<AddListingState>()(
     (set) => ({
       ...initialStore,
       step: 1,
+      createdListingSlug: null,
       setStep: (step) => set({ step }),
+      setCreatedListingSlug: (createdListingSlug) => set({ createdListingSlug }),
       setStore: (dataOrFn) =>
         set((state) => {
           const formFields = getFormFields(state);
@@ -75,6 +79,8 @@ export const useAddListingStore = create<AddListingState>()(
         set((s) => ({
           ...s,
           ...initialStore,
+          step: 1,
+          createdListingSlug: null,
         })),
     }),
     {

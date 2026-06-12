@@ -7,22 +7,17 @@ import { useAddListingForm, useAddListingStore } from '@/stores/add-listing-stor
 import Text from '@/components/ui/typography/text';
 import Upload from '@/components/ui/upload';
 
-let newImgArr: any = [];
-
 export default function AddBoatPhotos() {
   const t = useTranslations('addListing');
   const setStep = useAddListingStore((s) => s.setStep);
   const [store, setStore] = useAddListingForm();
 
-  function handleDropAccepted(e: any) {
-    e.forEach((item: any) => {
-      newImgArr.push({
-        id: `upload-${URL.createObjectURL(item)}`,
-        img: URL.createObjectURL(item),
-      });
+  function handleDropAccepted(files: File[]) {
+    const uploaded = files.map((file) => URL.createObjectURL(file));
+    setStore({
+      ...store,
+      images: [...store.images, ...uploaded],
     });
-    console.log(e);
-    setStore({ ...store, images: newImgArr });
   }
 
   return (
@@ -61,6 +56,10 @@ export default function AddBoatPhotos() {
                   onDelete={() => {
                     const updatedFiles = files.filter((_, i) => i !== index);
                     setFiles(updatedFiles);
+                    setStore({
+                      ...store,
+                      images: store.images.filter((_, i) => i !== index),
+                    });
                   }}
                 />
               ))}
@@ -70,6 +69,7 @@ export default function AddBoatPhotos() {
         <CreateListingFooter
           onBack={() => setStep(2)}
           onNext={() => setStep(4)}
+          disableNext={store.images.length === 0}
         />
       </form>
     </div>

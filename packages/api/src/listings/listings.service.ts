@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -118,7 +119,22 @@ export class ListingsService {
     return mapListingDetail(listing);
   }
 
+  async findMine(userId: string) {
+    const listings = await this.prisma.listing.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        user: { select: userSelect },
+        reviews: { select: { rating: true } },
+      },
+    });
+
+    return listings.map(mapListingCard);
+  }
+
   async create(userId: string, dto: CreateListingDto) {
+    await this.ensureHostCanPublish(userId);
+
     const slug = await this.resolveUniqueSlug(dto.slug ?? dto.title);
 
     const listing = await this.prisma.listing.create({
@@ -219,6 +235,48 @@ export class ListingsService {
     await this.prisma.listing.delete({ where: { id } });
 
     return { success: true };
+  }
+
+  private async ensureHostCanPublish(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        plan: true,
+        _count: { select: { listingsAsOwner: true } },
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.role === UserRole.GUEST) {
+      const litePlan = await this.prisma.plan.findFirst({
+        where: { name: 'Lite' },
+      });
+
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          role: UserRole.HOST,
+          planId: litePlan?.id ?? user.planId,
+        },
+      });
+
+      return;
+    }
+
+    if (user.role !== UserRole.HOST && user.role !== UserRole.ADMIN) {
+      throw new ForbiddenException('Not allowed to publish listings');
+    }
+
+    if (
+      user.plan &&
+      user.plan.maxListings !== -1 &&
+      user._count.listingsAsOwner >= user.plan.maxListings
+    ) {
+      throw new BadRequestException('Listing limit reached for your plan');
+    }
   }
 
   private async resolveUniqueSlug(base: string, excludeId?: string) {

@@ -1,162 +1,67 @@
 'use client';
 
-import { reservationData } from 'public/data/orders';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
-import { reservationColumn } from '@/components/reservation/reservation-col';
-import Input from '@/components/ui/form-fields/input';
-import Pagination from '@/components/ui/pagination';
+import { Link } from '@/i18n/navigation';
+import { useAuthStore } from '@/stores/auth-store';
+import { fetchMyListings } from '@/lib/listings-api';
+import { toListingCardProps } from '@/lib/listing-card-mapper';
+import ListingCard from '@/components/ui/cards/listing';
+import ListingCardLoader from '@/components/ui/loader/listing-card-loader';
 import Text from '@/components/ui/typography/text';
-import Table from '@/components/ui/table';
+import Button from '@/components/ui/button';
+import { Routes } from '@/config/routes';
 
-export default function LIstingPage() {
+export default function ListingPage() {
   const t = useTranslations('account');
-  const [order, setOrder] = useState<string>('desc');
-  const [column, setColumn] = useState<string>('');
-  const [data, setData] = useState<typeof reservationData>([]);
-  const [searchfilter, setSearchFilter] = useState('');
-  const [current, setCurrent] = useState(1);
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const [listings, setListings] = useState<Awaited<ReturnType<typeof fetchMyListings>>>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // filter data in table
   useEffect(() => {
-    let fArr = [...data];
-    if (searchfilter) {
-      setData(
-        fArr.filter((item) =>
-          item.customer.name.toLowerCase().includes(searchfilter.toLowerCase())
-        )
-      );
-    } else {
-      let start = (current - 1) * 10;
-      let offset = current * 10;
-      const getData = () => reservationData?.slice(start, offset);
-      setData(getData());
+    if (!accessToken) {
+      setIsLoading(false);
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchfilter]);
 
-  // table current change
-  useEffect(() => {
-    let start = (current - 1) * 10;
-    let offset = current * 10;
-    const getData = () => reservationData?.slice(start, offset);
-    setData(getData());
-  }, [current]);
-
-  // select all checkbox function
-  const onSelectAll = useCallback(
-    (checked: boolean) => {
-      let fArr = [...data];
-      let cArr: any = [];
-      if (checked) {
-        fArr.forEach((item) => {
-          item.checked = true;
-          cArr.push(item);
-        });
-        setData(cArr);
-      } else {
-        fArr.forEach((item) => {
-          item.checked = false;
-          cArr.push(item);
-        });
-        setData(fArr);
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    },
-    [data]
-  );
-
-  // single select checkbox function
-  const onChange = useCallback(
-    (row: any) => {
-      let fArr = [...data];
-      let cArr: any = [];
-      fArr.forEach((item) => {
-        if (item.id === row.id) item.checked = !item.checked;
-        cArr.push(item);
-      });
-      setData(cArr);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    },
-    [data]
-  );
-
-  // handle more button with edit, preview, delete
-  const onMore = useCallback((e: any, row: any) => {
-    console.log(e.target.id);
-  }, []);
-
-  // on header click sort table by ascending or descending order
-  const onHeaderClick = useCallback(
-    (value: string) => ({
-      onClick: () => {
-        setColumn(value);
-        setOrder(order === 'desc' ? 'asc' : 'desc');
-        if (order === 'desc') {
-          //@ts-ignore
-          setData([...data.sort((a, b) => (a[value] > b[value] ? -1 : 1))]);
-        } else {
-          //@ts-ignore
-          setData([...data.sort((a, b) => (a[value] > b[value] ? 1 : -1))]);
-        }
-      },
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data]
-  );
-
-  // gets the columns of table
-  const columns: any = useMemo(
-    () =>
-      reservationColumn(
-        t,
-        order,
-        column,
-        onSelectAll,
-        onChange,
-        onMore,
-        onHeaderClick
-      ),
-    [t, order, column, onSelectAll, onChange, onMore, onHeaderClick]
-  );
+    fetchMyListings(accessToken)
+      .then(setListings)
+      .catch(() => setListings([]))
+      .finally(() => setIsLoading(false));
+  }, [accessToken]);
 
   return (
     <div className="container-fluid mb-12 lg:mb-16">
-      <div className="mt-8 mb-6 grid grid-cols-1 items-center gap-3 sm:grid-cols-[1fr_262px] md:mt-10 md:gap-5 lg:mt-12 xl:mt-16 xl:gap-10">
+      <div className="mt-8 mb-6 flex flex-wrap items-center justify-between gap-4 md:mt-10 lg:mt-12 xl:mt-16">
         <Text tag="h4" className="text-xl">
           {t('yourListings')}
         </Text>
-        <Input
-          type="text"
-          variant="outline"
-          placeholder={t('searchByName')}
-          startIcon={<MagnifyingGlassIcon className="h-auto w-5" />}
-          value={searchfilter}
-          onChange={(e) => setSearchFilter(e.target.value)}
-          inputClassName="pl-12"
-        />
+        <Link href={Routes.private.addListing}>
+          <Button size="sm">{t('addListing')}</Button>
+        </Link>
       </div>
-      <Table
-        data={data}
-        columns={columns}
-        variant="minimal"
-        className="text-sm"
-      />
-      <div className="mt-8 text-center">
-        <Pagination
-          current={current}
-          total={reservationData.length}
-          pageSize={10}
-          nextIcon={t('next')}
-          prevIcon={t('previous')}
-          prevIconClassName="!text-gray-dark"
-          nextIconClassName="!text-gray-dark"
-          onChange={(page) => {
-            setCurrent(page);
-          }}
-        />
-      </div>
+
+      {isLoading ? (
+        <div className="grid grid-cols-1 gap-y-8 gap-x-5 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <ListingCardLoader key={`listing-loader-${index}`} />
+          ))}
+        </div>
+      ) : listings.length > 0 ? (
+        <div className="grid grid-cols-1 gap-y-8 gap-x-5 sm:grid-cols-2 lg:grid-cols-3">
+          {listings.map((item, index) => {
+            const props = toListingCardProps(item, 'account-listing', index);
+            return <ListingCard key={item.id} {...props} />;
+          })}
+        </div>
+      ) : (
+        <div className="rounded-xl border border-gray-lighter bg-gray-50 py-16 text-center">
+          <Text className="mb-4 text-gray">{t('noListingsYet')}</Text>
+          <Link href={Routes.private.addListing}>
+            <Button>{t('addListing')}</Button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }
