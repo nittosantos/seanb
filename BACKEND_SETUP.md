@@ -174,12 +174,14 @@ Review
 - [x] Integrar frontend (sign-in, sign-up, sessão JWT)
 - [ ] OAuth social (Facebook/Google/Apple) — desabilitado no front até implementar
 
-### Fase 3: Listings
-- [ ] GET `/listings` (listar, filtros)
-- [ ] GET `/listings/:slug` (detalhe)
-- [ ] POST `/listings` (só HOST)
-- [ ] PATCH/DELETE `/listings/:id`
-- [ ] Integrar frontend (home, explore, detalhe)
+### Fase 3: Listings ✅ (parcial)
+- [x] GET `/listings` (listar, filtros)
+- [x] GET `/listings/:slug` (detalhe + reviews)
+- [x] POST `/listings` (só HOST/ADMIN)
+- [x] PATCH/DELETE `/listings/:id` (dono ou ADMIN)
+- [x] Integrar frontend (home, explore, detalhe, wishlist, perfil)
+- [ ] Integrar add-listing wizard com POST `/listings`
+- [ ] Upload real de imagens (hoje URLs locais)
 
 ### Fase 4: Reservas
 - [ ] POST `/reservations`

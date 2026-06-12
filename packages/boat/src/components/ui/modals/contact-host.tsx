@@ -1,7 +1,6 @@
 'use client';
 
-import { vendorData } from 'public/data/listing-details';
-import { reviewsData } from 'public/data/reviews';
+import { useListingDetailStore } from '@/stores/listing-detail-store';
 import { z } from 'zod';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -42,8 +41,9 @@ export default function ContactHost() {
   });
 
   type ContactHostModalType = z.infer<typeof ContactHostSchema>;
-  const { vendor } = vendorData;
-  const { stats } = reviewsData;
+  const listing = useListingDetailStore((state) => state.listing);
+  const vendor = listing?.vendor;
+  const stats = listing?.reviewsData.stats;
   const [state, setState] = useState(false);
   const [stateTwo, setStateTwo] = useState(false);
   const {
@@ -58,6 +58,10 @@ export default function ContactHost() {
   function handleReservation(data: any) {
     console.log('Data:', data);
     closeModal();
+  }
+
+  if (!vendor || !stats) {
+    return null;
   }
 
   return (

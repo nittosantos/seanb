@@ -1,6 +1,6 @@
 'use client';
 
-import { vendorData } from 'public/data/listing-details';
+import { useListingDetailStore } from '@/stores/listing-detail-store';
 import Image from 'next/image';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -27,8 +27,15 @@ interface GalleryCarouselTypes {
 export default function GalleryCarousel({
   initialSlide,
 }: GalleryCarouselTypes) {
+  const listing = useListingDetailStore((state) => state.listing);
   const { closeGallery } = useGallery();
   const [state, setState] = useState(initialSlide);
+
+  if (!listing) {
+    return null;
+  }
+
+  const { gallary } = listing;
 
   return (
     <AnimatePresence>
@@ -40,7 +47,7 @@ export default function GalleryCarousel({
       >
         <div className="ml-auto flex w-1/2 items-center justify-between py-5 px-4 md:pl-0 md:pr-8 2xl:py-8">
           <div className="-translate-x-1/2 font-semibold text-white xl:text-xl">
-            {state ? state + 1 : 1}/{vendorData.gallary.length}
+            {state ? state + 1 : 1}/{gallary.length}
           </div>
           <Button
             variant="outline"
@@ -75,7 +82,7 @@ export default function GalleryCarousel({
             }}
             className="w-full"
           >
-            {vendorData.gallary.map((item) => (
+            {gallary.map((item) => (
               <SwiperSlide key={item}>
                 <div className="relative h-[300px] w-full bg-white py-2 md:h-[400px] lg:h-[500px] 3xl:h-[650px]">
                   <Image

@@ -89,7 +89,7 @@ export default function ListingCard({
             </div>
           </Link>
         </div>
-        <Link href={Routes.public.listingDetails(title)}>
+        <Link href={Routes.public.listingDetails(slug)}>
           <div className="content pt-3">
             <div className="mb-1 flex items-center gap-5">
               <span className="relative flex items-center font-bold text-gray-dark before:absolute before:-right-3 before:block before:h-1 before:w-1 before:rounded-full before:bg-gray-dark">

@@ -1,21 +1,22 @@
 'use client';
 
-import { vendorData } from 'public/data/listing-details';
-import { reviewsData } from 'public/data/reviews';
+import { useListingDetail } from '@/contexts/listing-detail-context';
 import { useDrawerState } from '@/stores/drawer-store';
 import { Staricon } from '@/components/icons/star-icon';
 import Button from '@/components/ui/button';
 
 export default function ReserveBottomMenu() {
+  const listing = useListingDetail();
   const [drawerState, setDrawerState] = useDrawerState();
+
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 flex w-full items-center justify-between bg-white py-3 px-4 shadow-menu-shadow sm:px-6 lg:hidden">
       <div>
-        <p className="font-bold text-gray-dark">${vendorData.price} / night</p>
+        <p className="font-bold text-gray-dark">${listing.price} / night</p>
         <p className="inline-flex items-center gap-2 text-sm text-gray-dark">
           <Staricon className="xl:w-h-5 h-4 w-4 xl:h-5" />
-          <span>{reviewsData.stats.averageRating}</span>
-          <span>( {reviewsData.stats.totalReview} reviews )</span>
+          <span>{listing.reviewsData.stats.averageRating}</span>
+          <span>( {listing.reviewsData.stats.totalReview} reviews )</span>
         </p>
       </div>
       <Button

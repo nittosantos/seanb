@@ -1,15 +1,13 @@
 'use client';
 
 import Image from 'next/image';
+import { useListingDetail } from '@/contexts/listing-detail-context';
 import { useDrawerState } from '@/stores/drawer-store';
 import { GridIcon } from '@/components/icons/grid';
 import Button from '@/components/ui/button';
 
-interface GallaryBlockProps {
-  images: string[];
-}
-
-export default function GallaryBlock({ images }: GallaryBlockProps) {
+export default function GallaryBlock() {
+  const { gallary: images } = useListingDetail();
   const [drawerState, setDrawerState] = useDrawerState();
 
   function handleClick() {
@@ -30,7 +28,7 @@ export default function GallaryBlock({ images }: GallaryBlockProps) {
           onClick={handleClick}
         >
           <Image
-            src={images[0]}
+            src={images[0] ?? '/images/top-boats/boat-one.jpg'}
             alt="pic"
             fill
             priority
@@ -43,7 +41,7 @@ export default function GallaryBlock({ images }: GallaryBlockProps) {
           onClick={handleClick}
         >
           <Image
-            src={images[1]}
+            src={images[1] ?? images[0] ?? '/images/top-boats/boat-one.jpg'}
             alt="pic"
             fill
             priority
@@ -56,7 +54,7 @@ export default function GallaryBlock({ images }: GallaryBlockProps) {
           onClick={handleClick}
         >
           <Image
-            src={images[2]}
+            src={images[2] ?? images[0] ?? '/images/top-boats/boat-one.jpg'}
             alt="pic"
             fill
             priority

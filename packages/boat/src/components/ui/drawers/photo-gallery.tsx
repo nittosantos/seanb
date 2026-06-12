@@ -1,6 +1,6 @@
 'use client';
 
-import { vendorData } from 'public/data/listing-details';
+import { useListingDetailStore } from '@/stores/listing-detail-store';
 import Image from 'next/image';
 import { useDrawerState } from '@/stores/drawer-store';
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
@@ -12,7 +12,8 @@ import Text from '@/components/ui/typography/text';
 import Button from '@/components/ui/button';
 
 export default function PhotoGallery() {
-  const { gallary } = vendorData;
+  const listing = useListingDetailStore((state) => state.listing);
+  const gallary = listing?.gallary ?? [];
   const [, setDrawerState] = useDrawerState();
   const { openModal } = useModal();
   const { openGallery } = useGallery();
