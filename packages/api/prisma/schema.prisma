@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -13,9 +10,140 @@ datasource db {
   provider = "postgresql"
 }
 
+// ============ ENUMS ============
+
+enum UserRole {
+  GUEST
+  HOST
+  ADMIN
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+// ============ MODELS ============
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
+  passwordHash String?
+  name      String?
+  avatar    String?
+  username  String?  @unique // ex: @frankiehelene
+  role      UserRole @default(GUEST)
+  memberSince DateTime?
+  languages String[] @default([]) // ex: ["English", "Italian"]
+  responseRate Int?
+  responseTime String? // ex: "Within an hour"
+  location  String?
+  coverImage String?
+  instagramUserName String?
+  twitterUserName String?
+  phone     String?
+  bio       String?
+  country   String?
+  city      String?
+  streetAddress String?
+  state     String?
+  zipCode   String?
+  birthDate DateTime?
+  gender    String?
+
+  planId    String?
+  plan      Plan?    @relation(fields: [planId], references: [id])
+
+  listingsAsOwner Listing[]     @relation("ListingOwner")
+  reservationsAsGuest Reservation[] @relation("ReservationGuest")
+  reviews          Review[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Plan {
+  id          String   @id @default(cuid())
+  name        String   // Lite, Pro, Ultimate
+  maxListings Int      @default(1) // -1 = ilimitado
+  priceMonthly Decimal @db.Decimal(10, 2)
+  priceYearly  Decimal @db.Decimal(10, 2)
+  features    Json?    // features em JSON
+
+  users User[]
+
+  @@map("Plan")
+}
+
+model Listing {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  title        String
+  description  String?
+  price        Decimal  @db.Decimal(10, 2) // preço por noite/período
+  location     String?
+  lat          Float?
+  lng          Float?
+  images       String[] @default([]) // URLs das imagens
+  boatName     String?  // ex: "SPORT CRUISER — OCEANIS 35 (2017)"
+  boatGuests   Int?     @default(1)
+  boatCabins   Int?     @default(0)
+  boatBathrooms Int?    @default(0)
+  duration     String?  // ex: "3 - 8 hours"
+  hasCaptain   Boolean  @default(false) // Captain / No Captain
+  equipment    Json?    // [{ img, name }, ...]
+  specifications Json?  // [{ name, details }, ...]
+  boatType     String?  // Motor Boat, Sailboat, etc.
+
+  userId String
+  user   User   @relation("ListingOwner", fields: [userId], references: [id], onDelete: Cascade)
+
+  reservations Reservation[]
+  reviews      Review[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([slug])
+}
+
+model Reservation {
+  id         String            @id @default(cuid())
+  checkIn    DateTime
+  checkOut   DateTime
+  totalPrice Decimal           @db.Decimal(10, 2)
+  status     ReservationStatus @default(PENDING)
+
+  listingId String
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  guestId String
+  guest   User   @relation("ReservationGuest", fields: [guestId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([listingId])
+  @@index([guestId])
+}
+
+model Review {
+  id      String @id @default(cuid())
+  rating  Int    // 1-5
+  comment String?
+  location String? // cidade do reviewer
+
+  listingId String
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([listingId])
+  @@index([userId])
 }

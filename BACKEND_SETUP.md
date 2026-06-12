@@ -1,227 +1,233 @@
 # 🚀 Guia de Setup do Backend NestJS no Monorepo
 
-## ✅ Recomendação: **ADICIONAR NO MONOREPO**
+## ✅ Estado Atual
 
-A estrutura atual usa **Lerna + Yarn Workspaces**, que é perfeita para incluir o backend NestJS.
+O backend está configurado com:
+- **NestJS 11** + **Fastify** (não Express)
+- **Prisma 7** + **PostgreSQL**
+- **Docker** para o banco (container `seanb-postgres`, porta 5433)
+- API rodando na **porta 3333**
 
 ---
 
-## 📁 Estrutura Recomendada
+## 📁 Estrutura Atual
 
 ```
-tripfinder/
+SeanB/
 ├── packages/
-│   ├── boat/          (Frontend - já existe)
-│   └── api/           (Backend NestJS - NOVO) ✨
+│   ├── boat/          (Frontend Next.js)
+│   └── api/           (Backend NestJS)
+│       ├── prisma/
+│       │   ├── schema.prisma
+│       │   └── migrations/
+│       ├── prisma.config.ts
 │       ├── src/
 │       │   ├── main.ts
 │       │   ├── app.module.ts
-│       │   ├── boats/
-│       │   ├── auth/
-│       │   ├── users/
+│       │   ├── prisma/
+│       │   │   ├── prisma.module.ts
+│       │   │   └── prisma.service.ts
 │       │   └── ...
-│       ├── package.json
-│       ├── tsconfig.json
-│       ├── nest-cli.json
-│       └── .env
-├── package.json       (root - já existe)
-├── lerna.json         (já existe)
+│       └── package.json
+├── package.json       (root - Turbo + Yarn Workspaces)
 └── yarn.lock
-```
-
----
-
-## 🔧 Passo a Passo para Implementação
-
-### 1. Criar o projeto NestJS dentro do monorepo
-
-```bash
-# No diretório packages/
-cd packages
-npx @nestjs/cli new api
-# Ou criar manualmente a estrutura
-```
-
-### 2. Configurar o package.json do backend
-
-```json
-{
-  "name": "@tripfinder/api",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "start": "nest start",
-    "dev": "nest start --watch",
-    "build": "nest build",
-    "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage"
-  },
-  "dependencies": {
-    "@nestjs/common": "^10.0.0",
-    "@nestjs/core": "^10.0.0",
-    "@nestjs/platform-express": "^10.0.0",
-    "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
-  },
-  "devDependencies": {
-    "@nestjs/cli": "^10.0.0",
-    "@nestjs/schematics": "^10.0.0",
-    "@types/node": "^20.3.1",
-    "typescript": "^5.1.3"
-  }
-}
-```
-
-### 3. Atualizar scripts do package.json raiz
-
-Adicionar ao `package.json` raiz:
-
-```json
-{
-  "scripts": {
-    // ... scripts existentes
-    "start:api": "yarn workspace @tripfinder/api run dev",
-    "build:api": "yarn workspace @tripfinder/api run build",
-    "start:all": "concurrently \"yarn start:api\" \"yarn start:boat\""
-  },
-  "devDependencies": {
-    // ... dependências existentes
-    "concurrently": "^8.2.0"  // Para rodar front e back juntos
-  }
-}
-```
-
-### 4. Compartilhar tipos TypeScript (Opcional mas Recomendado)
-
-Criar um package compartilhado para tipos:
-
-```
-packages/
-└── shared/
-    └── types/
-        ├── boat.types.ts
-        ├── user.types.ts
-        └── index.ts
-```
-
-E referenciar nos package.json:
-
-```json
-{
-  "dependencies": {
-    "@tripfinder/shared": "workspace:*"
-  }
-}
 ```
 
 ---
 
 ## ⚙️ Configuração de Ambiente
 
-### Variáveis de Ambiente (.env no backend)
+### Variáveis de Ambiente
+
+Copie o exemplo e ajuste apenas se necessário:
+
+```bash
+cp packages/api/.env.example packages/api/.env
+```
 
 ```env
 # packages/api/.env
-PORT=3001
-DATABASE_URL=postgresql://user:password@localhost:5432/tripfinder
-JWT_SECRET=your-secret-key
-NODE_ENV=development
+DATABASE_URL="postgresql://tripfinder:tripfinder_secret@localhost:5433/tripfinder"
+PORT=3333
+JWT_SECRET=super-secret-change-in-production
 ```
 
-### Atualizar api-endpoints.ts no frontend
+| Variável       | Valor (desenvolvimento)                                      |
+|----------------|--------------------------------------------------------------|
+| `DATABASE_URL` | `postgresql://tripfinder:tripfinder_secret@localhost:5433/tripfinder` |
+| `PORT`         | `3333`                                                       |
+| `JWT_SECRET`   | trocar em produção                                           |
+
+### Docker (PostgreSQL)
+
+Credenciais alinhadas com `docker-compose.yml`:
+
+| Campo    | Valor              |
+|----------|--------------------|
+| Usuário  | `tripfinder`       |
+| Senha    | `tripfinder_secret`|
+| Banco    | `tripfinder`       |
+| Container| `seanb-postgres`   |
+| Porta    | `5433` (host)      |
+
+```bash
+# Recomendado: subir via docker-compose (na raiz do monorepo)
+docker-compose up -d
+
+# Alternativa manual (mesmas credenciais do compose)
+docker run -d --name seanb-postgres \
+  -e POSTGRES_USER=tripfinder \
+  -e POSTGRES_PASSWORD=tripfinder_secret \
+  -e POSTGRES_DB=tripfinder \
+  -p 5433:5432 \
+  postgres:16-alpine
+```
+
+---
+
+## 🚀 Comandos
+
+```bash
+# Instalar dependências
+yarn
+
+# Rodar API
+yarn dev:api
+
+# Rodar frontend
+yarn dev:boat
+
+# Rodar ambos (Turbo executa em paralelo)
+yarn dev
+
+# Prisma (dentro de packages/api)
+cd packages/api
+npx prisma migrate dev    # Rodar migrations
+npx prisma generate       # Gerar client
+npx prisma studio         # UI do banco
+```
+
+---
+
+## 📊 Modelo de Dados (Planejado)
+
+### User (com roles)
+
+| Role   | Pode alugar | Pode publicar barcos |
+|--------|-------------|----------------------|
+| GUEST  | ✅          | ❌                   |
+| HOST   | ✅          | ✅                   |
+| ADMIN  | ✅          | ✅                   |
+
+**Host pode alugar** barcos de outros (como Guest). Um único usuário, dois papéis conforme o contexto.
+
+### Entidades
+
+```
+User
+├── id, email, name, avatar, ...
+├── role: GUEST | HOST | ADMIN
+├── planId (FK) → só para HOST
+└── createdAt, updatedAt
+
+Plan (planos para Hosts)
+├── id, name (Lite, Pro, Ultimate)
+├── maxListings, priceMonthly, priceYearly
+└── features
+
+Listing (barco/anúncio)
+├── id, slug, title, description, price
+├── userId (owner, deve ser HOST)
+├── location, coordinates, images
+├── equipment, specifications
+└── ...
+
+Reservation
+├── id, listingId, guestId, hostId
+├── checkIn, checkOut, totalPrice
+├── status: PENDING | CONFIRMED | CANCELLED | COMPLETED
+└── ...
+
+Review
+├── id, listingId, userId
+├── rating, comment, date
+└── ...
+```
+
+---
+
+## 📝 Roadmap de Implementação
+
+### Fase 1: Base ✅
+- [x] NestJS + Fastify
+- [x] Prisma + PostgreSQL
+- [x] Schema completo (User, Plan, Listing, Reservation, Review)
+- [x] db push (schema aplicado)
+- [x] Seed (planos, usuários, listings, reviews)
+
+### Fase 2: Auth ✅
+- [x] POST `/auth/register`
+- [x] POST `/auth/login` → JWT
+- [x] GET `/auth/me` (protegido)
+- [x] JWT Guard e estratégia
+- [x] ValidationPipe + CORS
+- [ ] Integrar frontend (substituir auth mock)
+
+### Fase 3: Listings
+- [ ] GET `/listings` (listar, filtros)
+- [ ] GET `/listings/:slug` (detalhe)
+- [ ] POST `/listings` (só HOST)
+- [ ] PATCH/DELETE `/listings/:id`
+- [ ] Integrar frontend (home, explore, detalhe)
+
+### Fase 4: Reservas
+- [ ] POST `/reservations`
+- [ ] GET `/reservations` (minhas reservas)
+- [ ] PATCH `/reservations/:id` (cancelar, etc.)
+- [ ] Integrar frontend
+
+### Fase 5: Extras
+- [ ] Reviews
+- [ ] Chat/Inbox
+- [ ] Pagamentos
+
+---
+
+## 🔗 Integração Frontend
+
+Quando a API estiver pronta, criar/atualizar:
 
 ```typescript
 // packages/boat/src/config/api-endpoints.ts
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333';
 
 export const API_ENDPOINTS = {
-  TOP_DESTINATIONS: `${API_BASE_URL}/api/destinations`,
-  BOATS: `${API_BASE_URL}/api/boats`,
-  TOP_BOATS: `${API_BASE_URL}/api/boats/top`,
-  NEW_BOATS: `${API_BASE_URL}/api/boats/new`,
-  TESTIMONIALS: `${API_BASE_URL}/api/testimonials`,
-  LISTING_DETAILS: (slug: string) => `${API_BASE_URL}/api/boats/${slug}`,
-  RELATED_BOATS: (slug: string) => `${API_BASE_URL}/api/boats/${slug}/related`,
-  REVIEWS: (slug: string) => `${API_BASE_URL}/api/boats/${slug}/reviews`,
+  AUTH: {
+    LOGIN: `${API_BASE_URL}/auth/login`,
+    REGISTER: `${API_BASE_URL}/auth/register`,
+    ME: `${API_BASE_URL}/auth/me`,
+  },
+  LISTINGS: `${API_BASE_URL}/listings`,
+  LISTING_DETAIL: (slug: string) => `${API_BASE_URL}/listings/${slug}`,
+  RESERVATIONS: `${API_BASE_URL}/reservations`,
+  REVIEWS: (slug: string) => `${API_BASE_URL}/listings/${slug}/reviews`,
 };
 ```
 
 ---
 
-## 📦 Vantagens desta Abordagem
+## 📦 Stack Técnica
 
-✅ **Code Sharing**: Compartilhar tipos TypeScript entre frontend e backend  
-✅ **Desenvolvimento Simplificado**: Um único `yarn install` instala tudo  
-✅ **Versionamento Coordenado**: Mudanças na API sincronizadas com o frontend  
-✅ **CI/CD Unificado**: Build e deploy de todo o projeto junto  
-✅ **Refatoração Segura**: IDEs ajudam a encontrar usos em todo o monorepo  
-
----
-
-## 🔄 Quando Manter Separado?
-
-Só considere projeto separado se:
-
-❌ Equipes completamente diferentes trabalhando isoladamente  
-❌ Deploy em servidores/plataformas completamente diferentes  
-❌ Ciclos de release independentes  
-❌ Não há necessidade de compartilhar código  
-
-**Para o seu caso (projeto comprado, desenvolvimento próprio): NÃO recomendado separar!**
+| Tecnologia | Versão |
+|------------|--------|
+| NestJS     | 11     |
+| Fastify    | via @nestjs/platform-fastify |
+| Prisma     | 7      |
+| PostgreSQL | 16     |
+| TypeScript | 5.x    |
 
 ---
 
-## 🚀 Comandos Úteis Após Setup
+## 💡 Dica
 
-```bash
-# Instalar todas as dependências (raiz + todos os packages)
-yarn
-
-# Rodar backend apenas
-yarn start:api
-
-# Rodar frontend boat apenas
-yarn start:boat
-
-# Rodar ambos simultaneamente (com concurrently)
-yarn start:all
-
-# Build de produção de tudo
-yarn build:api
-yarn build:boat
-
-# Lint em tudo
-yarn lint:boat
-# (adicionar yarn lint:api depois)
-```
-
----
-
-## 📝 Próximos Passos Recomendados
-
-1. ✅ Criar estrutura básica do NestJS
-2. ✅ Configurar banco de dados (PostgreSQL recomendado)
-3. ✅ Criar módulos principais:
-   - `boats` - CRUD de barcos
-   - `auth` - Autenticação (JWT)
-   - `users` - Gestão de usuários
-   - `reviews` - Sistema de avaliações
-   - `reservations` - Sistema de reservas
-4. ✅ Integrar com o frontend (substituir dados estáticos)
-5. ✅ Configurar CORS para permitir comunicação frontend ↔ backend
-
----
-
-## 💡 Dica Extra
-
-Considere usar **Nx** no futuro se o projeto crescer muito. Nx oferece:
-- Caching inteligente de builds
-- Graph de dependências
-- Testes afetados apenas por mudanças relevantes
-- Melhor performance em monorepos grandes
-
-Mas para começar, Lerna + Yarn Workspaces é perfeito! 🎯
-
+Considere **Nx** no futuro se o projeto crescer muito. Para começar, Turbo + Yarn Workspaces é suficiente.

@@ -1,3 +1,4 @@
+# Credenciais espelhadas em packages/api/.env.example (DATABASE_URL)
 services:
   postgres:
     image: postgres:16-alpine
