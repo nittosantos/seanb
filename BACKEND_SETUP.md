@@ -190,7 +190,7 @@ Review
 - [x] GET `/reservations/host` (reservas recebidas pelo host)
 - [x] PATCH `/reservations/:id` (cancelar, confirmar, concluir)
 - [x] Integrar frontend (booking form, trips, painel do host)
-- [ ] Calendário com datas bloqueadas reais
+- [x] Calendário com datas bloqueadas reais
 - [ ] Pagamentos no checkout
 
 ### Fase 5: Extras

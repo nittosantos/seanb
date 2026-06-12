@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma, UserRole } from '../../generated/prisma/client';
+import { Prisma, ReservationStatus, UserRole } from '../../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateListingDto } from './dto/create-listing.dto';
 import { QueryListingsDto } from './dto/query-listings.dto';
@@ -117,6 +117,37 @@ export class ListingsService {
     }
 
     return mapListingDetail(listing);
+  }
+
+  async getBookedDates(slug: string) {
+    const listing = await this.prisma.listing.findUnique({
+      where: { slug },
+      select: { id: true },
+    });
+
+    if (!listing) {
+      throw new NotFoundException('Listing not found');
+    }
+
+    const reservations = await this.prisma.reservation.findMany({
+      where: {
+        listingId: listing.id,
+        status: {
+          in: [ReservationStatus.PENDING, ReservationStatus.CONFIRMED],
+        },
+        checkOut: { gte: new Date() },
+      },
+      select: {
+        checkIn: true,
+        checkOut: true,
+      },
+      orderBy: { checkIn: 'asc' },
+    });
+
+    return reservations.map((reservation) => ({
+      checkIn: reservation.checkIn.toISOString(),
+      checkOut: reservation.checkOut.toISOString(),
+    }));
   }
 
   async findMine(userId: string) {

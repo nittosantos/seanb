@@ -216,6 +216,7 @@
     "total": "Total",
     "minAdultRequired": "Minimum 1 adult required",
     "invalidDateRange": "End date must be after start date",
+    "datesUnavailable": "Selected dates are not available",
     "reservationError": "Could not create reservation. Please try again."
   },
   "account": {

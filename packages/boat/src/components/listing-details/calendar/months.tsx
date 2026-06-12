@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { isDateBooked } from '@/lib/listing-availability';
 import { getDaysInMonth } from '@/components/listing-details/calendar/get-days';
 import {
   MonthDataTypes,
@@ -7,21 +8,19 @@ import {
 
 export default function Months({
   dates,
+  bookedRanges = [],
   month = new Date().getMonth(),
   year = new Date().getFullYear(),
   monthContainerClassName,
   weekNameClassName = 'mt-8 grid grid-cols-7 gap-0 text-center text-sm font-semibold text-gray-dark md:text-base',
 }: MonthPropsTypes) {
-  // month change state
   const [changeMonth, setChangeMonth] = useState({
     showMonth: month,
     showYear: year,
   });
 
-  // console log to see the data
   const [printDate, setPrintDate] = useState<MonthDataTypes>();
 
-  // month and year to show on the screen
   useEffect(() => {
     setChangeMonth({
       showMonth: month,
@@ -29,41 +28,54 @@ export default function Months({
     });
   }, [month, year]);
 
-  // get dates from props dates
-  let x = dates?.checkin;
-  let y = dates?.checkout;
+  const checkIn = dates?.checkin;
+  const checkOut = dates?.checkout;
 
-  // set day class name based on dates from props
   useEffect(() => {
     const { currentMonth, currentData } = getDaysInMonth(
       changeMonth.showMonth,
-      changeMonth.showYear
+      changeMonth.showYear,
     );
-    let newCurrentData = currentData?.map((item) => {
-      let c = item.time;
+
+    const newCurrentData = currentData?.map((item) => {
+      const day = item.time;
+
+      if (!day) {
+        return { ...item, className: '' };
+      }
+
+      if (bookedRanges.length > 0 && isDateBooked(day, bookedRanges)) {
+        return { ...item, className: 'between-range' };
+      }
+
       if (
-        dates?.checkin?.getDate() === item?.time?.getDate() &&
-        dates?.checkin?.getMonth() === item?.time?.getMonth()
+        checkIn?.getDate() === day.getDate() &&
+        checkIn?.getMonth() === day.getMonth() &&
+        checkIn?.getFullYear() === day.getFullYear()
       ) {
         return { ...item, className: 'calender-start-range' };
       }
+
       if (
-        dates?.checkout?.getDate() === item?.time?.getDate() &&
-        dates?.checkout?.getMonth() === item?.time?.getMonth()
+        checkOut?.getDate() === day.getDate() &&
+        checkOut?.getMonth() === day.getMonth() &&
+        checkOut?.getFullYear() === day.getFullYear()
       ) {
         return { ...item, className: 'calender-end-range' };
       }
-      if (x && y && c && x < c && y > c) {
+
+      if (checkIn && checkOut && checkIn < day && checkOut > day) {
         return { ...item, className: 'between-range' };
       }
+
       return { ...item, className: '' };
     });
+
     setPrintDate({
-      currentMonth: currentMonth,
+      currentMonth,
       currentData: newCurrentData,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dates, changeMonth]);
+  }, [dates, bookedRanges, changeMonth, checkIn, checkOut]);
 
   return (
     <div className={monthContainerClassName}>

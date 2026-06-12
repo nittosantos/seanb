@@ -34,6 +34,14 @@ export async function fetchListingBySlug(
   return apiFetch<ListingDetail>(API_ENDPOINTS.LISTING_DETAIL(slug));
 }
 
+export async function fetchBookedDates(
+  slug: string,
+): Promise<{ checkIn: string; checkOut: string }[]> {
+  return apiFetch<{ checkIn: string; checkOut: string }[]>(
+    API_ENDPOINTS.LISTING_BOOKED_DATES(slug),
+  );
+}
+
 export type CreateListingInput = {
   title: string;
   description?: string;

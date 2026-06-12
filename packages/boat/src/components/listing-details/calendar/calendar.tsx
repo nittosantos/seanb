@@ -6,6 +6,7 @@ import Months from '@/components/listing-details/calendar/months';
 
 export default function Calendar({
   dates,
+  bookedRanges,
   noMonth,
   className,
   monthContainerClassName,
@@ -96,6 +97,7 @@ export default function Calendar({
           <Months
             key={`month-${item.m}-${index}`}
             dates={dates}
+            bookedRanges={bookedRanges}
             month={item.m}
             year={item.y}
             monthContainerClassName={monthContainerClassName}

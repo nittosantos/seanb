@@ -3,6 +3,10 @@ export type CalendarPropsTypes = {
     checkin?: Date;
     checkout?: Date;
   };
+  bookedRanges?: {
+    checkIn: Date;
+    checkOut: Date;
+  }[];
   noMonth?: number;
   className?: string;
   mobile?: boolean;
@@ -16,6 +20,10 @@ export type MonthPropsTypes = {
     checkin?: Date;
     checkout?: Date;
   };
+  bookedRanges?: {
+    checkIn: Date;
+    checkOut: Date;
+  }[];
   month?: number;
   year?: number;
   monthContainerClassName?: string;

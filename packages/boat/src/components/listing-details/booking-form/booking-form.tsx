@@ -17,6 +17,11 @@ import useAuth from '@/hooks/use-auth';
 import { Routes } from '@/config/routes';
 import { createReservation } from '@/lib/reservations-api';
 import { ApiError } from '@/lib/api-client';
+import { useListingBookedDates } from '@/hooks/use-listing-booked-dates';
+import {
+  filterAvailableDate,
+  isRangeAvailable,
+} from '@/lib/listing-availability';
 
 interface BookingFormProps {
   price: number;
@@ -44,6 +49,7 @@ export default function BookingForm({
   const t = useTranslations('listing');
   const router = useRouter();
   const listing = useListingDetail();
+  const { bookedRanges } = useListingBookedDates(listing.slug);
   const { isAuthorized, accessToken } = useAuth();
   const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,8 +69,16 @@ export default function BookingForm({
         .refine(({ startDate, endDate }) => startDate < endDate, {
           message: t('invalidDateRange'),
           path: ['endDate'],
-        }),
-    [t],
+        })
+        .refine(
+          ({ startDate, endDate }) =>
+            isRangeAvailable(startDate, endDate, bookedRanges),
+          {
+            message: t('datesUnavailable'),
+            path: ['endDate'],
+          },
+        ),
+    [t, bookedRanges],
   );
 
   const {
@@ -190,6 +204,7 @@ export default function BookingForm({
               onClickOutside={() => setFocus(false)}
               placeholderText={t('addDate')}
               minDate={new Date()}
+              filterDate={(date) => filterAvailableDate(date, bookedRanges)}
               selected={value}
               onChange={(date: Date) => {
                 setMinEndDate(date);
@@ -219,6 +234,7 @@ export default function BookingForm({
               onChange={onChange}
               selectsEnd
               minDate={minEndDate ?? new Date()}
+              filterDate={(date) => filterAvailableDate(date, bookedRanges)}
               endDate={getValues('endDate')}
               startDate={getValues('startDate')}
               dateFormat="eee dd / LL / yy"

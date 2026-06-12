@@ -216,6 +216,7 @@
     "total": "Total",
     "minAdultRequired": "Mínimo 1 adulto obrigatório",
     "invalidDateRange": "A data final deve ser após a inicial",
+    "datesUnavailable": "As datas selecionadas não estão disponíveis",
     "reservationError": "Não foi possível criar a reserva. Tente novamente."
   },
   "account": {

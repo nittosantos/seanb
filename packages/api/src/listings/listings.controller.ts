@@ -39,6 +39,11 @@ export class ListingsController {
     return this.listingsService.findMine(userId);
   }
 
+  @Get(':slug/booked-dates')
+  getBookedDates(@Param('slug') slug: string) {
+    return this.listingsService.getBookedDates(slug);
+  }
+
   @Get(':slug')
   findBySlug(@Param('slug') slug: string) {
     return this.listingsService.findBySlug(slug);
