@@ -10,15 +10,23 @@ import Footer from '@/components/footer/footer';
 
 export default function UserLayout({ children }: React.PropsWithChildren<{}>) {
   const router = useRouter();
-  const { isAuthorized } = useAuth();
+  const { isAuthorized, isHydrating } = useAuth();
 
-  // Note: need this check if someone manually clear their cookie from browser
   useEffect(() => {
+    if (isHydrating) return;
+
     if (!isAuthorized) {
-      router.push(Routes.public.home);
+      router.push(Routes.auth.signIn);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthorized]);
+  }, [isAuthorized, isHydrating, router]);
+
+  if (isHydrating) {
+    return null;
+  }
+
+  if (!isAuthorized) {
+    return null;
+  }
 
   return (
     <>

@@ -1,22 +1,26 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import { Link } from '@/i18n/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
 import { Routes } from '@/config/routes';
 import Input from '@/components/ui/form-fields/input';
 import Button from '@/components/ui/button';
 import Checkbox from '@/components/ui/form-fields/checkbox';
 import useAuth from '@/hooks/use-auth';
 import { useModal } from '@/components/modals/context';
+import { ApiError } from '@/lib/api-client';
 
 export default function SigninForm() {
   const t = useTranslations('auth');
-  const { authorize } = useAuth();
+  const router = useRouter();
+  const { login } = useAuth();
   const { closeModal } = useModal();
+  const [formError, setFormError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const loginInfoSchema = useMemo(
     () =>
@@ -30,7 +34,7 @@ export default function SigninForm() {
           .min(8, { message: t('validationPasswordMin') }),
         remember: z.boolean(),
       }),
-    [t]
+    [t],
   );
 
   type SignInType = z.infer<typeof loginInfoSchema>;
@@ -43,15 +47,32 @@ export default function SigninForm() {
     resolver: zodResolver(loginInfoSchema),
   });
 
-  // TO-DO: Send data to API onSubmit.
-  function handleFormSubmit(data: SignInType) {
-    console.log('Submitted data', data);
-    authorize();
-    closeModal();
+  async function handleFormSubmit(data: SignInType) {
+    setFormError(null);
+    setIsSubmitting(true);
+
+    try {
+      await login(data.email, data.password);
+      closeModal();
+      router.push(Routes.private.dashboard);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setFormError(error.message);
+      } else {
+        setFormError(t('authError'));
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
     <form noValidate onSubmit={handleSubmit((d) => handleFormSubmit(d))}>
+      {formError && (
+        <p className="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
+          {formError}
+        </p>
+      )}
       <Input
         type="text"
         label={t('email')}
@@ -83,7 +104,13 @@ export default function SigninForm() {
           {t('forgetPassword')}
         </Link>
       </div>
-      <Button type="submit" className="mb-2 w-full" size="xl">
+      <Button
+        type="submit"
+        className="mb-2 w-full"
+        size="xl"
+        isLoading={isSubmitting}
+        disabled={isSubmitting}
+      >
         {t('signIn')}
       </Button>
       <p className="text-sm font-semibold leading-6 text-gray">

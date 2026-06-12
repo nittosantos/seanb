@@ -2,41 +2,91 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-
-export interface UserType {
-  name?: string;
-  avatar?: string;
-  role?: string;
-}
-
-const demoUser: UserType = {
-  name: 'Jhon Doe',
-  avatar:
-    'http://s3.amazonaws.com/redqteam.com/isomorphic-reloaded-image/profilepic.png',
-  role: 'admin',
-};
+import {
+  loginRequest,
+  meRequest,
+  registerRequest,
+  type AuthUser,
+} from '@/lib/auth-api';
+import { ApiError } from '@/lib/api-client';
 
 interface AuthState {
   isAuthorized: boolean;
-  user: Partial<UserType>;
-  authorize: () => void;
-  unauthorize: () => void;
+  user: AuthUser | null;
+  accessToken: string | null;
+  isHydrating: boolean;
+  setSession: (user: AuthUser, accessToken: string) => void;
+  clearSession: () => void;
+  setHydrating: (hydrating: boolean) => void;
+  login: (email: string, password: string) => Promise<void>;
+  register: (input: {
+    email: string;
+    password: string;
+    name?: string;
+  }) => Promise<void>;
+  hydrateSession: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       isAuthorized: false,
-      user: {},
-      authorize: () => set({ isAuthorized: true, user: demoUser }),
-      unauthorize: () => set({ isAuthorized: false, user: {} }),
+      user: null,
+      accessToken: null,
+      isHydrating: true,
+      setSession: (user, accessToken) =>
+        set({ isAuthorized: true, user, accessToken }),
+      clearSession: () =>
+        set({
+          isAuthorized: false,
+          user: null,
+          accessToken: null,
+        }),
+      setHydrating: (isHydrating) => set({ isHydrating }),
+      login: async (email, password) => {
+        const { user, accessToken } = await loginRequest(email, password);
+        get().setSession(user, accessToken);
+      },
+      register: async (input) => {
+        const { user, accessToken } = await registerRequest(input);
+        get().setSession(user, accessToken);
+      },
+      hydrateSession: async () => {
+        const { accessToken, setSession, clearSession, setHydrating } = get();
+
+        if (!accessToken) {
+          setHydrating(false);
+          return;
+        }
+
+        try {
+          const user = await meRequest(accessToken);
+          setSession(user, accessToken);
+        } catch (error) {
+          if (error instanceof ApiError && error.status === 401) {
+            clearSession();
+          } else {
+            clearSession();
+          }
+        } finally {
+          setHydrating(false);
+        }
+      },
     }),
     {
       name: 'auth-storage',
       partialize: (state) => ({
         isAuthorized: state.isAuthorized,
         user: state.user,
+        accessToken: state.accessToken,
       }),
-    }
-  )
+      onRehydrateStorage: () => (state, error) => {
+        if (error) {
+          useAuthStore.getState().setHydrating(false);
+          return;
+        }
+        void state?.hydrateSession();
+      },
+    },
+  ),
 );

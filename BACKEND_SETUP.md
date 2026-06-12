@@ -171,7 +171,8 @@ Review
 - [x] GET `/auth/me` (protegido)
 - [x] JWT Guard e estratégia
 - [x] ValidationPipe + CORS
-- [ ] Integrar frontend (substituir auth mock)
+- [x] Integrar frontend (sign-in, sign-up, sessão JWT)
+- [ ] OAuth social (Facebook/Google/Apple) — desabilitado no front até implementar
 
 ### Fase 3: Listings
 - [ ] GET `/listings` (listar, filtros)
@@ -187,32 +188,41 @@ Review
 - [ ] Integrar frontend
 
 ### Fase 5: Extras
-- [ ] Reviews
-- [ ] Chat/Inbox
-- [ ] Pagamentos
+- [ ] Reviews (API dedicada)
+- [ ] Chat/Inbox — **WebSockets** (ver nota abaixo)
+- [ ] Pagamentos (Stripe ou similar)
+- [ ] E-mails transacionais (reset de senha, confirmação de reserva)
+- [ ] Upload de imagens (S3/Cloudinary)
+
+#### Chat em produção (planejado)
+
+O inbox do frontend hoje usa dados estáticos. Para produção, a abordagem recomendada:
+
+1. **NestJS Gateway** (`@nestjs/websockets` + Socket.IO ou `ws`)
+2. **Modelos Prisma**: `Conversation`, `Message` (participantes, `listingId` opcional)
+3. **Autenticação WS**: validar JWT no handshake (`auth.token` no Socket.IO)
+4. **Persistência**: salvar mensagens no PostgreSQL; WS só para tempo real
+5. **Fallback**: polling ou SSE se WS estiver bloqueado em alguma rede
+
+Alternativa gerenciada (menos código): Pusher, Ably ou Supabase Realtime — avaliar custo vs controle.
 
 ---
 
 ## 🔗 Integração Frontend
 
-Quando a API estiver pronta, criar/atualizar:
+### Auth (implementado)
 
-```typescript
-// packages/boat/src/config/api-endpoints.ts
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333';
+- `packages/boat/src/config/api-endpoints.ts` — URLs da API
+- `packages/boat/src/lib/api-client.ts` — cliente HTTP com JWT
+- `packages/boat/src/lib/auth-api.ts` — login, register, me
+- `packages/boat/src/stores/auth-store.ts` — sessão persistida (Zustand)
 
-export const API_ENDPOINTS = {
-  AUTH: {
-    LOGIN: `${API_BASE_URL}/auth/login`,
-    REGISTER: `${API_BASE_URL}/auth/register`,
-    ME: `${API_BASE_URL}/auth/me`,
-  },
-  LISTINGS: `${API_BASE_URL}/listings`,
-  LISTING_DETAIL: (slug: string) => `${API_BASE_URL}/listings/${slug}`,
-  RESERVATIONS: `${API_BASE_URL}/reservations`,
-  REVIEWS: (slug: string) => `${API_BASE_URL}/listings/${slug}/reviews`,
-};
+```bash
+# packages/boat/.env.local
+NEXT_PUBLIC_API_URL=http://localhost:3333
 ```
+
+Usuários de teste (após `prisma db seed`): `fabio@example.com` / `maria@example.com` — senha `password123`
 
 ---
 

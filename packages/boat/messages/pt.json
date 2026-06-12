@@ -174,7 +174,11 @@
     "validationEmailRequired": "O e-mail é obrigatório.",
     "validationEmailInvalid": "O e-mail é inválido.",
     "validationPasswordMin": "A senha deve ter pelo menos 8 caracteres.",
-    "validationPasswordsDontMatch": "As senhas não coincidem."
+    "validationPasswordsDontMatch": "As senhas não coincidem.",
+    "validationFieldRequired": "Este campo é obrigatório.",
+    "validationAcceptPolicy": "Você precisa aceitar os termos para continuar.",
+    "authError": "Algo deu errado. Tente novamente.",
+    "socialComingSoon": "Login social em breve."
   },
   "trips": {
     "title": "Minhas Viagens",
