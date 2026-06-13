@@ -71,3 +71,27 @@ export async function createListing(
     body: JSON.stringify(input),
   });
 }
+
+export type UpdateListingInput = Partial<CreateListingInput>;
+
+export async function updateListing(
+  id: string,
+  input: UpdateListingInput,
+  token: string,
+): Promise<ListingCard> {
+  return apiFetch<ListingCard>(API_ENDPOINTS.LISTING_BY_ID(id), {
+    method: 'PATCH',
+    token,
+    body: JSON.stringify(input),
+  });
+}
+
+export async function deleteListing(
+  id: string,
+  token: string,
+): Promise<{ success: boolean }> {
+  return apiFetch<{ success: boolean }>(API_ENDPOINTS.LISTING_BY_ID(id), {
+    method: 'DELETE',
+    token,
+  });
+}

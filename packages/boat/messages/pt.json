@@ -240,7 +240,23 @@
     "refund": "Reembolso",
     "edit": "Editar",
     "preview": "Visualizar",
-    "delete": "Excluir"
+    "delete": "Excluir",
+    "confirmReservation": "Confirmar",
+    "cancelReservation": "Cancelar",
+    "completeReservation": "Concluir",
+    "pendingOrders": "Pedidos pendentes",
+    "totalRevenue": "Receita total",
+    "avgOrderRevenue": "Receita média por pedido",
+    "editListing": "Editar anúncio",
+    "listingTitle": "Título",
+    "listingPrice": "Preço por noite",
+    "listingLocation": "Localização",
+    "listingDescription": "Descrição",
+    "deleteListingConfirm": "Excluir este anúncio? Esta ação não pode ser desfeita.",
+    "saving": "Salvando...",
+    "validationTitleMin": "O título deve ter pelo menos 3 caracteres",
+    "validationPriceMin": "O preço deve ser pelo menos 1",
+    "validationLocationRequired": "A localização é obrigatória"
   },
   "inbox": {
     "searchByName": "Buscar por nome",
@@ -289,7 +305,12 @@
     "country": "País/região",
     "city": "Cidade",
     "gender": "Gênero",
-    "phoneNumber": "Telefone"
+    "phoneNumber": "Telefone",
+    "profileSaved": "Perfil atualizado com sucesso.",
+    "profileSaveError": "Não foi possível salvar o perfil. Tente novamente.",
+    "passwordUpdated": "Senha atualizada com sucesso.",
+    "passwordUpdateError": "Não foi possível atualizar a senha. Verifique a senha atual.",
+    "saving": "Salvando..."
   },
   "profile": {
     "hiIm": "Olá, sou {name}",

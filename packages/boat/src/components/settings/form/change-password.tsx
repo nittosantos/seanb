@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -7,9 +8,14 @@ import { useTranslations } from 'next-intl';
 import Input from '@/components/ui/form-fields/input';
 import Text from '@/components/ui/typography/text';
 import Button from '@/components/ui/button';
+import { useAuthStore } from '@/stores/auth-store';
+import { changeUserPassword } from '@/lib/users-api';
 
 export default function ChangePassword() {
   const t = useTranslations('settings');
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const changePasswordSchema = z
     .object({
@@ -33,13 +39,33 @@ export default function ChangePassword() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<ChangePasswordType>({
     resolver: zodResolver(changePasswordSchema),
   });
 
-  function handleChangePassword(data: ChangePasswordType) {
-    console.log('Data:', data);
+  async function handleChangePassword(data: ChangePasswordType) {
+    if (!accessToken) return;
+
+    setIsSaving(true);
+    setFeedback(null);
+
+    try {
+      await changeUserPassword(
+        {
+          currentPassword: data.currentPassword,
+          newPassword: data.newPassword,
+        },
+        accessToken,
+      );
+      reset();
+      setFeedback(t('passwordUpdated'));
+    } catch {
+      setFeedback(t('passwordUpdateError'));
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   return (
@@ -50,6 +76,9 @@ export default function ChangePassword() {
       >
         {t('changePassword')}
       </Text>
+      {feedback && (
+        <Text className="mb-4 text-sm text-gray-dark">{feedback}</Text>
+      )}
       <form
         noValidate
         onSubmit={handleSubmit((data) => handleChangePassword(data))}
@@ -83,8 +112,9 @@ export default function ChangePassword() {
             type="submit"
             size="xl"
             className="w-full transition-transform duration-100 focus:!ring-0 active:scale-95 md:w-auto"
+            disabled={isSaving}
           >
-            {t('updatePassword')}
+            {isSaving ? t('saving') : t('updatePassword')}
           </Button>
         </div>
       </form>

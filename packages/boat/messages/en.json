@@ -240,7 +240,23 @@
     "refund": "Refund",
     "edit": "Edit",
     "preview": "Preview",
-    "delete": "Delete"
+    "delete": "Delete",
+    "confirmReservation": "Confirm",
+    "cancelReservation": "Cancel",
+    "completeReservation": "Complete",
+    "pendingOrders": "Pending orders",
+    "totalRevenue": "Total revenue",
+    "avgOrderRevenue": "Avg. order revenue",
+    "editListing": "Edit listing",
+    "listingTitle": "Title",
+    "listingPrice": "Price per night",
+    "listingLocation": "Location",
+    "listingDescription": "Description",
+    "deleteListingConfirm": "Delete this listing? This cannot be undone.",
+    "saving": "Saving...",
+    "validationTitleMin": "Title must be at least 3 characters",
+    "validationPriceMin": "Price must be at least 1",
+    "validationLocationRequired": "Location is required"
   },
   "inbox": {
     "searchByName": "Search by name",
@@ -289,7 +305,12 @@
     "country": "Country/region",
     "city": "City",
     "gender": "Gender",
-    "phoneNumber": "Phone Number"
+    "phoneNumber": "Phone Number",
+    "profileSaved": "Profile updated successfully.",
+    "profileSaveError": "Could not save profile. Please try again.",
+    "passwordUpdated": "Password updated successfully.",
+    "passwordUpdateError": "Could not update password. Check your current password.",
+    "saving": "Saving..."
   },
   "profile": {
     "hiIm": "Hi, I'm {name}",

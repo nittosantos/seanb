@@ -4,12 +4,17 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import { useHostReservations } from '@/hooks/use-reservations';
+import { updateReservationStatus } from '@/lib/reservations-api';
+import { useAuthStore } from '@/stores/auth-store';
 import { reservationColumn } from '@/components/reservation/reservation-col';
 import Input from '@/components/ui/form-fields/input';
 import Pagination from '@/components/ui/pagination';
 import Text from '@/components/ui/typography/text';
 import Table from '@/components/ui/table';
-import type { HostReservationRow } from '@/types/reservations';
+import type {
+  HostReservationRow,
+  ReservationStatus,
+} from '@/types/reservations';
 
 type HostReservationsTableProps = {
   title?: string;
@@ -21,12 +26,14 @@ export default function HostReservationsTable({
   showSearch = true,
 }: HostReservationsTableProps) {
   const t = useTranslations('account');
-  const { reservations, isLoading } = useHostReservations();
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const { reservations, isLoading, reload } = useHostReservations();
   const [order, setOrder] = useState('desc');
   const [column, setColumn] = useState('');
   const [data, setData] = useState<HostReservationRow[]>([]);
   const [searchfilter, setSearchFilter] = useState('');
   const [current, setCurrent] = useState(1);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
   const pageSize = 10;
 
   const filteredSource = useMemo(() => {
@@ -46,12 +53,9 @@ export default function HostReservationsTable({
     setCurrent(1);
   }, [searchfilter]);
 
-  const onSelectAll = useCallback(
-    (checked: boolean) => {
-      setData((rows) => rows.map((item) => ({ ...item, checked })));
-    },
-    [],
-  );
+  const onSelectAll = useCallback((checked: boolean) => {
+    setData((rows) => rows.map((item) => ({ ...item, checked })));
+  }, []);
 
   const onChange = useCallback((row: HostReservationRow) => {
     setData((rows) =>
@@ -61,9 +65,22 @@ export default function HostReservationsTable({
     );
   }, []);
 
-  const onMore = useCallback((_e: unknown, row: HostReservationRow) => {
-    console.log('Reservation action', row.key);
-  }, []);
+  const onAction = useCallback(
+    async (reservationId: string, status: ReservationStatus) => {
+      if (!accessToken) return;
+
+      setUpdatingId(reservationId);
+      try {
+        await updateReservationStatus(reservationId, status, accessToken);
+        await reload();
+      } catch {
+        // keep table state on failure
+      } finally {
+        setUpdatingId(null);
+      }
+    },
+    [accessToken, reload],
+  );
 
   const onHeaderClick = useCallback(
     (value: string) => ({
@@ -92,10 +109,11 @@ export default function HostReservationsTable({
         column,
         onSelectAll,
         onChange,
-        onMore,
+        onAction,
         onHeaderClick,
+        updatingId,
       ),
-    [t, order, column, onSelectAll, onChange, onMore, onHeaderClick],
+    [t, order, column, onSelectAll, onChange, onAction, onHeaderClick, updatingId],
   );
 
   if (isLoading) {

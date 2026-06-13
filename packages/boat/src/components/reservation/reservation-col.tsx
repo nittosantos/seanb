@@ -1,10 +1,11 @@
 'use client';
 
-import DotsDropdown from '@/components/reservation/dots-dropdown';
+import ReservationActionsDropdown from '@/components/reservation/reservation-actions-dropdown';
 import Checkbox from '@/components/ui/form-fields/checkbox';
 import HeaderCell from '@/components/ui/table/header-cell';
 import Avatar from '@/components/ui/avatar';
 import Badge from '@/components/ui/badge';
+import type { HostReservationRow, ReservationStatus } from '@/types/reservations';
 
 export enum STATUS {
   Received = 'Received',
@@ -30,8 +31,9 @@ export const reservationColumn = (
   column: string,
   onSelectAll: (key: boolean) => any,
   onChange: (row: any) => any,
-  onMore: (e: any, row: any) => any,
-  onHeaderClick: (value: string) => any
+  onAction: (reservationId: string, status: ReservationStatus) => void,
+  onHeaderClick: (value: string) => any,
+  updatingId?: string | null,
 ) => [
   {
     title: (
@@ -131,9 +133,13 @@ export const reservationColumn = (
     dataIndex: 'action',
     key: 'action',
     width: 50,
-    render: (value: any, row: any) => (
+    render: (_value: unknown, row: HostReservationRow) => (
       <div className="flex items-center gap-2">
-        <DotsDropdown key={row.key} onClick={(e: any) => onMore(e, row)} />
+        <ReservationActionsDropdown
+          row={row}
+          onAction={onAction}
+          isUpdating={updatingId === row.key}
+        />
       </div>
     ),
   },

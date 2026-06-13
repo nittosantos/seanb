@@ -1,23 +1,38 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { z } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
+import clsx from 'clsx';
 import DateTime from '@/components/ui/form-fields/date-time-picker';
 import PhoneNumber from '@/components/ui/form-fields/phone-number';
 import Radio from '@/components/ui/form-fields/radio';
 import Input from '@/components/ui/form-fields/input';
 import Text from '@/components/ui/typography/text';
 import Button from '@/components/ui/button';
-import clsx from 'clsx';
-import { useState } from 'react';
+import { useAuthStore } from '@/stores/auth-store';
+import { fetchUserProfile, updateUserProfile } from '@/lib/users-api';
+
+function splitName(name?: string | null) {
+  if (!name) return { firstName: '', lastName: '' };
+  const parts = name.trim().split(/\s+/);
+  const firstName = parts.shift() ?? '';
+  const lastName = parts.join(' ');
+  return { firstName, lastName };
+}
 
 export default function PersonalInfoForm() {
   const t = useTranslations('settings');
   const tAuth = useTranslations('auth');
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const setSession = useAuthStore((state) => state.setSession);
+  const user = useAuthStore((state) => state.user);
   const [state, setState] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
 
   const PersonalInfoSchema = useMemo(
     () =>
@@ -39,7 +54,7 @@ export default function PersonalInfoForm() {
         streetAddress: z.string().optional(),
         state: z.string().optional(),
       }),
-    [t, tAuth]
+    [t, tAuth],
   );
 
   type PersonalInfoType = z.infer<typeof PersonalInfoSchema>;
@@ -48,6 +63,7 @@ export default function PersonalInfoForm() {
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors },
   } = useForm<PersonalInfoType>({
     defaultValues: {
@@ -56,8 +72,91 @@ export default function PersonalInfoForm() {
     resolver: zodResolver(PersonalInfoSchema),
   });
 
-  function handlePersonalInfo(data: any) {
-    console.log('Data:', data);
+  useEffect(() => {
+    if (!accessToken) {
+      setIsLoading(false);
+      return;
+    }
+
+    fetchUserProfile(accessToken)
+      .then((profile) => {
+        const { firstName, lastName } = splitName(profile.name);
+        reset({
+          firstName,
+          lastName,
+          email: profile.email,
+          phoneNumber: profile.phone ?? '',
+          birthDate: profile.birthDate ? new Date(profile.birthDate) : undefined,
+          townCity: profile.city ?? '',
+          zipCode: profile.zipCode ?? '',
+          bio: profile.bio ?? '',
+          gender: profile.gender ?? 'male',
+          country: profile.country ?? '',
+          city: profile.city ?? '',
+          streetAddress: profile.streetAddress ?? '',
+          state: profile.state ?? '',
+        });
+      })
+      .catch(() => {
+        if (user) {
+          const { firstName, lastName } = splitName(user.name);
+          reset({
+            firstName,
+            lastName,
+            email: user.email,
+            phoneNumber: '',
+            gender: 'male',
+          });
+        }
+      })
+      .finally(() => setIsLoading(false));
+  }, [accessToken, reset, user]);
+
+  async function handlePersonalInfo(data: PersonalInfoType) {
+    if (!accessToken) return;
+
+    setIsSaving(true);
+    setFeedback(null);
+
+    try {
+      const updated = await updateUserProfile(
+        {
+          name: `${data.firstName} ${data.lastName}`.trim(),
+          email: data.email,
+          phone: data.phoneNumber,
+          bio: data.bio,
+          country: data.country,
+          city: data.city || data.townCity,
+          streetAddress: data.streetAddress,
+          state: data.state,
+          zipCode: data.zipCode,
+          birthDate: data.birthDate?.toISOString(),
+          gender: data.gender,
+        },
+        accessToken,
+      );
+
+      if (user) {
+        setSession(
+          {
+            ...user,
+            email: updated.email,
+            name: updated.name,
+          },
+          accessToken,
+        );
+      }
+
+      setFeedback(t('profileSaved'));
+    } catch {
+      setFeedback(t('profileSaveError'));
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  if (isLoading) {
+    return null;
   }
 
   return (
@@ -68,6 +167,9 @@ export default function PersonalInfoForm() {
       >
         {t('personalInfo')}
       </Text>
+      {feedback && (
+        <Text className="mb-4 text-sm text-gray-dark">{feedback}</Text>
+      )}
       <form
         noValidate
         onSubmit={handleSubmit((data) => handlePersonalInfo(data))}
@@ -139,7 +241,7 @@ export default function PersonalInfoForm() {
                     placeholderText="dd/mm/yyyy"
                     inputClassName={clsx(
                       state &&
-                        '!border !border-gray-dark !ring-[1px] !ring-gray-900/20'
+                        '!border !border-gray-dark !ring-[1px] !ring-gray-900/20',
                     )}
                     onCalendarOpen={() => setState(true)}
                     onCalendarClose={() => setState(false)}
@@ -244,11 +346,17 @@ export default function PersonalInfoForm() {
             size="xl"
             variant="outline"
             className="w-full border-gray-dark hover:bg-gray-dark hover:text-white md:w-auto"
+            onClick={() => window.location.reload()}
           >
             {t('cancel')}
           </Button>
-          <Button type="submit" size="xl" className="w-full md:w-auto">
-            {t('save')}
+          <Button
+            type="submit"
+            size="xl"
+            className="w-full md:w-auto"
+            disabled={isSaving}
+          >
+            {isSaving ? t('saving') : t('save')}
           </Button>
         </div>
       </form>

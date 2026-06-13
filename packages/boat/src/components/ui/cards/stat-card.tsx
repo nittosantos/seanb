@@ -10,9 +10,13 @@ interface PricingCardTypes {
     last: number;
     price: number | null;
   };
+  showComparison?: boolean;
 }
 
-export default function StatCard({ data }: PricingCardTypes) {
+export default function StatCard({
+  data,
+  showComparison = true,
+}: PricingCardTypes) {
   return (
     <div className="card-gradient rounded-lg border-2 border-gray-lighter p-6 transition-all duration-200 hover:shadow-card md:rounded-xl md:p-8 lg:p-11 2xl:p-14">
       <Text className="text-sm text-gray md:!text-sm 2xl:!text-base">
@@ -26,7 +30,7 @@ export default function StatCard({ data }: PricingCardTypes) {
         {data.price && <span>${data.price}</span>}
       </Text>
       <Text className="text-sm text-gray md:!text-sm 2xl:!text-base">
-        vs. {data.last} last period
+        {showComparison ? `vs. ${data.last} last period` : '\u00A0'}
       </Text>
     </div>
   );
