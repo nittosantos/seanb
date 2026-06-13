@@ -1,9 +1,12 @@
 'use client';
 
-import { z } from 'zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  addListingSpecificationSchema,
+  type AddListingSpecificationInput,
+} from '@seanb/shared';
 import { useTranslations } from 'next-intl';
 import CreateListingFooter from '@/components/footer/create-listing-footer';
 import {
@@ -19,21 +22,7 @@ import { meRequest } from '@/lib/auth-api';
 import { ApiError } from '@/lib/api-client';
 import { useAuthStore } from '@/stores/auth-store';
 
-const SpecificationSchema = z.object({
-  engine: z.string(),
-  engineTorque: z.string(),
-  fuelSystem: z.string(),
-  boreStroke: z.string(),
-  infotainmentSystem: z.string(),
-  displacement: z.string(),
-  fuelCapacity: z.string(),
-  compressionRatio: z.string(),
-  luggageCapacity: z.string(),
-  fuelEconomy: z.string(),
-  weight: z.string(),
-});
-
-type SpecificationSchemaType = z.infer<typeof SpecificationSchema>;
+type SpecificationSchemaType = AddListingSpecificationInput;
 
 export default function AddSpecification() {
   const t = useTranslations('addListing');
@@ -50,7 +39,7 @@ export default function AddSpecification() {
     formState: { errors },
   } = useForm<SpecificationSchemaType>({
     defaultValues: store.specification,
-    resolver: zodResolver(SpecificationSchema),
+    resolver: zodResolver(addListingSpecificationSchema),
   });
 
   async function handleSpecification(data: SpecificationSchemaType) {

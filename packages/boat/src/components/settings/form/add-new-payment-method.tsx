@@ -1,8 +1,13 @@
 'use client';
 
+import { useMemo } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import {
+  addPaymentMethodSchema,
+  type AddPaymentMethodInput,
+} from '@seanb/shared';
 import { useTranslations } from 'next-intl';
 import Input from '@/components/ui/form-fields/input';
 import Text from '@/components/ui/typography/text';
@@ -11,30 +16,32 @@ import Button from '@/components/ui/button';
 export default function AddnewPaymentMethod() {
   const t = useTranslations('settings');
 
-  const AddnewPaymentMethodSchema = z.object({
-    fullName: z.string().min(1, { message: t('validationFieldRequired') }),
-    cardNumber: z
-      .string()
-      .min(12, { message: t('validationCardInvalid') })
-      .max(12, { message: t('validationCardInvalid') }),
-    email: z
-      .string()
-      .min(1, { message: t('validationEmailRequired') })
-      .email({ message: t('validationEmailInvalid') }),
-    ccv: z.string().min(4, { message: t('validationCcvRequired') }),
-  });
-
-  type AddnewPaymentMethodType = z.infer<typeof AddnewPaymentMethodSchema>;
+  const schema = useMemo(
+    () =>
+      addPaymentMethodSchema.extend({
+        fullName: z.string().min(1, { message: t('validationFieldRequired') }),
+        cardNumber: z
+          .string()
+          .min(12, { message: t('validationCardInvalid') })
+          .max(12, { message: t('validationCardInvalid') }),
+        email: z
+          .string()
+          .min(1, { message: t('validationEmailRequired') })
+          .email({ message: t('validationEmailInvalid') }),
+        ccv: z.string().min(4, { message: t('validationCcvRequired') }),
+      }),
+    [t],
+  );
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<AddnewPaymentMethodType>({
-    resolver: zodResolver(AddnewPaymentMethodSchema),
+  } = useForm<AddPaymentMethodInput>({
+    resolver: zodResolver(schema),
   });
 
-  function handleAddPaymentMethod(data: AddnewPaymentMethodType) {
+  function handleAddPaymentMethod(data: AddPaymentMethodInput) {
     console.log('Data:', data);
   }
 

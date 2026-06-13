@@ -75,6 +75,17 @@ function formatReviewDate(date: Date): string {
   });
 }
 
+export function mapListingReview(review: ReviewWithUser) {
+  return {
+    avatar: review.user.avatar ?? '',
+    name: review.user.name ?? '',
+    date: formatReviewDate(review.createdAt),
+    location: review.location ?? '',
+    rating: review.rating,
+    review: review.comment ?? '',
+  };
+}
+
 export function computeReviewStats(reviews: ReviewRow[]) {
   const totalReview = reviews.length;
   const averageRating =
@@ -167,14 +178,7 @@ export function mapListingDetail(
     },
     reviewsData: {
       stats,
-      reviews: listing.reviews.map((review) => ({
-        avatar: review.user.avatar ?? '',
-        name: review.user.name ?? '',
-        date: formatReviewDate(review.createdAt),
-        location: review.location ?? '',
-        rating: review.rating,
-        review: review.comment ?? '',
-      })),
+      reviews: listing.reviews.map((review) => mapListingReview(review)),
     },
   };
 }

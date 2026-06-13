@@ -8,6 +8,7 @@ import {
   registerRequest,
   type AuthUser,
 } from '@/lib/auth-api';
+import type { RegisterInput } from '@seanb/shared';
 import { ApiError } from '@/lib/api-client';
 
 interface AuthState {
@@ -19,11 +20,7 @@ interface AuthState {
   clearSession: () => void;
   setHydrating: (hydrating: boolean) => void;
   login: (email: string, password: string) => Promise<void>;
-  register: (input: {
-    email: string;
-    password: string;
-    name?: string;
-  }) => Promise<void>;
+  register: (input: RegisterInput) => Promise<void>;
   hydrateSession: () => Promise<void>;
 }
 

@@ -6,7 +6,15 @@ import type {
   HostReservationRow,
   ReservationDetail,
   ReservationStatus,
-} from '@/types/reservations';
+} from '@seanb/shared';
+
+export type {
+  CreateReservationInput,
+  ReservationStatus,
+  GuestTrip,
+  HostReservationRow,
+  ReservationDetail,
+};
 
 export async function fetchMyTrips(token: string): Promise<GuestTrip[]> {
   return apiFetch<GuestTrip[]>(API_ENDPOINTS.RESERVATIONS, { token });

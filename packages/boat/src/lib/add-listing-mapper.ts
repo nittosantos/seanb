@@ -1,3 +1,7 @@
+import {
+  createListingSchema,
+  type CreateListingInput,
+} from '@seanb/shared';
 import { vendorData } from 'public/data/listing-details';
 import type { AddListingStore } from '@/stores/add-listing-store';
 
@@ -51,8 +55,10 @@ function mapSpecifications(spec: AddListingStore['specification']) {
     }));
 }
 
-export function mapAddListingToCreatePayload(store: AddListingStore) {
-  return {
+export function mapAddListingToCreatePayload(
+  store: AddListingStore,
+): CreateListingInput {
+  const payload = {
     title: store.boatName,
     description: store.boatDescription,
     price: store.pricePerDay,
@@ -66,4 +72,6 @@ export function mapAddListingToCreatePayload(store: AddListingStore) {
     equipment: mapEquipment(store.equipment),
     specifications: mapSpecifications(store.specification),
   };
+
+  return createListingSchema.parse(payload);
 }

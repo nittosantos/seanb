@@ -1,8 +1,13 @@
 'use client';
 
+import { useMemo } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
+import {
+  addListingLocationSchema,
+  type AddListingLocationInput,
+} from '@seanb/shared';
 import { useTranslations } from 'next-intl';
 import CreateListingFooter from '@/components/footer/create-listing-footer';
 import { useAddListingForm, useAddListingStore } from '@/stores/add-listing-store';
@@ -17,19 +22,20 @@ export default function AddLocation() {
   const setStep = useAddListingStore((s) => s.setStep);
   const [store, setStore] = useAddListingForm();
 
-  const FormDataSchema = z.object({
-    phoneNumber: z.string().min(7, { message: t('validationMin7Digits') }),
-    location: z.string().optional(),
-  });
-
-  type FormDataType = z.infer<typeof FormDataSchema>;
+  const FormDataSchema = useMemo(
+    () =>
+      addListingLocationSchema.extend({
+        phoneNumber: z.string().min(7, { message: t('validationMin7Digits') }),
+      }),
+    [t],
+  );
 
   const {
     handleSubmit,
     register,
     control,
     formState: { errors },
-  } = useForm<FormDataType>({
+  } = useForm<AddListingLocationInput>({
     defaultValues: {
       phoneNumber: store.phoneNumber,
       location: store.location,
@@ -37,13 +43,12 @@ export default function AddLocation() {
     resolver: zodResolver(FormDataSchema),
   });
 
-  function handleFormData(data: FormDataType) {
+  function handleFormData(data: AddListingLocationInput) {
     setStore({
       ...store,
       location: data.location,
       phoneNumber: data.phoneNumber,
     });
-    console.log(data);
     setStep(5);
   }
 

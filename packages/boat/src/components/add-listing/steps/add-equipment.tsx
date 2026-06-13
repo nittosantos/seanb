@@ -1,10 +1,14 @@
 'use client';
 
 import { vendorData } from 'public/data/listing-details';
-import { z } from 'zod';
+import { useMemo } from 'react';
 import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  addListingEquipmentSchema,
+  type AddListingEquipmentInput,
+} from '@seanb/shared';
 import { useTranslations } from 'next-intl';
 import AdvancedCheckbox from '@/components/ui/form-fields/advanced-checkbox';
 import FieldHelperText from '@/components/ui/form-fields/field-helper-text';
@@ -17,32 +21,32 @@ export default function AddEquipment() {
   const setStep = useAddListingStore((s) => s.setStep);
   const [store, setStore] = useAddListingForm();
 
-  const EquipmentSchema = z.object({
-    equipment: z
-      .string()
-      .array()
-      .min(5, { message: t('validationMin5Items') }),
-  });
-
-  type EquipmentSchemaType = z.infer<typeof EquipmentSchema>;
+  const EquipmentSchema = useMemo(
+    () =>
+      addListingEquipmentSchema.extend({
+        equipment: addListingEquipmentSchema.shape.equipment.min(5, {
+          message: t('validationMin5Items'),
+        }),
+      }),
+    [t],
+  );
 
   const {
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm<EquipmentSchemaType>({
+  } = useForm<AddListingEquipmentInput>({
     defaultValues: {
       equipment: store.equipment,
     },
     resolver: zodResolver(EquipmentSchema),
   });
 
-  function handleEquipment(data: EquipmentSchemaType) {
+  function handleEquipment(data: AddListingEquipmentInput) {
     setStore({
       ...store,
       equipment: data.equipment,
     });
-    console.log(data);
     setStep(6);
   }
 

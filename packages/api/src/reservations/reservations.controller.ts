@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Get,
   Param,
@@ -7,11 +6,16 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { UserRole } from '../../generated/prisma/client';
+import {
+  createReservationSchema,
+  updateReservationSchema,
+  type CreateReservationInput,
+  type UpdateReservationInput,
+  type UserRole,
+} from '@seanb/shared';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CreateReservationDto } from './dto/create-reservation.dto';
-import { UpdateReservationDto } from './dto/update-reservation.dto';
+import { ZodBody } from '../common/pipes/zod-validation.pipe';
 import { ReservationsService } from './reservations.service';
 
 type AuthUser = {
@@ -35,7 +39,10 @@ export class ReservationsController {
   }
 
   @Post()
-  create(@CurrentUser('id') userId: string, @Body() dto: CreateReservationDto) {
+  create(
+    @CurrentUser('id') userId: string,
+    @ZodBody(createReservationSchema) dto: CreateReservationInput,
+  ) {
     return this.reservationsService.create(userId, dto);
   }
 
@@ -43,7 +50,7 @@ export class ReservationsController {
   updateStatus(
     @Param('id') id: string,
     @CurrentUser() user: AuthUser,
-    @Body() dto: UpdateReservationDto,
+    @ZodBody(updateReservationSchema) dto: UpdateReservationInput,
   ) {
     return this.reservationsService.updateStatus(
       id,

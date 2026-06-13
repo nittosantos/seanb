@@ -1,77 +1,67 @@
-# Tripfinder Boat Documentation
+# Documentação do frontend — @seanb/boat
 
-## Introduction
+## Introdução
 
-Fastest E-commerce template built with `React`, `NextJS`, `TypeScript` and `Tailwind CSS`. It's very easy to use, we used `static` data. You can setup your api endpoint's very easily and your frontend team will love using it.
+Frontend do SeanB: listagem, reserva e gestão de anúncios de barcos. Consome a API NestJS (`packages/api`) e valida formulários com schemas de `@seanb/shared`.
 
-## Requirements
+Parte do layout veio do template TripFinder; fluxos principais (auth, listings, reservas) usam a API real.
 
-- node(16.00.00 or later)
-- yarn(version 1)
-- editor: Visual Studio Code(recommended)
+## Requisitos
 
-## Tech We Have Used
+- Node.js 18+
+- Yarn 1.x
+- API + Postgres rodando localmente (ver [BACKEND_SETUP.md](../../BACKEND_SETUP.md))
 
-Tech specification for this template is given below
-
-- [React](https://reactjs.org/)
-- [NextJs](https://nextjs.org/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-
-## Getting Started & Installation
-
-For getting started with the template you have to follow the below procedure. First navigate to the `boat` directory.
-
-### Step 1 : Configure your env file
-
-Within the project directory you'll find a `.env.example` file just rename it as `.env.local`.
-
-** NOTE : ** This file contain `env values` for local development but when you wanna use this template for your needs you need to replace this value with `your own real API endpoint`.
-
-** NOTE : ** To get the map in development mode, go to your `.env.local` file and put your google map api key there like `NEXT_PUBLIC_GOOGLE_API_KEY= put your api key`
-
-<br/>
-<br/>
-<br/>
-
-### Step 2 : Running the project
-
-Run below command for getting started with this template.
+## Configuração
 
 ```bash
-# on tripfinder or in root directory
-$ yarn
-
-$ yarn dev
-# which will running the boat template for development
+# na raiz seanb/
+cp packages/boat/.env.example packages/boat/.env.local
 ```
 
-If you want to test your production build in local environment then run the below commands.
+| Variável | Descrição |
+|----------|-----------|
+| `NEXT_PUBLIC_API_URL` | URL da API (padrão `http://localhost:3333`) |
+| `NEXT_PUBLIC_GOOGLE_MAP_API_KEY` | Google Maps (opcional) |
+
+## Executar
 
 ```bash
-# build for production
-yarn build
-
-#start template in production mode
-yarn start
+yarn dev:boat    # só frontend
+yarn dev         # frontend + API
 ```
 
-## Folder Structure & Customization
+## Estrutura de pastas
 
-- To setup you site's basic information like **[Logo,Site title,Description etc]** go to -> `boat/src/app/layout.tsx` file
-- To customize tailwind configuration go to -> `tailwind.config.js` file .
-- `/public`: This folder contains `all the static data` used in this project.
-- `/src/app`: This folder contains all the pages and layouts.
-- `/src/components`: This folder contains all the template related ui components.
-- `/src/components/ui`: This folder contains all the common sections related components.
-- `/src/contexts`: This folder contains all necessary context for this template . Like `modal, drawer, gallery` etc.
-- `/src/styles`: Overwrites some third party packages CSS files and our custom CSS in the `global.css` file.
-- `/src/hooks` : This folder contains `hooks` etc.
-- `/src/config` : This folder contains `routes, api-endpoints, constants` etc.
-- `/src/pages` : This folder contains `404.tsx` file for not found or unmatching routes.
-- `/src/types` : This folder contains common used types arround this project.
+| Pasta | Conteúdo |
+|-------|----------|
+| `src/app/[locale]/` | Páginas e layouts (i18n) |
+| `src/components/` | Componentes de UI e features |
+| `src/components/ui/` | Componentes reutilizáveis |
+| `src/lib/` | Clientes API, mappers locais |
+| `src/stores/` | Zustand (auth, listing, modals, …) |
+| `src/hooks/` | Data fetching e utilitários React |
+| `src/config/` | Rotas, endpoints, constantes |
+| `src/types/` | Tipos de UI (view models) |
+| `public/` | Assets estáticos e JSON legado (home) |
 
-<br/>
-<br/>
-<br/>
+## Customização
+
+- Metadados do site: `src/app/layout.tsx`
+- Tailwind: `tailwind.config.js`
+- Rotas: `src/config/routes.ts`
+- Endpoints: `src/config/api-endpoints.ts`
+
+## Schemas compartilhados
+
+Formulários que falam com a API importam schemas de `@seanb/shared`:
+
+```typescript
+import { loginSchema } from '@seanb/shared';
+
+const formSchema = loginSchema.extend({
+  remember: z.boolean(), // campo só de UI
+});
+```
+
+Campos exclusivos de tela (confirmPassword, acceptPolicy, etc.) ficam no `.extend()` do componente; regras da API ficam no shared.

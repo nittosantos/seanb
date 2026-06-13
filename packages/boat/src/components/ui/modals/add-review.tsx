@@ -1,9 +1,14 @@
 'use client';
 
+import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { XMarkIcon } from '@heroicons/react/24/solid';
-import { z } from 'zod';
+import {
+  addReviewFormSchema,
+  mapAddReviewFormToCreateReview,
+  type AddReviewFormInput,
+} from '@seanb/shared';
 import { useTranslations } from 'next-intl';
 import Textarea from '@/components/ui/form-fields/textarea';
 import { useModal } from '@/components/modals/context';
@@ -11,29 +16,76 @@ import ActionIcon from '@/components/ui/action-icon';
 import Text from '@/components/ui/typography/text';
 import Button from '@/components/ui/button';
 import Rate from '@/components/ui/rating';
+import { useListingDetailStore } from '@/stores/listing-detail-store';
+import useAuth from '@/hooks/use-auth';
+import { createReview } from '@/lib/listings-api';
+import { ApiError } from '@/lib/api-client';
 
 export default function AddReview() {
   const t = useTranslations('modals');
-  const { closeModal } = useModal();
+  const { closeModal, openModal } = useModal();
+  const listing = useListingDetailStore((state) => state.listing);
+  const { isAuthorized, accessToken } = useAuth();
+  const [formError, setFormError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const AddReviewSchema = z.object({
-    rating: z.number().min(1, { message: t('minStars') }),
-    message: z.string().min(1, { message: t('saySomething') }),
-  });
+  const schema = useMemo(
+    () =>
+      addReviewFormSchema.extend({
+        rating: addReviewFormSchema.shape.rating.min(1, {
+          message: t('minStars'),
+        }),
+        message: addReviewFormSchema.shape.message.min(1, {
+          message: t('saySomething'),
+        }),
+      }),
+    [t],
+  );
 
-  type AddReviewModalType = z.infer<typeof AddReviewSchema>;
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<AddReviewModalType>({
-    resolver: zodResolver(AddReviewSchema),
+  } = useForm<AddReviewFormInput>({
+    resolver: zodResolver(schema),
   });
 
-  function handleReview(data: any) {
-    console.log('Rating:', data);
-    closeModal();
+  async function handleReview(data: AddReviewFormInput) {
+    if (!listing?.slug) {
+      setFormError(t('reviewListingMissing'));
+      return;
+    }
+
+    if (!isAuthorized || !accessToken) {
+      closeModal();
+      openModal('SIGN_IN');
+      return;
+    }
+
+    setFormError(null);
+    setIsSubmitting(true);
+
+    try {
+      await createReview(
+        listing.slug,
+        mapAddReviewFormToCreateReview(data),
+        accessToken,
+      );
+      closeModal();
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setFormError(error.message);
+      } else {
+        setFormError(t('reviewSubmitError'));
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  if (!listing) {
+    return null;
   }
 
   return (
@@ -52,6 +104,11 @@ export default function AddReview() {
         </ActionIcon>
       </div>
       <form noValidate onSubmit={handleSubmit((data) => handleReview(data))}>
+        {formError && (
+          <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
+            {formError}
+          </p>
+        )}
         <div className="mt-8">
           <Text tag="h6">{t('yourRating')}</Text>
           <Controller
@@ -83,8 +140,9 @@ export default function AddReview() {
           size="xl"
           variant="solid"
           className="mt-4 w-full !py-[15px] !font-semibold uppercase tracking-[0.7px] sm:mt-8 lg:mt-12"
+          disabled={isSubmitting}
         >
-          {t('submit')}
+          {isSubmitting ? t('submitting') : t('submit')}
         </Button>
       </form>
     </div>

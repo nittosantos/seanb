@@ -1,3 +1,6 @@
+import type { z } from 'zod';
+import { parseResponse } from '@seanb/shared';
+
 export class ApiError extends Error {
   status: number;
   body: unknown;
@@ -26,13 +29,14 @@ function getErrorMessage(body: unknown, fallback: string): string {
 
 type ApiFetchOptions = RequestInit & {
   token?: string | null;
+  schema?: z.ZodTypeAny;
 };
 
 export async function apiFetch<T>(
   url: string,
   options: ApiFetchOptions = {},
 ): Promise<T> {
-  const { token, headers, ...rest } = options;
+  const { token, schema, headers, ...rest } = options;
 
   const response = await fetch(url, {
     ...rest,
@@ -51,6 +55,10 @@ export async function apiFetch<T>(
       response.status,
       body,
     );
+  }
+
+  if (schema) {
+    return parseResponse(schema, body) as T;
   }
 
   return body as T;

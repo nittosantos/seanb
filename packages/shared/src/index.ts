@@ -1,15 +1,17 @@
-/**
- * @tripfinder/shared
- *
- * Tipos, constantes e utilitários compartilhados entre:
- * - boat (web - Next.js)
- * - boat-app (mobile - React Native)
- * - api (backend - NestJS)
- *
- * Serão adicionados conforme a API for implementada.
- */
+export const APP_NAME = 'SeanB';
 
-export const APP_NAME = 'TripFinder';
-
-// Tipos serão adicionados aqui conforme a API for definida
-// Exemplo: export interface Boat { ... }
+export * from './lib/parse-response';
+export * from './enums';
+export * from './mappers/listings';
+export * from './mappers/profile';
+export * from './mappers/reservations';
+export * from './schemas/auth';
+export * from './schemas/add-listing';
+export * from './schemas/booking';
+export * from './schemas/feedback';
+export * from './schemas/listings';
+export * from './schemas/payments';
+export * from './schemas/reservations';
+export * from './schemas/responses';
+export * from './schemas/reviews';
+export * from './schemas/users';

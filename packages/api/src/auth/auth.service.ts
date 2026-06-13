@@ -6,8 +6,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
+import { RegisterInput, LoginInput, ForgotPasswordInput } from '@seanb/shared';
 
 @Injectable()
 export class AuthService {
@@ -16,7 +15,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async register(dto: RegisterDto) {
+  async register(dto: RegisterInput) {
     const existing = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
@@ -52,7 +51,7 @@ export class AuthService {
     };
   }
 
-  async login(dto: LoginDto) {
+  async login(dto: LoginInput) {
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
@@ -100,5 +99,21 @@ export class AuthService {
     }
 
     return user;
+  }
+
+  async forgotPassword(dto: ForgotPasswordInput) {
+    const user = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+
+    if (user) {
+      // TODO: enviar e-mail com link de redefinição de senha
+    }
+
+    return {
+      success: true,
+      message:
+        'If an account exists for this email, you will receive reset instructions.',
+    };
   }
 }

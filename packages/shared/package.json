@@ -1,22 +1,27 @@
 {
-  "name": "@tripfinder/shared",
+  "name": "@seanb/shared",
   "version": "1.0.0",
   "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
-      "default": "./src/index.ts"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     }
   },
   "scripts": {
-    "build": "tsc --noEmit",
+    "build": "tsc",
+    "dev": "tsc --watch",
     "lint": "echo 'No lint configured yet'",
-    "clean": "echo 'No clean needed'",
-    "clean:build": "echo 'No clean:build needed'"
+    "clean": "rimraf dist",
+    "clean:build": "rimraf dist"
+  },
+  "dependencies": {
+    "zod": "^3.23.0"
   },
   "devDependencies": {
+    "rimraf": "^5.0.0",
     "typescript": "^5.6.0"
   }
 }

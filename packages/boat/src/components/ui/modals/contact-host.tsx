@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo, useState } from 'react';
 import { useListingDetailStore } from '@/stores/listing-detail-store';
 import { z } from 'zod';
 import Link from 'next/link';
@@ -8,6 +9,11 @@ import { addDays } from 'date-fns';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  contactHostSchema,
+  withContactHostDateOrder,
+  type ContactHostInput,
+} from '@seanb/shared';
 import { useTranslations } from 'next-intl';
 import DateTime from '@/components/ui/form-fields/date-time-picker';
 import PhoneNumber from '@/components/ui/form-fields/phone-number';
@@ -20,27 +26,31 @@ import Text from '@/components/ui/typography/text';
 import Button from '@/components/ui/button';
 import Rate from '@/components/ui/rating';
 import { Routes } from '@/config/routes';
-import { useState } from 'react';
 import clsx from 'clsx';
 
 export default function ContactHost() {
   const t = useTranslations('modals');
   const { closeModal } = useModal();
 
-  const ContactHostSchema = z.object({
-    startDate: z.date().min(new Date(), { message: t('selectDateError') }),
-    endDate: z.date().min(new Date(), { message: t('selectEndDateError') }),
-    firstName: z.string().min(1, { message: t('firstNameRequired') }),
-    lastName: z.string().min(1, { message: t('lastNameRequired') }),
-    email: z
-      .string()
-      .min(1, { message: t('validationEmailRequired') })
-      .email({ message: t('validationEmailInvalid') }),
-    phoneNumber: z.string().min(7, { message: t('validationMin7Digits') }),
-    message: z.string().min(1, { message: t('messageRequired') }),
-  });
+  const schema = useMemo(
+    () =>
+      withContactHostDateOrder(
+        contactHostSchema.extend({
+          startDate: z.date().min(new Date(), { message: t('selectDateError') }),
+          endDate: z.date().min(new Date(), { message: t('selectEndDateError') }),
+          firstName: z.string().min(1, { message: t('firstNameRequired') }),
+          lastName: z.string().min(1, { message: t('lastNameRequired') }),
+          email: z
+            .string()
+            .min(1, { message: t('validationEmailRequired') })
+            .email({ message: t('validationEmailInvalid') }),
+          phoneNumber: z.string().min(7, { message: t('validationMin7Digits') }),
+          message: z.string().min(1, { message: t('messageRequired') }),
+        }),
+      ),
+    [t],
+  );
 
-  type ContactHostModalType = z.infer<typeof ContactHostSchema>;
   const listing = useListingDetailStore((state) => state.listing);
   const vendor = listing?.vendor;
   const stats = listing?.reviewsData.stats;
@@ -51,11 +61,11 @@ export default function ContactHost() {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<ContactHostModalType>({
-    resolver: zodResolver(ContactHostSchema),
+  } = useForm<ContactHostInput>({
+    resolver: zodResolver(schema),
   });
 
-  function handleReservation(data: any) {
+  function handleReservation(data: ContactHostInput) {
     console.log('Data:', data);
     closeModal();
   }

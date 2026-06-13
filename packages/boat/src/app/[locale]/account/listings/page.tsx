@@ -19,6 +19,7 @@ import Text from '@/components/ui/typography/text';
 import Button from '@/components/ui/button';
 import { Routes } from '@/config/routes';
 import type { ListingCard } from '@/types/listings';
+import type { UpdateListingInput } from '@seanb/shared';
 
 export default function ListingPage() {
   const t = useTranslations('account');
@@ -83,24 +84,14 @@ export default function ListingPage() {
     }
   };
 
-  const handleSaveEdit = async (values: {
-    title: string;
-    price: number;
-    location: string;
-    description: string;
-  }) => {
+  const handleSaveEdit = async (values: UpdateListingInput) => {
     if (!accessToken || !editingListing) return;
 
     setIsSaving(true);
     try {
       const updated = await updateListing(
         editingListing.id,
-        {
-          title: values.title,
-          price: values.price,
-          location: values.location,
-          description: values.description || undefined,
-        },
+        values,
         accessToken,
       );
       setListings((current) =>

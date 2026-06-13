@@ -5,12 +5,13 @@ import { XMarkIcon } from '@heroicons/react/24/solid';
 import ActionIcon from '@/components/ui/action-icon';
 import Radio from '@/components/ui/form-fields/radio';
 import Button from '@/components/ui/button';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Input from '@/components/ui/form-fields/input';
 import Textarea from '@/components/ui/form-fields/textarea';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { reportListingFeedbackSchema } from '@seanb/shared';
 import { useTranslations } from 'next-intl';
 import { useModal } from '@/components/modals/context';
 
@@ -18,13 +19,17 @@ function ReportForm() {
   const t = useTranslations('modals');
   const { closeModal } = useModal();
 
-  const feedbackSchema = z.object({
-    email: z
-      .string()
-      .min(1, { message: t('validationEmailRequired') })
-      .email({ message: t('validationEmailInvalid') }),
-    message: z.string().min(1, { message: t('messageRequired') }),
-  });
+  const feedbackSchema = useMemo(
+    () =>
+      reportListingFeedbackSchema.extend({
+        email: z
+          .string()
+          .min(1, { message: t('validationEmailRequired') })
+          .email({ message: t('validationEmailInvalid') }),
+        message: z.string().min(1, { message: t('messageRequired') }),
+      }),
+    [t],
+  );
 
   type FeedbackSchemaType = z.infer<typeof feedbackSchema>;
   const {

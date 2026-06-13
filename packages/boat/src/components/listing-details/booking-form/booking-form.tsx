@@ -16,6 +16,11 @@ import { useListingDetail } from '@/contexts/listing-detail-context';
 import useAuth from '@/hooks/use-auth';
 import { Routes } from '@/config/routes';
 import { createReservation } from '@/lib/reservations-api';
+import {
+  bookingFormSchema,
+  mapBookingDatesToCreateReservation,
+  type BookingFormInput,
+} from '@seanb/shared';
 import { ApiError } from '@/lib/api-client';
 import { useListingBookedDates } from '@/hooks/use-listing-booked-dates';
 import {
@@ -29,16 +34,6 @@ interface BookingFormProps {
   totalReviews: number;
   className?: string;
 }
-
-type BookingSchemaType = {
-  startDate: Date;
-  endDate: Date;
-  selected: {
-    adults: number;
-    child: number;
-    pets: boolean;
-  };
-};
 
 export default function BookingForm({
   price,
@@ -56,19 +51,13 @@ export default function BookingForm({
 
   const BookingSchema = useMemo(
     () =>
-      z
-        .object({
+      bookingFormSchema
+        .extend({
           startDate: z.date({ required_error: t('selectDate') }),
           endDate: z.date({ required_error: t('selectDate') }),
-          selected: z.object({
+          selected: bookingFormSchema.shape.selected.extend({
             adults: z.number().min(1, t('minAdultRequired')),
-            child: z.number(),
-            pets: z.boolean(),
           }),
-        })
-        .refine(({ startDate, endDate }) => startDate < endDate, {
-          message: t('invalidDateRange'),
-          path: ['endDate'],
         })
         .refine(
           ({ startDate, endDate }) =>
@@ -87,7 +76,7 @@ export default function BookingForm({
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<BookingSchemaType>({
+  } = useForm<BookingFormInput>({
     defaultValues: {
       selected: {
         adults: 1,
@@ -110,7 +99,7 @@ export default function BookingForm({
       : 0;
   const subtotal = nights > 0 ? price * nights : 0;
 
-  async function handleBooking(data: BookingSchemaType) {
+  async function handleBooking(data: BookingFormInput) {
     setFormError(null);
 
     if (!isAuthorized || !accessToken) {
@@ -122,11 +111,11 @@ export default function BookingForm({
 
     try {
       await createReservation(
-        {
+        mapBookingDatesToCreateReservation({
           listingId: listing.id,
-          checkIn: data.startDate.toISOString(),
-          checkOut: data.endDate.toISOString(),
-        },
+          checkIn: data.startDate,
+          checkOut: data.endDate,
+        }),
         accessToken,
       );
       router.push(Routes.private.trips);

@@ -8,8 +8,10 @@ import {
 import * as bcrypt from 'bcrypt';
 import { ReservationStatus } from '../../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import { ChangePasswordDto } from './dto/change-password.dto';
-import { UpdateProfileDto } from './dto/update-profile.dto';
+import {
+  ChangePasswordInput,
+  UpdateProfileInput,
+} from '@seanb/shared';
 
 const profileSelect = {
   id: true,
@@ -50,7 +52,7 @@ export class UsersService {
     };
   }
 
-  async updateProfile(userId: string, dto: UpdateProfileDto) {
+  async updateProfile(userId: string, dto: UpdateProfileInput) {
     if (dto.email) {
       const existing = await this.prisma.user.findFirst({
         where: {
@@ -88,7 +90,7 @@ export class UsersService {
     };
   }
 
-  async changePassword(userId: string, dto: ChangePasswordDto) {
+  async changePassword(userId: string, dto: ChangePasswordInput) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });

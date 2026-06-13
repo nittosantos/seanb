@@ -1,5 +1,5 @@
 {
-  "name": "@tripfinder/boat",
+  "name": "@seanb/boat",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -19,6 +19,7 @@
     "@react-google-maps/api": "^2.20.8",
     "@tailwindcss/forms": "^0.5.9",
     "@tailwindcss/typography": "^0.5.15",
+    "@seanb/shared": "*",
     "@types/node": "20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

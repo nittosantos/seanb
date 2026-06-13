@@ -1,8 +1,13 @@
-import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
+import { Controller, Get, Patch, UseGuards } from '@nestjs/common';
+import {
+  changePasswordSchema,
+  updateProfileSchema,
+  type ChangePasswordInput,
+  type UpdateProfileInput,
+} from '@seanb/shared';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ChangePasswordDto } from './dto/change-password.dto';
-import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ZodBody } from '../common/pipes/zod-validation.pipe';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -18,7 +23,7 @@ export class UsersController {
   @Patch('me')
   updateProfile(
     @CurrentUser('id') userId: string,
-    @Body() dto: UpdateProfileDto,
+    @ZodBody(updateProfileSchema) dto: UpdateProfileInput,
   ) {
     return this.usersService.updateProfile(userId, dto);
   }
@@ -26,7 +31,7 @@ export class UsersController {
   @Patch('me/password')
   changePassword(
     @CurrentUser('id') userId: string,
-    @Body() dto: ChangePasswordDto,
+    @ZodBody(changePasswordSchema) dto: ChangePasswordInput,
   ) {
     return this.usersService.changePassword(userId, dto);
   }

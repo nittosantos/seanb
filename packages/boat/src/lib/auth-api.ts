@@ -1,39 +1,50 @@
 import { API_ENDPOINTS } from '@/config/api-endpoints';
 import { apiFetch } from '@/lib/api-client';
+import type {
+  AuthResponse,
+  AuthUser,
+  ForgotPasswordInput,
+  ForgotPasswordResponse,
+  LoginInput,
+  RegisterInput,
+} from '@seanb/shared';
+import {
+  authResponseSchema,
+  forgotPasswordResponseSchema,
+} from '@seanb/shared';
 
-export type AuthUser = {
-  id: string;
-  email: string;
-  name?: string | null;
-  avatar?: string | null;
-  role?: string;
-  username?: string | null;
-  createdAt?: string;
-};
-
-export type AuthResponse = {
-  user: AuthUser;
-  accessToken: string;
-};
+export type { AuthResponse, AuthUser, ForgotPasswordResponse };
 
 export async function loginRequest(
   email: string,
   password: string,
 ): Promise<AuthResponse> {
+  const body: LoginInput = { email, password };
+
   return apiFetch<AuthResponse>(API_ENDPOINTS.AUTH.LOGIN, {
     method: 'POST',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify(body),
+    schema: authResponseSchema,
   });
 }
 
-export async function registerRequest(input: {
-  email: string;
-  password: string;
-  name?: string;
-}): Promise<AuthResponse> {
+export async function registerRequest(
+  input: RegisterInput,
+): Promise<AuthResponse> {
   return apiFetch<AuthResponse>(API_ENDPOINTS.AUTH.REGISTER, {
     method: 'POST',
     body: JSON.stringify(input),
+    schema: authResponseSchema,
+  });
+}
+
+export async function forgotPasswordRequest(
+  input: ForgotPasswordInput,
+): Promise<ForgotPasswordResponse> {
+  return apiFetch<ForgotPasswordResponse>(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, {
+    method: 'POST',
+    body: JSON.stringify(input),
+    schema: forgotPasswordResponseSchema,
   });
 }
 

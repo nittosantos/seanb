@@ -1,8 +1,13 @@
 'use client';
 
+import { useMemo } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
+import {
+  profileContactSchema,
+  type ProfileContactInput,
+} from '@seanb/shared';
 import { useTranslations } from 'next-intl';
 import PhoneNumber from '@/components/ui/form-fields/phone-number';
 import Checkbox from '@/components/ui/form-fields/checkbox';
@@ -13,30 +18,32 @@ import Button from '@/components/ui/button';
 export default function Contact() {
   const t = useTranslations('profile');
 
-  const contactSchema = z.object({
-    message: z.string().min(1, { message: t('validationFieldRequired') }),
-    email: z
-      .string()
-      .min(1, { message: t('validationEmailRequired') })
-      .email({ message: t('validationEmailInvalid') }),
-    phoneNumber: z.string().min(7, { message: t('validationMin7Digits') }),
-    remember: z.boolean().optional(),
-  });
+  const schema = useMemo(
+    () =>
+      profileContactSchema.extend({
+        message: z.string().min(1, { message: t('validationFieldRequired') }),
+        email: z
+          .string()
+          .min(1, { message: t('validationEmailRequired') })
+          .email({ message: t('validationEmailInvalid') }),
+        phoneNumber: z.string().min(7, { message: t('validationMin7Digits') }),
+      }),
+    [t],
+  );
 
-  type ContactSchemaType = z.infer<typeof contactSchema>;
   const {
     control,
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ContactSchemaType>({
+  } = useForm<ProfileContactInput>({
     defaultValues: {
       remember: false,
     },
-    resolver: zodResolver(contactSchema),
+    resolver: zodResolver(schema),
   });
 
-  function handleFormSubmit(data: any) {
+  function handleFormSubmit(data: ProfileContactInput) {
     console.log('Data:', data);
   }
 

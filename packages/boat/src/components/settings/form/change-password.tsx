@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { changePasswordSchema } from '@seanb/shared';
 import { useTranslations } from 'next-intl';
 import Input from '@/components/ui/form-fields/input';
 import Text from '@/components/ui/typography/text';
@@ -17,24 +18,16 @@ export default function ChangePassword() {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  const changePasswordSchema = z
-    .object({
-      currentPassword: z
-        .string()
-        .min(8, { message: t('validationPasswordLength') }),
-      newPassword: z
-        .string()
-        .min(8, { message: t('validationPasswordLength') }),
-      confirmPassword: z
-        .string()
-        .min(8, { message: t('validationPasswordLength') }),
+  const changePasswordFormSchema = changePasswordSchema
+    .extend({
+      confirmPassword: changePasswordSchema.shape.newPassword,
     })
     .refine((data) => data.newPassword === data.confirmPassword, {
       message: t('validationPasswordsDontMatch'),
       path: ['confirmPassword'],
     });
 
-  type ChangePasswordType = z.infer<typeof changePasswordSchema>;
+  type ChangePasswordType = z.infer<typeof changePasswordFormSchema>;
 
   const {
     register,
@@ -42,7 +35,7 @@ export default function ChangePassword() {
     reset,
     formState: { errors },
   } = useForm<ChangePasswordType>({
-    resolver: zodResolver(changePasswordSchema),
+    resolver: zodResolver(changePasswordFormSchema),
   });
 
   async function handleChangePassword(data: ChangePasswordType) {

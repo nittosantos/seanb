@@ -1,17 +1,22 @@
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { Prisma, ReservationStatus, UserRole } from '../../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateListingDto } from './dto/create-listing.dto';
-import { QueryListingsDto } from './dto/query-listings.dto';
-import { UpdateListingDto } from './dto/update-listing.dto';
+import {
+  CreateListingInput,
+  CreateReviewInput,
+  QueryListingsInput,
+  UpdateListingInput,
+} from '@seanb/shared';
 import {
   mapListingCard,
   mapListingDetail,
+  mapListingReview,
   slugify,
 } from './listings.mapper';
 
@@ -34,7 +39,7 @@ const userSelect = {
 export class ListingsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(query: QueryListingsDto) {
+  async findAll(query: QueryListingsInput) {
     const page = query.page ?? 1;
     const limit = query.limit ?? 12;
     const skip = (page - 1) * limit;
@@ -163,7 +168,7 @@ export class ListingsService {
     return listings.map(mapListingCard);
   }
 
-  async create(userId: string, dto: CreateListingDto) {
+  async create(userId: string, dto: CreateListingInput) {
     await this.ensureHostCanPublish(userId);
 
     const slug = await this.resolveUniqueSlug(dto.slug ?? dto.title);
@@ -202,7 +207,7 @@ export class ListingsService {
     id: string,
     userId: string,
     role: UserRole,
-    dto: UpdateListingDto,
+    dto: UpdateListingInput,
   ) {
     const listing = await this.prisma.listing.findUnique({ where: { id } });
 
@@ -333,5 +338,53 @@ export class ListingsService {
       candidate = `${normalized}-${suffix}`;
       suffix += 1;
     }
+  }
+
+  async createReview(slug: string, userId: string, dto: CreateReviewInput) {
+    const listing = await this.prisma.listing.findUnique({
+      where: { slug },
+      select: { id: true, userId: true },
+    });
+
+    if (!listing) {
+      throw new NotFoundException('Listing not found');
+    }
+
+    if (listing.userId === userId) {
+      throw new ForbiddenException('Cannot review your own listing');
+    }
+
+    const existing = await this.prisma.review.findFirst({
+      where: { listingId: listing.id, userId },
+    });
+
+    if (existing) {
+      throw new ConflictException('You have already reviewed this listing');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { city: true, country: true, location: true },
+    });
+
+    const location =
+      user?.city && user?.country
+        ? `${user.city}, ${user.country}`
+        : (user?.location ?? null);
+
+    const review = await this.prisma.review.create({
+      data: {
+        rating: dto.rating,
+        comment: dto.comment,
+        location,
+        listingId: listing.id,
+        userId,
+      },
+      include: {
+        user: { select: { name: true, avatar: true } },
+      },
+    });
+
+    return mapListingReview(review);
   }
 }

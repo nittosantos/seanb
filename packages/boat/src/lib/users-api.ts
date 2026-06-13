@@ -1,38 +1,14 @@
 import { API_ENDPOINTS } from '@/config/api-endpoints';
 import { apiFetch } from '@/lib/api-client';
-import type { AuthUser } from '@/lib/auth-api';
+import type {
+  ChangePasswordInput,
+  DashboardStats,
+  SuccessResponse,
+  UpdateProfileInput,
+  UserProfile,
+} from '@seanb/shared';
 
-export type UserProfile = AuthUser & {
-  phone?: string | null;
-  bio?: string | null;
-  country?: string | null;
-  city?: string | null;
-  streetAddress?: string | null;
-  state?: string | null;
-  zipCode?: string | null;
-  birthDate?: string | null;
-  gender?: string | null;
-};
-
-export type UpdateProfileInput = {
-  name?: string;
-  email?: string;
-  phone?: string;
-  bio?: string;
-  country?: string;
-  city?: string;
-  streetAddress?: string;
-  state?: string;
-  zipCode?: string;
-  birthDate?: string;
-  gender?: string;
-};
-
-export type DashboardStats = {
-  pendingOrders: number;
-  totalRevenue: number;
-  avgOrderRevenue: number;
-};
+export type { UpdateProfileInput, ChangePasswordInput, UserProfile, DashboardStats };
 
 export async function fetchUserProfile(token: string): Promise<UserProfile> {
   return apiFetch<UserProfile>(API_ENDPOINTS.USERS.ME, { token });
@@ -50,10 +26,10 @@ export async function updateUserProfile(
 }
 
 export async function changeUserPassword(
-  input: { currentPassword: string; newPassword: string },
+  input: ChangePasswordInput,
   token: string,
-): Promise<{ success: boolean }> {
-  return apiFetch<{ success: boolean }>(API_ENDPOINTS.USERS.PASSWORD, {
+): Promise<SuccessResponse> {
+  return apiFetch<SuccessResponse>(API_ENDPOINTS.USERS.PASSWORD, {
     method: 'PATCH',
     token,
     body: JSON.stringify(input),

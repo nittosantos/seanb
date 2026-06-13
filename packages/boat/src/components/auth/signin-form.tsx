@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { loginSchema } from '@seanb/shared';
 import { useTranslations } from 'next-intl';
 import { Link, useRouter } from '@/i18n/navigation';
 import { Routes } from '@/config/routes';
@@ -22,29 +23,22 @@ export default function SigninForm() {
   const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const loginInfoSchema = useMemo(
+  const loginFormSchema = useMemo(
     () =>
-      z.object({
-        email: z
-          .string()
-          .min(1, { message: t('validationEmailRequired') })
-          .email({ message: t('validationEmailInvalid') }),
-        password: z
-          .string()
-          .min(8, { message: t('validationPasswordMin') }),
+      loginSchema.extend({
         remember: z.boolean(),
       }),
-    [t],
+    [],
   );
 
-  type SignInType = z.infer<typeof loginInfoSchema>;
+  type SignInType = z.infer<typeof loginFormSchema>;
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<SignInType>({
-    resolver: zodResolver(loginInfoSchema),
+    resolver: zodResolver(loginFormSchema),
   });
 
   async function handleFormSubmit(data: SignInType) {

@@ -1,75 +1,96 @@
-# Introduction
+# SeanB
 
-## TripFinder. - A React Next Rental and Listing Template
+Plataforma de listagem e reserva de barcos. Monorepo com frontend Next.js, backend NestJS e pacote compartilhado de contratos (Zod).
 
-This template built with React, NextJS, TypeScript, Styled-Components, HeadlessUI, TailwindCSS, Google Map API, & AntDesign. It's a very easy to use template, comes with ready made beautiful components, those helps you to build your amazing react next js application.
+> Base visual derivada do template TripFinder (RedQ). A aplicação evoluiu com API própria, Prisma e `@seanb/shared`.
 
-#### Demo Link: 
-- https://tripfinder-boat.vercel.app/
+## Pacotes
 
-#### Support Link: https://redqsupport.ticksy.com/
+| Pacote | Nome npm | Descrição |
+|--------|----------|-----------|
+| `packages/boat` | `@seanb/boat` | Frontend (Next.js 15, React 19, Tailwind) |
+| `packages/api` | `api` | Backend REST (NestJS 11, Fastify, Prisma 7) |
+| `packages/shared` | `@seanb/shared` | Schemas Zod, tipos e mappers front ↔ API |
 
-<br>
+Orquestração: **Yarn Workspaces** + **Turborepo**.
 
-# Getting Started
+## Pré-requisitos
 
-After downloading the file from ThemeForest, You will find tripfinder.zip file. Unzip the tripfinder.zip and Follow the Installation guideline.
+- Node.js 18+ (recomendado 20+)
+- Yarn 1.x
+- Docker (PostgreSQL local)
 
-<br>
+## Setup rápido
 
-## Installation
-
-Make sure you have Node & Yarn installed in your system. Recommended node version >=v16.17.0 and yarn v1.21.1. You check your ones by running these commands-
-
-```
-node -v
-
-yarn -v
-```
-
-If it's not installed in your system then please install them by checking official documentation of,
-
-1. https://nodejs.org/en/
-2. https://yarnpkg.com/lang/en/docs/install/
-
-> ### Before starting the project, you need to configure the .env.local file for the of our packages.
-
-<br/>
-
-## Configuration
-
-### Boat
-
-Please read our DOCUMENTATION.md file to configure the Boat package (`packages/boat/DOCUMENTATION.md`)
-
-## Start the project
-
-After all the configurations, Install Package dependency by running below command at the root directory `TripFinder` to get started with the project,
-
-```
+```bash
+# 1. Dependências
 yarn
+
+# 2. Banco de dados
+docker-compose up -d
+
+# 3. Variáveis de ambiente
+cp packages/api/.env.example packages/api/.env
+cp packages/boat/.env.example packages/boat/.env.local
+
+# 4. Prisma (primeira vez)
+cd packages/api
+npx prisma generate
+npx prisma migrate dev
+npx prisma db seed
+cd ../..
 ```
 
-For starting **development server** run the below command at the root directory:
+## Comandos
 
-```
+```bash
+# Frontend (http://localhost:3000)
+yarn dev:boat
+
+# API (http://localhost:3333)
+yarn dev:api
+
+# Ambos em paralelo
 yarn dev
-# ou
-yarn start:boat
-```
 
-For starting **production server** run the below command at the root directory:
-
-```
+# Build de produção
 yarn build
-# ou
-yarn build:boat
+yarn start:boat   # frontend
 ```
 
-Then start the production server:
+## Configuração
 
+### Frontend (`packages/boat/.env.local`)
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3333
+NEXT_PUBLIC_GOOGLE_MAP_API_KEY=sua-chave-opcional
 ```
-yarn start
-# ou
-yarn serve:boat
+
+### API (`packages/api/.env`)
+
+```env
+DATABASE_URL="postgresql://tripfinder:tripfinder_secret@localhost:5433/tripfinder"
+PORT=3333
+JWT_SECRET=trocar-em-producao
 ```
+
+> As credenciais `tripfinder` no Postgres são do `docker-compose.yml` — nome do banco, não do projeto npm.
+
+### Usuários de teste (após seed)
+
+| Email | Senha |
+|-------|-------|
+| `fabio@example.com` | `password123` |
+| `maria@example.com` | `password123` |
+
+## Documentação adicional
+
+- [BACKEND_SETUP.md](./BACKEND_SETUP.md) — backend, Prisma, roadmap da API
+- [packages/boat/DOCUMENTATION.md](./packages/boat/DOCUMENTATION.md) — estrutura do frontend
+
+## Stack
+
+- **Frontend:** Next.js, TypeScript, Tailwind, Zustand, next-intl (pt/en)
+- **Backend:** NestJS, Fastify, JWT, PostgreSQL
+- **Shared:** Zod (validação única entre front e API)

@@ -4,6 +4,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { z } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  mapPersonalInfoFormToUpdateProfile,
+  personalInfoFormSchema,
+  type PersonalInfoFormInput,
+} from '@seanb/shared';
 import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
 import DateTime from '@/components/ui/form-fields/date-time-picker';
@@ -36,7 +41,7 @@ export default function PersonalInfoForm() {
 
   const PersonalInfoSchema = useMemo(
     () =>
-      z.object({
+      personalInfoFormSchema.extend({
         firstName: z.string().min(1, { message: t('validationFieldRequired') }),
         lastName: z.string().min(1, { message: t('validationFieldRequired') }),
         email: z
@@ -44,20 +49,11 @@ export default function PersonalInfoForm() {
           .min(1, { message: tAuth('validationEmailRequired') })
           .email({ message: tAuth('validationEmailInvalid') }),
         phoneNumber: z.string().min(7, { message: t('validationMinDigits') }),
-        birthDate: z.date().optional(),
-        townCity: z.string().optional(),
-        zipCode: z.string().optional(),
-        bio: z.string().optional(),
-        gender: z.string(),
-        country: z.string().optional(),
-        city: z.string().optional(),
-        streetAddress: z.string().optional(),
-        state: z.string().optional(),
       }),
     [t, tAuth],
   );
 
-  type PersonalInfoType = z.infer<typeof PersonalInfoSchema>;
+  type PersonalInfoType = PersonalInfoFormInput;
 
   const {
     register,
@@ -120,19 +116,7 @@ export default function PersonalInfoForm() {
 
     try {
       const updated = await updateUserProfile(
-        {
-          name: `${data.firstName} ${data.lastName}`.trim(),
-          email: data.email,
-          phone: data.phoneNumber,
-          bio: data.bio,
-          country: data.country,
-          city: data.city || data.townCity,
-          streetAddress: data.streetAddress,
-          state: data.state,
-          zipCode: data.zipCode,
-          birthDate: data.birthDate?.toISOString(),
-          gender: data.gender,
-        },
+        mapPersonalInfoFormToUpdateProfile(data),
         accessToken,
       );
 

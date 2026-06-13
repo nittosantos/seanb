@@ -1,249 +1,211 @@
-# 🚀 Guia de Setup do Backend NestJS no Monorepo
+# Guia de Setup do Backend — SeanB
 
-## ✅ Estado Atual
+## Estado atual
 
-O backend está configurado com:
-- **NestJS 11** + **Fastify** (não Express)
-- **Prisma 7** + **PostgreSQL**
-- **Docker** para o banco (container `seanb-postgres`, porta 5433)
-- API rodando na **porta 3333**
+- **NestJS 11** + **Fastify**
+- **Prisma 7** + **PostgreSQL 16**
+- **Validação:** Zod via `@seanb/shared` (não usa mais class-validator)
+- **Docker:** container `seanb-postgres`, porta **5433**
+- **API:** porta **3333**
 
 ---
 
-## 📁 Estrutura Atual
+## Estrutura do monorepo
 
 ```
-SeanB/
+seanb/
 ├── packages/
-│   ├── boat/          (Frontend Next.js)
-│   └── api/           (Backend NestJS)
-│       ├── prisma/
-│       │   ├── schema.prisma
-│       │   └── migrations/
-│       ├── prisma.config.ts
-│       ├── src/
-│       │   ├── main.ts
-│       │   ├── app.module.ts
-│       │   ├── prisma/
-│       │   │   ├── prisma.module.ts
-│       │   │   └── prisma.service.ts
-│       │   └── ...
-│       └── package.json
-├── package.json       (root - Turbo + Yarn Workspaces)
+│   ├── boat/              @seanb/boat — Frontend Next.js
+│   ├── api/               api — Backend NestJS
+│   └── shared/            @seanb/shared — Schemas Zod + mappers
+│       ├── src/schemas/   auth, listings, reservations, users, …
+│       ├── src/mappers/   form → payload da API
+│       └── dist/          build TypeScript (gerado)
+├── docker-compose.yml
+├── package.json           Turbo + Yarn Workspaces
 └── yarn.lock
 ```
 
 ---
 
-## ⚙️ Configuração de Ambiente
+## Configuração de ambiente
 
-### Variáveis de Ambiente
-
-Copie o exemplo e ajuste apenas se necessário:
+### API
 
 ```bash
 cp packages/api/.env.example packages/api/.env
 ```
 
 ```env
-# packages/api/.env
 DATABASE_URL="postgresql://tripfinder:tripfinder_secret@localhost:5433/tripfinder"
 PORT=3333
 JWT_SECRET=super-secret-change-in-production
 ```
 
-| Variável       | Valor (desenvolvimento)                                      |
-|----------------|--------------------------------------------------------------|
+| Variável | Desenvolvimento |
+|----------|-----------------|
 | `DATABASE_URL` | `postgresql://tripfinder:tripfinder_secret@localhost:5433/tripfinder` |
-| `PORT`         | `3333`                                                       |
-| `JWT_SECRET`   | trocar em produção                                           |
+| `PORT` | `3333` |
+| `JWT_SECRET` | trocar em produção |
 
-### Docker (PostgreSQL)
-
-Credenciais alinhadas com `docker-compose.yml`:
-
-| Campo    | Valor              |
-|----------|--------------------|
-| Usuário  | `tripfinder`       |
-| Senha    | `tripfinder_secret`|
-| Banco    | `tripfinder`       |
-| Container| `seanb-postgres`   |
-| Porta    | `5433` (host)      |
+### Frontend
 
 ```bash
-# Recomendado: subir via docker-compose (na raiz do monorepo)
-docker-compose up -d
-
-# Alternativa manual (mesmas credenciais do compose)
-docker run -d --name seanb-postgres \
-  -e POSTGRES_USER=tripfinder \
-  -e POSTGRES_PASSWORD=tripfinder_secret \
-  -e POSTGRES_DB=tripfinder \
-  -p 5433:5432 \
-  postgres:16-alpine
+cp packages/boat/.env.example packages/boat/.env.local
 ```
 
----
-
-## 🚀 Comandos
-
-```bash
-# Instalar dependências
-yarn
-
-# Rodar API
-yarn dev:api
-
-# Rodar frontend
-yarn dev:boat
-
-# Rodar ambos (Turbo executa em paralelo)
-yarn dev
-
-# Prisma (dentro de packages/api)
-cd packages/api
-npx prisma migrate dev    # Rodar migrations
-npx prisma generate       # Gerar client
-npx prisma studio         # UI do banco
-```
-
----
-
-## 📊 Modelo de Dados (Planejado)
-
-### User (com roles)
-
-| Role   | Pode alugar | Pode publicar barcos |
-|--------|-------------|----------------------|
-| GUEST  | ✅          | ❌                   |
-| HOST   | ✅          | ✅                   |
-| ADMIN  | ✅          | ✅                   |
-
-**Host pode alugar** barcos de outros (como Guest). Um único usuário, dois papéis conforme o contexto.
-
-### Entidades
-
-```
-User
-├── id, email, name, avatar, ...
-├── role: GUEST | HOST | ADMIN
-├── planId (FK) → só para HOST
-└── createdAt, updatedAt
-
-Plan (planos para Hosts)
-├── id, name (Lite, Pro, Ultimate)
-├── maxListings, priceMonthly, priceYearly
-└── features
-
-Listing (barco/anúncio)
-├── id, slug, title, description, price
-├── userId (owner, deve ser HOST)
-├── location, coordinates, images
-├── equipment, specifications
-└── ...
-
-Reservation
-├── id, listingId, guestId, hostId
-├── checkIn, checkOut, totalPrice
-├── status: PENDING | CONFIRMED | CANCELLED | COMPLETED
-└── ...
-
-Review
-├── id, listingId, userId
-├── rating, comment, date
-└── ...
-```
-
----
-
-## 📝 Roadmap de Implementação
-
-### Fase 1: Base ✅
-- [x] NestJS + Fastify
-- [x] Prisma + PostgreSQL
-- [x] Schema completo (User, Plan, Listing, Reservation, Review)
-- [x] db push (schema aplicado)
-- [x] Seed (planos, usuários, listings, reviews)
-
-### Fase 2: Auth ✅
-- [x] POST `/auth/register`
-- [x] POST `/auth/login` → JWT
-- [x] GET `/auth/me` (protegido)
-- [x] JWT Guard e estratégia
-- [x] ValidationPipe + CORS
-- [x] Integrar frontend (sign-in, sign-up, sessão JWT)
-- [ ] OAuth social (Facebook/Google/Apple) — desabilitado no front até implementar
-
-### Fase 3: Listings ✅ (parcial)
-- [x] GET `/listings` (listar, filtros)
-- [x] GET `/listings/:slug` (detalhe + reviews)
-- [x] POST `/listings` (só HOST/ADMIN)
-- [x] PATCH/DELETE `/listings/:id` (dono ou ADMIN)
-- [x] Integrar frontend (home, explore, detalhe, wishlist, perfil)
-- [x] Integrar add-listing wizard com POST `/listings`
-- [x] GET `/listings/mine` (anúncios do host)
-- [ ] Upload real de imagens (hoje URLs locais / placeholders)
-
-### Fase 4: Reservas ✅ (parcial)
-- [x] POST `/reservations`
-- [x] GET `/reservations` (viagens do guest)
-- [x] GET `/reservations/host` (reservas recebidas pelo host)
-- [x] PATCH `/reservations/:id` (cancelar, confirmar, concluir)
-- [x] Integrar frontend (booking form, trips, painel do host)
-- [x] Calendário com datas bloqueadas reais
-- [ ] Pagamentos no checkout
-
-### Fase 5: Extras
-- [ ] Reviews (API dedicada)
-- [ ] Chat/Inbox — **WebSockets** (ver nota abaixo)
-- [ ] Pagamentos (Stripe ou similar)
-- [ ] E-mails transacionais (reset de senha, confirmação de reserva)
-- [ ] Upload de imagens (S3/Cloudinary)
-
-#### Chat em produção (planejado)
-
-O inbox do frontend hoje usa dados estáticos. Para produção, a abordagem recomendada:
-
-1. **NestJS Gateway** (`@nestjs/websockets` + Socket.IO ou `ws`)
-2. **Modelos Prisma**: `Conversation`, `Message` (participantes, `listingId` opcional)
-3. **Autenticação WS**: validar JWT no handshake (`auth.token` no Socket.IO)
-4. **Persistência**: salvar mensagens no PostgreSQL; WS só para tempo real
-5. **Fallback**: polling ou SSE se WS estiver bloqueado em alguma rede
-
-Alternativa gerenciada (menos código): Pusher, Ably ou Supabase Realtime — avaliar custo vs controle.
-
----
-
-## 🔗 Integração Frontend
-
-### Auth (implementado)
-
-- `packages/boat/src/config/api-endpoints.ts` — URLs da API
-- `packages/boat/src/lib/api-client.ts` — cliente HTTP com JWT
-- `packages/boat/src/lib/auth-api.ts` — login, register, me
-- `packages/boat/src/stores/auth-store.ts` — sessão persistida (Zustand)
-
-```bash
-# packages/boat/.env.local
+```env
 NEXT_PUBLIC_API_URL=http://localhost:3333
 ```
 
-Usuários de teste (após `prisma db seed`): `fabio@example.com` / `maria@example.com` — senha `password123`
+### Docker (PostgreSQL)
+
+| Campo | Valor |
+|-------|-------|
+| Usuário | `tripfinder` |
+| Senha | `tripfinder_secret` |
+| Banco | `tripfinder` |
+| Container | `seanb-postgres` |
+| Porta (host) | `5433` |
+
+```bash
+docker-compose up -d
+```
 
 ---
 
-## 📦 Stack Técnica
+## Comandos
+
+```bash
+# Raiz do monorepo
+yarn                          # instalar deps
+yarn dev:api                  # API em watch (builda @seanb/shared antes)
+yarn dev:boat                 # frontend
+yarn dev                      # ambos
+
+# Prisma (packages/api)
+cd packages/api
+npx prisma generate           # obrigatório após clone
+npx prisma migrate dev
+npx prisma db seed
+npx prisma studio
+```
+
+O script `dev`/`build` da API já executa `yarn workspace @seanb/shared build` automaticamente.
+
+---
+
+## `@seanb/shared` — contrato front ↔ API
+
+Schemas Zod compartilhados. A API valida com `ZodBody` / `ZodQuery`; o frontend importa os mesmos schemas (ou `.extend()` para i18n/campos de UI).
+
+```
+packages/shared/src/
+├── schemas/
+│   auth.ts          login, register, forgotPassword
+│   listings.ts      create, update, query, editListingForm
+│   reservations.ts  create, update
+│   users.ts         updateProfile, changePassword, personalInfoForm
+│   add-listing.ts   wizard steps
+│   booking.ts       bookingForm
+│   reviews.ts       createReview (API planejada)
+│   feedback.ts      contactHost, reportListing (API planejada)
+│   payments.ts      addPaymentMethod (API planejada)
+│   responses/       tipos de saída da API (AuthResponse, ListingCard, …)
+├── mappers/         transformações form → payload API
+└── enums.ts         UserRole, ReservationStatus
+```
+
+Exemplo na API:
+
+```typescript
+import { loginSchema, type LoginInput } from '@seanb/shared';
+import { ZodBody } from '../common/pipes/zod-validation.pipe';
+
+@Post('login')
+login(@ZodBody(loginSchema) dto: LoginInput) { … }
+```
+
+Exemplo no frontend:
+
+```typescript
+import { loginSchema } from '@seanb/shared';
+
+const formSchema = loginSchema.extend({ remember: z.boolean() });
+```
+
+---
+
+## Modelo de dados
+
+### User (roles)
+
+| Role | Alugar | Publicar barcos |
+|------|--------|-----------------|
+| GUEST | ✅ | ❌ |
+| HOST | ✅ | ✅ |
+| ADMIN | ✅ | ✅ |
+
+### Entidades principais
+
+- **User** — auth, perfil, role, plano (HOST)
+- **Plan** — Lite, Pro, Ultimate
+- **Listing** — anúncio de barco
+- **Reservation** — reserva (guest ↔ listing)
+- **Review** — avaliação de listing
+
+---
+
+## Roadmap
+
+### Fase 1: Base ✅
+- [x] NestJS + Fastify + Prisma + PostgreSQL
+- [x] Schema + migrations + seed
+- [x] `@seanb/shared` com Zod
+
+### Fase 2: Auth ✅
+- [x] Register, login, `/auth/me` (JWT)
+- [x] Integração no frontend
+- [ ] OAuth social
+- [ ] Forgot password (schema pronto; API pendente)
+
+### Fase 3: Listings ✅ (parcial)
+- [x] CRUD + filtros + integração front
+- [x] Add-listing wizard
+- [ ] Upload real de imagens
+
+### Fase 4: Reservas ✅ (parcial)
+- [x] CRUD reservas + booking form + calendário
+- [ ] Pagamentos
+
+### Fase 5: Extras
+- [ ] Reviews API (`createReviewSchema` já no shared)
+- [ ] Chat/Inbox (WebSockets)
+- [ ] E-mails transacionais
+- [ ] Upload S3/Cloudinary
+
+---
+
+## Integração frontend
+
+| Arquivo | Função |
+|---------|--------|
+| `packages/boat/src/config/api-endpoints.ts` | URLs da API |
+| `packages/boat/src/lib/api-client.ts` | HTTP + JWT |
+| `packages/boat/src/lib/*-api.ts` | Chamadas por domínio |
+| `@seanb/shared` | Schemas e tipos compartilhados |
+
+Usuários de teste: `fabio@example.com` / `maria@example.com` — senha `password123`
+
+---
+
+## Stack
 
 | Tecnologia | Versão |
 |------------|--------|
-| NestJS     | 11     |
-| Fastify    | via @nestjs/platform-fastify |
-| Prisma     | 7      |
-| PostgreSQL | 16     |
-| TypeScript | 5.x    |
-
----
-
-## 💡 Dica
-
-Considere **Nx** no futuro se o projeto crescer muito. Para começar, Turbo + Yarn Workspaces é suficiente.
+| NestJS | 11 |
+| Fastify | via @nestjs/platform-fastify |
+| Prisma | 7 |
+| PostgreSQL | 16 |
+| Zod | 3.x (`@seanb/shared`) |
+| TypeScript | 5.x |

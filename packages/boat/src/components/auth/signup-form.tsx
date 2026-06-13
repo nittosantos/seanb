@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { registerSchema } from '@seanb/shared';
 import { useTranslations } from 'next-intl';
 import { Link, useRouter } from '@/i18n/navigation';
 import { Routes } from '@/config/routes';
@@ -20,22 +21,15 @@ export default function SignUpForm() {
   const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const signUpSchema = useMemo(
+  const signUpFormSchema = useMemo(
     () =>
-      z
-        .object({
+      registerSchema
+        .extend({
           firstName: z
             .string()
             .min(1, { message: t('validationFieldRequired') }),
           lastName: z.string().optional(),
-          email: z
-            .string()
-            .min(1, t('validationEmailRequired'))
-            .email({ message: t('validationEmailInvalid') }),
-          password: z.string().min(8, { message: t('validationPasswordMin') }),
-          confirmPassword: z
-            .string()
-            .min(8, { message: t('validationPasswordMin') }),
+          confirmPassword: registerSchema.shape.password,
           acceptPolicy: z.literal(true, {
             errorMap: () => ({ message: t('validationAcceptPolicy') }),
           }),
@@ -47,14 +41,14 @@ export default function SignUpForm() {
     [t],
   );
 
-  type SignUpType = z.infer<typeof signUpSchema>;
+  type SignUpType = z.infer<typeof signUpFormSchema>;
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<SignUpType>({
-    resolver: zodResolver(signUpSchema),
+    resolver: zodResolver(signUpFormSchema),
   });
 
   async function handleFormSubmit(data: SignUpType) {

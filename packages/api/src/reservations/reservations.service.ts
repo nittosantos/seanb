@@ -6,8 +6,10 @@ import {
 } from '@nestjs/common';
 import { ReservationStatus, UserRole } from '../../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateReservationDto } from './dto/create-reservation.dto';
-import { UpdateReservationDto } from './dto/update-reservation.dto';
+import {
+  CreateReservationInput,
+  UpdateReservationInput,
+} from '@seanb/shared';
 import {
   mapGuestTrip,
   mapHostReservationRow,
@@ -42,7 +44,7 @@ const reservationInclude = {
 export class ReservationsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(guestId: string, dto: CreateReservationDto) {
+  async create(guestId: string, dto: CreateReservationInput) {
     const checkIn = new Date(dto.checkIn);
     const checkOut = new Date(dto.checkOut);
 
@@ -132,7 +134,7 @@ export class ReservationsService {
     id: string,
     userId: string,
     role: UserRole,
-    dto: UpdateReservationDto,
+    dto: UpdateReservationInput,
   ) {
     const reservation = await this.prisma.reservation.findUnique({
       where: { id },

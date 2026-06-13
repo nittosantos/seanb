@@ -1,10 +1,15 @@
 'use client';
 
 import { boatTypes } from 'public/data/boat-types';
+import { useMemo } from 'react';
 import { z } from 'zod';
 import Image from 'next/image';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  addListingBoatInfoSchema,
+  type AddListingBoatInfoInput,
+} from '@seanb/shared';
 import { useTranslations } from 'next-intl';
 import FieldHelperText from '@/components/ui/form-fields/field-helper-text';
 import CreateListingFooter from '@/components/footer/create-listing-footer';
@@ -18,23 +23,28 @@ import Counter from '@/components/ui/counter';
 export default function BoatInfo() {
   const t = useTranslations('addListing');
 
-  const BoatSchema = z.object({
-    boatName: z
-      .string()
-      .min(1, { message: t('validationFieldRequired') })
-      .max(24, { message: t('validationLetterLimit') }),
-    boatType: z.string().min(1, { message: t('validationFieldRequired') }),
-    pricePerDay: z.number().min(10, { message: t('validationMinPrice') }),
-    boatDescription: z
-      .string()
-      .min(1, { message: t('validationLetterLimitReq') })
-      .max(450, { message: t('validationLetterLimit') }),
-    beadRooms: z.number().optional(),
-    bathRooms: z.number().optional(),
-    guests: z.number().min(1, { message: t('validationMin1Guest') }),
-  });
+  const BoatSchema = useMemo(
+    () =>
+      addListingBoatInfoSchema.extend({
+        boatName: addListingBoatInfoSchema.shape.boatName.max(24, {
+          message: t('validationLetterLimit'),
+        }),
+        boatType: z.string().min(1, { message: t('validationFieldRequired') }),
+        pricePerDay: addListingBoatInfoSchema.shape.pricePerDay.min(10, {
+          message: t('validationMinPrice'),
+        }),
+        boatDescription: z
+          .string()
+          .min(1, { message: t('validationLetterLimitReq') })
+          .max(450, { message: t('validationLetterLimit') }),
+        guests: addListingBoatInfoSchema.shape.guests.min(1, {
+          message: t('validationMin1Guest'),
+        }),
+      }),
+    [t],
+  );
 
-  type BoatSchemaType = z.infer<typeof BoatSchema>;
+  type BoatSchemaType = AddListingBoatInfoInput;
   const setStep = useAddListingStore((s) => s.setStep);
   const [store, setStore] = useAddListingForm();
   const {

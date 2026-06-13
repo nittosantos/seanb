@@ -1,71 +1,21 @@
 import type {
-  EquipmentsTypes,
-  ReviewStatsTypes,
-  ReviewTypes,
-  SpecificationTypes,
-  VendorTypes,
-} from '@/types';
+  ListingDetail,
+  QueryListingsInput,
+} from '@seanb/shared';
 
-export type ListingCard = {
-  id: string;
-  slug: string;
-  title: string;
-  thumbnail: string[];
-  time: string;
-  caption: string;
-  location: string;
-  price: string;
-  priceValue: number;
-  rating: number;
-  ratingCount: string;
-  user: {
-    name: string;
-    avatar: string;
-    slug: string;
-  };
-};
+export type {
+  CreateListingInput,
+  ListingCard,
+  ListingDetail,
+  ListingsPaginatedResponse,
+} from '@seanb/shared';
 
-export type ListingsResponse = {
-  data: ListingCard[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
-};
+/** Query params for GET /listings — shared with the API contract. */
+export type ListingsQuery = QueryListingsInput;
 
-export type ListingDetail = {
-  id: string;
-  slug: string;
-  title: string;
-  description: string;
-  price: number;
-  location: string | null;
-  lat: number | null;
-  lng: number | null;
-  gallary: string[];
-  duration: string | null;
-  hasCaptain: boolean;
-  caption: string;
-  boatType: string | null;
-  equipment: EquipmentsTypes;
-  specifications: SpecificationTypes;
-  vendor: VendorTypes & { id: string };
-  reviewsData: {
-    stats: ReviewStatsTypes;
-    reviews: ReviewTypes[];
-  };
-};
-
-export type ListingsQuery = {
-  page?: number;
-  limit?: number;
-  location?: string;
-  boatType?: string;
-  minPrice?: number;
-  maxPrice?: number;
-  minGuests?: number;
-  hasCaptain?: boolean;
-  excludeSlug?: string;
-};
+/** Aliases legados usados em `@/types` e componentes do template. */
+export type EquipmentsTypes = ListingDetail['equipment'];
+export type SpecificationTypes = ListingDetail['specifications'];
+export type ReviewTypes = ListingDetail['reviewsData']['reviews'][number];
+export type ReviewStatsTypes = ListingDetail['reviewsData']['stats'];
+export type VendorTypes = Omit<ListingDetail['vendor'], 'id'>;
