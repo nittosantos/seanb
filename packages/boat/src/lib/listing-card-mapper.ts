@@ -5,9 +5,10 @@ export function toListingCardProps(
   item: ListingCard,
   idPrefix: string,
   index: number,
-): ListingItemTypes & { id: string } {
+): ListingItemTypes & { id: string; listingId: string } {
   return {
     id: `${idPrefix}-${index}`,
+    listingId: item.id,
     slides: item.thumbnail,
     time: item.time,
     caption: item.caption,

@@ -196,7 +196,10 @@
     "title": "My Wishlist",
     "subtitle": "Boats you have saved for later",
     "emptyTitle": "Your wishlist is empty",
-    "emptyDesc": "Save boats you like by clicking the heart icon on any listing"
+    "emptyDesc": "Save boats you like by clicking the heart icon on any listing",
+    "loginRequired": "Sign in to view your wishlist",
+    "signIn": "Sign In",
+    "exploreBoats": "Explore boats"
   },
   "subscriptionForm": {
     "emailPlaceholder": "Your email address",
@@ -218,7 +221,14 @@
     "minAdultRequired": "Minimum 1 adult required",
     "invalidDateRange": "End date must be after start date",
     "datesUnavailable": "Selected dates are not available",
-    "reservationError": "Could not create reservation. Please try again."
+    "reservationError": "Could not create reservation. Please try again.",
+    "reviewsTitle": "{count, plural, =0 {Reviews} =1 {1 review} other {# reviews}}",
+    "reviewsSummary": "{rating} - {count, plural, =0 {No reviews} =1 {1 Review} other {# Reviews}}",
+    "addReview": "Add Review",
+    "noReviews": "No reviews yet. Be the first to share your experience.",
+    "previousPage": "Previous",
+    "nextPage": "Next",
+    "pageOf": "Page {current} of {total}"
   },
   "account": {
     "hello": "Hello, {name}",
@@ -329,7 +339,14 @@
     "validationEmailRequired": "The email is required!",
     "validationEmailInvalid": "The email is invalid!",
     "validationMin7Digits": "Minimum 7 digits!",
-    "phoneNumber": "Phone Number"
+    "phoneNumber": "Phone Number",
+    "loading": "Loading...",
+    "notFoundTitle": "User not found",
+    "notFoundDesc": "This profile does not exist or is no longer available.",
+    "loginRequired": "Sign in to view your profile",
+    "signIn": "Sign In",
+    "noListings": "No listings yet",
+    "noFavourites": "No favourites yet"
   },
   "modals": {
     "contact": "Contact",

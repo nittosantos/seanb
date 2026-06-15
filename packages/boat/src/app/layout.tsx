@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Satisfy, Lato } from 'next/font/google';
 import '@/styles/globals.css';
 import { GoogleMapsProvider } from '@/components/providers/google-maps-provider';
+import { isGoogleMapsEnabled } from '@/config/google-maps';
 
 const lato = Lato({
   subsets: ['latin'],
@@ -40,9 +41,11 @@ export default function RootLayout({ children }: React.PropsWithChildren<{}>) {
     >
       <head />
       <body className="flex min-h-full flex-col">
-        <GoogleMapsProvider>
-          {children}
-        </GoogleMapsProvider>
+        {isGoogleMapsEnabled ? (
+          <GoogleMapsProvider>{children}</GoogleMapsProvider>
+        ) : (
+          children
+        )}
       </body>
     </html>
   );

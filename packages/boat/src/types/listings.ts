@@ -18,4 +18,4 @@ export type EquipmentsTypes = ListingDetail['equipment'];
 export type SpecificationTypes = ListingDetail['specifications'];
 export type ReviewTypes = ListingDetail['reviewsData']['reviews'][number];
 export type ReviewStatsTypes = ListingDetail['reviewsData']['stats'];
-export type VendorTypes = Omit<ListingDetail['vendor'], 'id'>;
+export type VendorTypes = ListingDetail['vendor'];

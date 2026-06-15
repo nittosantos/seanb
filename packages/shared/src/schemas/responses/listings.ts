@@ -3,6 +3,7 @@ import { userRoleSchema } from '../../enums';
 import { paginationMetaSchema } from './common';
 
 export const reviewStarSchema = z.object({
+  star: z.number(),
   count: z.number(),
   percent: z.number(),
 });

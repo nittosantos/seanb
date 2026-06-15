@@ -3,6 +3,7 @@ import RelatedListingBlock from '@/components/listing-details/related-listings/r
 import ListingDetails from '@/components/listing-details/listing-details-block';
 import SubscriptionBlock from '@/components/subscription/subscription-block';
 import GallaryBlock from '@/components/listing-details/gallary-block';
+import ReserveBottomMenu from '@/components/listing-details/booking-form/reserve-bottom-menu';
 import { ListingDetailProvider } from '@/contexts/listing-detail-context';
 import { getListingBySlug } from '@/lib/listings-api-server';
 
@@ -26,6 +27,7 @@ export default async function ListingDetailsPage({
         <RelatedListingBlock />
       </div>
       <SubscriptionBlock sectionClassName="3xl:!px-12 4xl:!px-12" />
+      <ReserveBottomMenu />
     </ListingDetailProvider>
   );
 }

@@ -1,25 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Tab } from '@headlessui/react';
 import { useTranslations } from 'next-intl';
 import { useListings } from '@/hooks/use-listings';
+import { useMyWishlist } from '@/hooks/use-my-wishlist';
 import { TabItem, Tablist, TabPanel, TabPanels } from '@/components/ui/tab';
-import DirectContactCard from '@/components/profile//direct-contact-card';
+import DirectContactCard from '@/components/profile/direct-contact-card';
 import ListingCard from '@/components/ui/cards/listing';
 import ListingCardLoader from '@/components/ui/loader/listing-card-loader';
 import Contact from '@/components/profile/contact';
 import Text from '@/components/ui/typography/text';
 import { toListingCardProps } from '@/lib/listing-card-mapper';
+import type { ListingCard as ListingCardType } from '@/types/listings';
 
 function ListingGrid({
   items,
   idPrefix,
   isLoading,
+  emptyMessage,
 }: {
-  items: ReturnType<typeof useListings>['listings'];
+  items: ListingCardType[];
   idPrefix: string;
   isLoading: boolean;
+  emptyMessage?: string;
 }) {
   if (isLoading) {
     return (
@@ -27,6 +31,14 @@ function ListingGrid({
         {Array.from({ length: 4 }).map((_, index) => (
           <ListingCardLoader key={`${idPrefix}-loader-${index}`} />
         ))}
+      </div>
+    );
+  }
+
+  if (items.length === 0) {
+    return (
+      <div className="rounded-xl border border-gray-lighter bg-gray-50 py-12 text-center">
+        <Text className="text-gray">{emptyMessage}</Text>
       </div>
     );
   }
@@ -41,22 +53,36 @@ function ListingGrid({
   );
 }
 
-export default function ProfileListBlock() {
+type ProfileListBlockProps = {
+  ownerId: string;
+  isOwnProfile?: boolean;
+};
+
+export default function ProfileListBlock({
+  ownerId,
+  isOwnProfile = false,
+}: ProfileListBlockProps) {
   const t = useTranslations('profile');
-  const { listings, isLoading } = useListings({ limit: 12 });
-  const favouriteListings = listings.slice(0, 4);
-  const tabData = [
-    { title: t('listing'), path: 'listing' },
-    { title: t('favourite'), path: 'favourite' },
-    { title: t('contact'), path: 'contact' },
-  ];
+  const { listings, isLoading } = useListings({ ownerId, limit: 12 });
+  const { listings: wishlist, isLoading: isWishlistLoading } = useMyWishlist();
   const [selected, setSelected] = useState(0);
+
+  const tabData = useMemo(() => {
+    const tabs = [{ title: t('listing'), path: 'listing' }];
+
+    if (isOwnProfile) {
+      tabs.push({ title: t('favourite'), path: 'favourite' });
+    }
+
+    tabs.push({ title: t('contact'), path: 'contact' });
+    return tabs;
+  }, [isOwnProfile, t]);
 
   return (
     <div>
-      <Tab.Group selectedIndex={selected} onChange={(val) => setSelected(val)}>
+      <Tab.Group selectedIndex={selected} onChange={setSelected}>
         <Tablist className="relative flex w-full items-center gap-8 lg:gap-14">
-          {tabData?.map((item) => (
+          {tabData.map((item) => (
             <TabItem key={item.path} motionLayoutId="profileTab">
               {item.title}
             </TabItem>
@@ -69,15 +95,19 @@ export default function ProfileListBlock() {
               items={listings}
               idPrefix="profile-listing-cards"
               isLoading={isLoading}
+              emptyMessage={t('noListings')}
             />
           </TabPanel>
-          <TabPanel>
-            <ListingGrid
-              items={favouriteListings}
-              idPrefix="profile-favourite-cards"
-              isLoading={isLoading}
-            />
-          </TabPanel>
+          {isOwnProfile && (
+            <TabPanel>
+              <ListingGrid
+                items={wishlist}
+                idPrefix="profile-favourite-cards"
+                isLoading={isWishlistLoading}
+                emptyMessage={t('noFavourites')}
+              />
+            </TabPanel>
+          )}
           <TabPanel>
             <Text tag="h3" className="mb-5 text-xl md:!text-2xl">
               {t('contact')}

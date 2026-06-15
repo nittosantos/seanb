@@ -17,6 +17,7 @@ import Text from '@/components/ui/typography/text';
 import Button from '@/components/ui/button';
 import Rate from '@/components/ui/rating';
 import { useListingDetailStore } from '@/stores/listing-detail-store';
+import { refreshListingDetail } from '@/contexts/listing-detail-context';
 import useAuth from '@/hooks/use-auth';
 import { createReview } from '@/lib/listings-api';
 import { ApiError } from '@/lib/api-client';
@@ -72,6 +73,7 @@ export default function AddReview() {
         mapAddReviewFormToCreateReview(data),
         accessToken,
       );
+      await refreshListingDetail(listing.slug);
       closeModal();
     } catch (error) {
       if (error instanceof ApiError) {

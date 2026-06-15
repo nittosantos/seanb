@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, UseGuards } from '@nestjs/common';
+import { Controller, Get, Patch, Param, UseGuards } from '@nestjs/common';
 import {
   changePasswordSchema,
   updateProfileSchema,
@@ -11,24 +11,23 @@ import { ZodBody } from '../common/pipes/zod-validation.pipe';
 import { UsersService } from './users.service';
 
 @Controller('users')
-@UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Get('me/dashboard')
+  @UseGuards(JwtAuthGuard)
+  getDashboard(@CurrentUser('id') userId: string) {
+    return this.usersService.getDashboardStats(userId);
+  }
+
   @Get('me')
+  @UseGuards(JwtAuthGuard)
   getProfile(@CurrentUser('id') userId: string) {
     return this.usersService.getProfile(userId);
   }
 
-  @Patch('me')
-  updateProfile(
-    @CurrentUser('id') userId: string,
-    @ZodBody(updateProfileSchema) dto: UpdateProfileInput,
-  ) {
-    return this.usersService.updateProfile(userId, dto);
-  }
-
   @Patch('me/password')
+  @UseGuards(JwtAuthGuard)
   changePassword(
     @CurrentUser('id') userId: string,
     @ZodBody(changePasswordSchema) dto: ChangePasswordInput,
@@ -36,8 +35,17 @@ export class UsersController {
     return this.usersService.changePassword(userId, dto);
   }
 
-  @Get('me/dashboard')
-  getDashboard(@CurrentUser('id') userId: string) {
-    return this.usersService.getDashboardStats(userId);
+  @Patch('me')
+  @UseGuards(JwtAuthGuard)
+  updateProfile(
+    @CurrentUser('id') userId: string,
+    @ZodBody(updateProfileSchema) dto: UpdateProfileInput,
+  ) {
+    return this.usersService.updateProfile(userId, dto);
+  }
+
+  @Get(':identifier')
+  getPublicProfile(@Param('identifier') identifier: string) {
+    return this.usersService.getPublicProfile(identifier);
   }
 }

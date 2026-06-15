@@ -2,18 +2,21 @@
 
 import { VendorTypes } from '@/types';
 import { Menu } from '@headlessui/react';
-import { HeartIcon, EllipsisHorizontalIcon } from '@heroicons/react/24/outline';
+import { EllipsisHorizontalIcon } from '@heroicons/react/24/outline';
 import { ShareIcon } from '@/components/icons/share-icon';
 import { useModal } from '@/components/modals/context';
 import Text from '@/components/ui/typography/text';
 import Button from '@/components/ui/button';
+import WishlistButton from '@/components/listing-details/wishlist-button';
+import { useWishlistToggle } from '@/hooks/use-wishlist';
 
 interface ListingDetailsHeroBlockProps {
   vendor: VendorTypes;
+  listingId: string;
 }
 
 // share icons
-function ShareIcons() {
+function ShareIcons({ listingId }: { listingId: string }) {
   const { openModal } = useModal();
   return (
     <div className="mt-1 hidden items-center gap-3 bg-white md:flex 3xl:gap-6">
@@ -26,20 +29,14 @@ function ShareIcons() {
       >
         <ShareIcon className="h-auto w-5" />
       </Button>
-      <Button
-        className="!border-none !bg-gray-lightest !p-4 text-gray-dark hover:!bg-gray-dark hover:text-white"
-        size="sm"
-        variant="outline"
-        rounded="pill"
-      >
-        <HeartIcon className="h-auto w-5" />
-      </Button>
+      <WishlistButton listingId={listingId} />
     </div>
   );
 }
 
-function ShareMenu() {
+function ShareMenu({ listingId }: { listingId: string }) {
   const { openModal } = useModal();
+  const { toggleWishlist } = useWishlistToggle();
   return (
     <Menu as="div" className="relative md:hidden">
       <div>
@@ -57,7 +54,11 @@ function ShareMenu() {
               </button>
             </Menu.Item>
             <Menu.Item>
-              <button className="border-gray-lightest py-2 text-base font-medium text-gray-dark hover:bg-gray-lightest">
+              <button
+                type="button"
+                onClick={() => void toggleWishlist(listingId)}
+                className="border-gray-lightest py-2 text-base font-medium text-gray-dark hover:bg-gray-lightest"
+              >
                 Add to wishlist
               </button>
             </Menu.Item>
@@ -70,6 +71,7 @@ function ShareMenu() {
 
 export default function ListingDetailsHeroBlock({
   vendor,
+  listingId,
 }: ListingDetailsHeroBlockProps) {
   return (
     <div className="flex justify-between border-b border-gray-lighter pb-6 md:pb-8 2xl:pb-10">
@@ -90,8 +92,8 @@ export default function ListingDetailsHeroBlock({
         </div>
       </div>
       <div className="relative">
-        <ShareMenu />
-        <ShareIcons />
+        <ShareMenu listingId={listingId} />
+        <ShareIcons listingId={listingId} />
       </div>
     </div>
   );

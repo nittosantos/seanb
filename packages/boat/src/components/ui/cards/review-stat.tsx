@@ -7,11 +7,11 @@ interface ReviewStatProps {
 }
 
 // this section is the review percentage bar
-function ReviewBar({ count, percent }: ReviewBarTypes) {
+function ReviewBar({ star, percent }: Pick<ReviewBarTypes, 'star' | 'percent'>) {
   return (
     <div className="flex items-center gap-3 sm:gap-4">
       <p className="text-sm capitalize text-gray-dark sm:text-base">
-        {count && count} Star
+        {star} Star
       </p>
       <div className="w-28 overflow-hidden rounded-lg bg-gray-lighter sm:w-[200px]">
         <div
@@ -39,7 +39,7 @@ export default function ReviewStat({ stats }: ReviewStatProps) {
       </div>
       <div className="grid w-full grid-cols-1 gap-3 pl-5 md:pl-14">
         {stats.stars.map((st: ReviewBarTypes) => (
-          <ReviewBar key={st.count} count={st.count} percent={st.percent} />
+          <ReviewBar key={st.star} star={st.star} percent={st.percent} />
         ))}
       </div>
     </div>

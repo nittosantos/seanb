@@ -6,9 +6,10 @@ import { ListingsModule } from './listings/listings.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ReservationsModule } from './reservations/reservations.module';
 import { UsersModule } from './users/users.module';
+import { WishlistModule } from './wishlist/wishlist.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, ListingsModule, ReservationsModule, UsersModule],
+  imports: [PrismaModule, AuthModule, ListingsModule, ReservationsModule, UsersModule, WishlistModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -26,7 +26,7 @@ export function useListings({
     setError(null);
 
     try {
-      const response = await fetchListings(params);
+      const response = await fetchListings(JSON.parse(queryKey) as ListingsQuery);
       setListings(response.data);
       setTotal(response.meta.total);
     } catch {
@@ -36,7 +36,7 @@ export function useListings({
     } finally {
       setIsLoading(false);
     }
-  }, [enabled, queryKey, params]);
+  }, [enabled, queryKey]);
 
   useEffect(() => {
     void load();

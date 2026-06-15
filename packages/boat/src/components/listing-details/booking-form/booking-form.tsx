@@ -17,7 +17,8 @@ import useAuth from '@/hooks/use-auth';
 import { Routes } from '@/config/routes';
 import { createReservation } from '@/lib/reservations-api';
 import {
-  bookingFormSchema,
+  bookingFormObjectSchema,
+  bookingGuestSelectionSchema,
   mapBookingDatesToCreateReservation,
   type BookingFormInput,
 } from '@seanb/shared';
@@ -51,14 +52,21 @@ export default function BookingForm({
 
   const BookingSchema = useMemo(
     () =>
-      bookingFormSchema
+      bookingFormObjectSchema
         .extend({
           startDate: z.date({ required_error: t('selectDate') }),
           endDate: z.date({ required_error: t('selectDate') }),
-          selected: bookingFormSchema.shape.selected.extend({
+          selected: bookingGuestSelectionSchema.extend({
             adults: z.number().min(1, t('minAdultRequired')),
           }),
         })
+        .refine(
+          ({ startDate, endDate }) => startDate < endDate,
+          {
+            message: t('selectDate'),
+            path: ['endDate'],
+          },
+        )
         .refine(
           ({ startDate, endDate }) =>
             isRangeAvailable(startDate, endDate, bookedRanges),

@@ -59,6 +59,7 @@ model User {
   listingsAsOwner Listing[]     @relation("ListingOwner")
   reservationsAsGuest Reservation[] @relation("ReservationGuest")
   reviews          Review[]
+  wishlistItems    WishlistItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -102,6 +103,7 @@ model Listing {
 
   reservations Reservation[]
   reviews      Review[]
+  wishlistItems WishlistItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -146,4 +148,17 @@ model Review {
 
   @@index([listingId])
   @@index([userId])
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listingId String
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, listingId])
+  @@index([userId])
+  @@index([listingId])
 }

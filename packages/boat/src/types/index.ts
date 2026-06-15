@@ -77,6 +77,7 @@ export type ReviewStatsTypes = {
 };
 
 export type ReviewBarTypes = {
+  star: number;
   count: number;
   percent: number;
 };

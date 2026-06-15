@@ -76,6 +76,27 @@ export class ListingsService {
       where.slug = { not: query.excludeSlug };
     }
 
+    if (query.ownerId) {
+      where.userId = query.ownerId;
+    }
+
+    if (query.checkIn && query.checkOut) {
+      const checkIn = new Date(query.checkIn);
+      const checkOut = new Date(query.checkOut);
+
+      if (checkIn < checkOut) {
+        where.reservations = {
+          none: {
+            status: {
+              in: [ReservationStatus.PENDING, ReservationStatus.CONFIRMED],
+            },
+            checkIn: { lt: checkOut },
+            checkOut: { gt: checkIn },
+          },
+        };
+      }
+    }
+
     const [listings, total] = await Promise.all([
       this.prisma.listing.findMany({
         where,

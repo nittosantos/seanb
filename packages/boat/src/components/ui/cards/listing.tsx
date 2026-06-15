@@ -3,6 +3,7 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useMemo } from 'react';
 import type { ListingItemTypes } from '@/types';
 import { ChevronRightIcon } from '@/components/icons/chevronRight';
 import { ChevronLeftIcon } from '@/components/icons/chevronLeft';
@@ -19,6 +20,7 @@ import { Routes } from '@/config/routes';
 
 export default function ListingCard({
   id,
+  listingId,
   slides,
   time,
   caption,
@@ -29,27 +31,29 @@ export default function ListingCard({
   rating,
   ratingCount,
 }: ListingItemTypes) {
+  const swiperModules = useMemo(() => [Pagination, Navigation], []);
+  const pagination = useMemo(() => ({ clickable: true }), []);
+  const navigation = useMemo(
+    () => ({
+      nextEl: `.${id}-listing-item-button-next`,
+      prevEl: `.${id}-listing-item-button-prev`,
+    }),
+    [id],
+  );
+
   return (
     <>
       <div className="listing-card group/item relative inline-flex w-full flex-col">
         <div className="relative w-full overflow-hidden rounded-xl">
-          <AddToWishlist
-            isWishListed={false}
-            onClick={(data) => console.log('Item added to Wishlist.', data)}
-          />
+          <AddToWishlist listingId={listingId} />
           <Link href={Routes.public.listingDetails(slug)}>
             <div className="listing-item after:absolute after:bottom-0 after:left-0 after:z-[1] after:h-1/4 after:w-full after:bg-gradient-to-t after:from-black/25">
               <Swiper
                 className="!static"
-                modules={[Pagination, Navigation]}
-                pagination={{
-                  clickable: true,
-                }}
+                modules={swiperModules}
+                pagination={pagination}
                 slidesPerView={1}
-                navigation={{
-                  nextEl: `.${id}-listing-item-button-next`,
-                  prevEl: `.${id}-listing-item-button-prev`,
-                }}
+                navigation={navigation}
               >
                 {slides?.map((slide, index) => (
                   <SwiperSlide key={`slide-${index}`}>

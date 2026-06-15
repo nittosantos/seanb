@@ -2,6 +2,7 @@
 
 import { StandaloneSearchBox } from '@react-google-maps/api';
 import { useGoogleMaps } from '@/components/providers/google-maps-provider';
+import { isGoogleMapsEnabled } from '@/config/google-maps';
 
 type QueryStringType = {
   children: React.ReactNode;
@@ -17,6 +18,10 @@ export default function SearchAutocomplete({
   onPlacesChanged,
 }: QueryStringType) {
   const { isLoaded } = useGoogleMaps();
+
+  if (!isGoogleMapsEnabled) {
+    return <div className="map_autocomplete">{children}</div>;
+  }
 
   return (
     <div className="map_autocomplete">

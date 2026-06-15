@@ -12,6 +12,10 @@ import {
   ChangePasswordInput,
   UpdateProfileInput,
 } from '@seanb/shared';
+import {
+  buildPublicProfileWhere,
+  mapPublicHostProfile,
+} from './users.mapper';
 
 const profileSelect = {
   id: true,
@@ -113,6 +117,26 @@ export class UsersService {
     });
 
     return { success: true };
+  }
+
+  async getPublicProfile(identifier: string) {
+    const user = await this.prisma.user.findFirst({
+      where: buildPublicProfileWhere(identifier),
+      include: {
+        listingsAsOwner: {
+          include: {
+            reviews: { select: { rating: true } },
+          },
+        },
+        _count: { select: { listingsAsOwner: true } },
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return mapPublicHostProfile(user);
   }
 
   async getDashboardStats(userId: string) {

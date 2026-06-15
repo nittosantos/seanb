@@ -3,6 +3,7 @@ export const APP_NAME = 'SeanB';
 export * from './lib/parse-response';
 export * from './enums';
 export * from './mappers/listings';
+export * from './mappers/explore-query';
 export * from './mappers/profile';
 export * from './mappers/reservations';
 export * from './schemas/auth';

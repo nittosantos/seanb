@@ -24,7 +24,7 @@ export default function VendorBlock({ vendor, stats }: VendorProps) {
       titleClassName="text-xl md:!text-[22px] 2xl:!text-2xl mb-1.5"
     >
       <div className="mb-6 flex items-center pt-4">
-        <Link href={Routes.public.userID('fabio-jaction')}>
+        <Link href={Routes.public.userID(vendor.id)}>
           <div className="relative h-16 w-16 overflow-hidden rounded-full">
             <Image
               src={vendor.img}
@@ -37,7 +37,7 @@ export default function VendorBlock({ vendor, stats }: VendorProps) {
         </Link>
         <div className="ml-3 md:ml-6">
           <Text tag="h6">
-            <Link href={Routes.public.userID('fabio-jaction')}>
+            <Link href={Routes.public.userID(vendor.id)}>
               {vendor.name}
             </Link>
           </Text>

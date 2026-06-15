@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from 'react';
 import { useJsApiLoader } from '@react-google-maps/api';
+import { isGoogleMapsEnabled } from '@/config/google-maps';
 
 type GoogleMapsState = {
   isLoaded: boolean;
@@ -17,9 +18,13 @@ const GoogleMapsContext = createContext<GoogleMapsState>({ isLoaded: false });
 
 const LIBRARIES: ('places')[] = ['places'];
 
-export function GoogleMapsProvider({ children }: { children: ReactNode }) {
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY ?? '';
-
+function GoogleMapsLoader({
+  apiKey,
+  children,
+}: {
+  apiKey: string;
+  children: ReactNode;
+}) {
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: apiKey,
     libraries: LIBRARIES,
@@ -27,7 +32,7 @@ export function GoogleMapsProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(
     () => ({ isLoaded, loadError }),
-    [isLoaded, loadError]
+    [isLoaded, loadError],
   );
 
   return (
@@ -35,6 +40,20 @@ export function GoogleMapsProvider({ children }: { children: ReactNode }) {
       {children}
     </GoogleMapsContext.Provider>
   );
+}
+
+export function GoogleMapsProvider({ children }: { children: ReactNode }) {
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY?.trim() ?? '';
+
+  if (!isGoogleMapsEnabled) {
+    return (
+      <GoogleMapsContext.Provider value={{ isLoaded: false }}>
+        {children}
+      </GoogleMapsContext.Provider>
+    );
+  }
+
+  return <GoogleMapsLoader apiKey={apiKey}>{children}</GoogleMapsLoader>;
 }
 
 export function useGoogleMaps() {

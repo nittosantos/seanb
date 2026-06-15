@@ -101,7 +101,7 @@ export function computeReviewStats(reviews: ReviewRow[]) {
     const count = reviews.filter((review) => review.rating === star).length;
     const percent =
       totalReview === 0 ? 0 : Math.round((count / totalReview) * 100);
-    return { count, percent };
+    return { star, count, percent };
   });
 
   return {

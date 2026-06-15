@@ -196,7 +196,10 @@
     "title": "Meus Favoritos",
     "subtitle": "Barcos que você salvou para depois",
     "emptyTitle": "Sua lista de favoritos está vazia",
-    "emptyDesc": "Salve barcos clicando no ícone de coração em qualquer anúncio"
+    "emptyDesc": "Salve barcos clicando no ícone de coração em qualquer anúncio",
+    "loginRequired": "Entre para ver seus favoritos",
+    "signIn": "Entrar",
+    "exploreBoats": "Explorar barcos"
   },
   "subscriptionForm": {
     "emailPlaceholder": "Seu e-mail",
@@ -218,7 +221,14 @@
     "minAdultRequired": "Mínimo 1 adulto obrigatório",
     "invalidDateRange": "A data final deve ser após a inicial",
     "datesUnavailable": "As datas selecionadas não estão disponíveis",
-    "reservationError": "Não foi possível criar a reserva. Tente novamente."
+    "reservationError": "Não foi possível criar a reserva. Tente novamente.",
+    "reviewsTitle": "{count, plural, =0 {Avaliações} =1 {1 avaliação} other {# avaliações}}",
+    "reviewsSummary": "{rating} - {count, plural, =0 {Sem avaliações} =1 {1 avaliação} other {# avaliações}}",
+    "addReview": "Adicionar avaliação",
+    "noReviews": "Nenhuma avaliação ainda. Seja o primeiro a compartilhar sua experiência.",
+    "previousPage": "Anterior",
+    "nextPage": "Próxima",
+    "pageOf": "Página {current} de {total}"
   },
   "account": {
     "hello": "Olá, {name}",
@@ -329,7 +339,14 @@
     "validationEmailRequired": "O e-mail é obrigatório!",
     "validationEmailInvalid": "O e-mail é inválido!",
     "validationMin7Digits": "Mínimo 7 dígitos!",
-    "phoneNumber": "Telefone"
+    "phoneNumber": "Telefone",
+    "loading": "Carregando...",
+    "notFoundTitle": "Usuário não encontrado",
+    "notFoundDesc": "Este perfil não existe ou não está mais disponível.",
+    "loginRequired": "Entre para ver seu perfil",
+    "signIn": "Entrar",
+    "noListings": "Nenhum anúncio ainda",
+    "noFavourites": "Nenhum favorito ainda"
   },
   "modals": {
     "contact": "Contato",
