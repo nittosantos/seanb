@@ -33,6 +33,12 @@ enum ListingReportReason {
   OTHER
 }
 
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+}
+
 // ============ MODELS ============
 
 model User {
@@ -70,6 +76,9 @@ model User {
   wishlistItems    WishlistItem[]
   hostInquiries    HostInquiry[]
   listingReports   ListingReport[]
+  conversationsAsGuest Conversation[] @relation("ConversationGuest")
+  conversationsAsHost  Conversation[] @relation("ConversationHost")
+  messagesSent         Message[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -116,12 +125,53 @@ model Listing {
   wishlistItems WishlistItem[]
   hostInquiries HostInquiry[]
   listingReports ListingReport[]
+  conversations Conversation[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([userId])
   @@index([slug])
+}
+
+model Conversation {
+  id            String    @id @default(cuid())
+  listingId     String
+  listing       Listing   @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  guestId       String
+  guest         User      @relation("ConversationGuest", fields: [guestId], references: [id], onDelete: Cascade)
+  hostId        String
+  host          User      @relation("ConversationHost", fields: [hostId], references: [id], onDelete: Cascade)
+  inquiryId     String?   @unique
+  inquiry       HostInquiry? @relation(fields: [inquiryId], references: [id], onDelete: SetNull)
+  lastMessageAt DateTime?
+  messages      Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([listingId, guestId])
+  @@index([guestId])
+  @@index([hostId])
+  @@index([lastMessageAt])
+}
+
+model Message {
+  id             String      @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId       String
+  sender         User        @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  type           MessageType @default(TEXT)
+  body           String
+  mediaUrl       String?
+  mediaMimeType  String?
+  mediaSize      Int?
+  createdAt      DateTime    @default(now())
+  readAt         DateTime?
+
+  @@index([conversationId, createdAt])
+  @@index([senderId])
 }
 
 model HostInquiry {
@@ -138,6 +188,8 @@ model HostInquiry {
   phoneNumber String
   message     String
   createdAt   DateTime @default(now())
+
+  conversation Conversation?
 
   @@index([listingId])
   @@index([userId])

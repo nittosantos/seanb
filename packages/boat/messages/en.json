@@ -228,7 +228,10 @@
     "noReviews": "No reviews yet. Be the first to share your experience.",
     "previousPage": "Previous",
     "nextPage": "Next",
-    "pageOf": "Page {current} of {total}"
+    "pageOf": "Page {current} of {total}",
+    "chatTitle": "Still have questions?",
+    "chatDescription": "Get a fast response about amenities, check-in times, and general questions.",
+    "chatNow": "Chat now"
   },
   "account": {
     "hello": "Hello, {name}",
@@ -271,7 +274,12 @@
   },
   "inbox": {
     "searchByName": "Search by name",
-    "typeMessage": "Type your message..."
+    "typeMessage": "Type your message...",
+    "loading": "Loading conversations...",
+    "loadError": "Could not load your inbox. Please try again.",
+    "sendError": "Could not send your message. Please try again.",
+    "emptyConversations": "No conversations yet.",
+    "selectConversation": "Select a conversation to start chatting."
   },
   "settings": {
     "tabPersonalInfo": "Personal Information",

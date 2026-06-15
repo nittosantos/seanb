@@ -11,6 +11,7 @@ import {
 import type { RegisterInput } from '@seanb/shared';
 import { ApiError } from '@/lib/api-client';
 import { clearAuthCookie, setAuthCookie } from '@/config/auth-cookie';
+import { disconnectChatSocket } from '@/lib/chat-socket';
 
 interface AuthState {
   isAuthorized: boolean;
@@ -38,6 +39,7 @@ export const useAuthStore = create<AuthState>()(
       },
       clearSession: () => {
         clearAuthCookie();
+        disconnectChatSocket();
         set({
           isAuthorized: false,
           user: null,

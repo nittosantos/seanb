@@ -10,6 +10,7 @@ export * from './schemas/auth';
 export * from './schemas/add-listing';
 export * from './schemas/booking';
 export * from './schemas/feedback';
+export * from './schemas/conversations';
 export * from './schemas/listings';
 export * from './schemas/payments';
 export * from './schemas/reservations';

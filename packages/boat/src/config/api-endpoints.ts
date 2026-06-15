@@ -29,6 +29,9 @@ export const API_ENDPOINTS = {
     `${API_BASE_URL}/listings/${slug}/inquiries`,
   LISTING_REPORTS: (slug: string) =>
     `${API_BASE_URL}/listings/${slug}/reports`,
+  CONVERSATIONS: `${API_BASE_URL}/conversations`,
+  CONVERSATION_MESSAGES: (id: string) =>
+    `${API_BASE_URL}/conversations/${id}/messages`,
   WISHLIST: `${API_BASE_URL}/wishlist`,
   WISHLIST_IDS: `${API_BASE_URL}/wishlist/ids`,
   WISHLIST_ITEM: (listingId: string) =>

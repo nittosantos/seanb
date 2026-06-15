@@ -29,12 +29,15 @@ import { Routes } from '@/config/routes';
 import clsx from 'clsx';
 import useAuth from '@/hooks/use-auth';
 import { submitHostInquiry } from '@/lib/feedback-api';
+import { startListingChat } from '@/lib/conversations-api';
 import { ApiError } from '@/lib/api-client';
+import { useRouter } from '@/i18n/navigation';
 
 export default function ContactHost() {
   const t = useTranslations('modals');
   const { closeModal } = useModal();
   const { accessToken } = useAuth();
+  const router = useRouter();
 
   const schema = useMemo(
     () =>
@@ -82,6 +85,18 @@ export default function ContactHost() {
 
     try {
       await submitHostInquiry(listing.slug, data, accessToken);
+
+      if (accessToken && listing.id) {
+        const conversation = await startListingChat(
+          listing.id,
+          accessToken,
+          data.message,
+        );
+        closeModal();
+        router.push(`${Routes.private.inbox}?conversation=${conversation.id}`);
+        return;
+      }
+
       closeModal();
     } catch (error) {
       if (error instanceof ApiError) {

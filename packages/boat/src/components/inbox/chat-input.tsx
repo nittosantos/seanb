@@ -7,14 +7,16 @@ import ActionIcon from '@/components/ui/action-icon';
 
 interface ChatInputType {
   value: string;
-  onChange: (e: any) => void;
-  onSubmit?: (data: any) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSubmit?: (event: React.FormEvent) => void;
+  disabled?: boolean;
 }
 
 export default function ChatInput({
   value,
   onChange,
   onSubmit,
+  disabled = false,
 }: ChatInputType) {
   const t = useTranslations('inbox');
 
@@ -29,9 +31,11 @@ export default function ChatInput({
           className="rounded-lg border-gray-lighter"
           inputClassName="pr-16 pl-2 md:pl-4 lg:pr-24"
           onChange={onChange}
+          disabled={disabled}
         />
         <ActionIcon
-          onClick={onSubmit}
+          type="submit"
+          disabled={disabled}
           className="absolute inset-y-0 right-0 top-0 !h-full w-14 cursor-pointer rounded-none rounded-r-lg text-white lg:w-20"
         >
           <PaperAirplaneIcon className="h-auto w-5" />

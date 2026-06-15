@@ -4,6 +4,7 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -16,6 +17,8 @@ async function bootstrap() {
     origin: ['http://localhost:3000'],
     credentials: true,
   });
+
+  app.useWebSocketAdapter(new IoAdapter(app));
 
   await app.listen(process.env.PORT ?? 3333, '0.0.0.0');
 }

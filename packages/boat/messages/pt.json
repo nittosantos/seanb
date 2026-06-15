@@ -228,7 +228,10 @@
     "noReviews": "Nenhuma avaliação ainda. Seja o primeiro a compartilhar sua experiência.",
     "previousPage": "Anterior",
     "nextPage": "Próxima",
-    "pageOf": "Página {current} de {total}"
+    "pageOf": "Página {current} de {total}",
+    "chatTitle": "Ainda tem dúvidas?",
+    "chatDescription": "Receba uma resposta rápida sobre comodidades, horários de check-in e outras perguntas.",
+    "chatNow": "Conversar agora"
   },
   "account": {
     "hello": "Olá, {name}",
@@ -271,7 +274,12 @@
   },
   "inbox": {
     "searchByName": "Buscar por nome",
-    "typeMessage": "Digite sua mensagem..."
+    "typeMessage": "Digite sua mensagem...",
+    "loading": "Carregando conversas...",
+    "loadError": "Não foi possível carregar o inbox. Tente novamente.",
+    "sendError": "Não foi possível enviar a mensagem. Tente novamente.",
+    "emptyConversations": "Nenhuma conversa ainda.",
+    "selectConversation": "Selecione uma conversa para começar."
   },
   "settings": {
     "tabPersonalInfo": "Informações pessoais",
