@@ -27,10 +27,14 @@ import Button from '@/components/ui/button';
 import Rate from '@/components/ui/rating';
 import { Routes } from '@/config/routes';
 import clsx from 'clsx';
+import useAuth from '@/hooks/use-auth';
+import { submitHostInquiry } from '@/lib/feedback-api';
+import { ApiError } from '@/lib/api-client';
 
 export default function ContactHost() {
   const t = useTranslations('modals');
   const { closeModal } = useModal();
+  const { accessToken } = useAuth();
 
   const schema = useMemo(
     () =>
@@ -56,6 +60,8 @@ export default function ContactHost() {
   const stats = listing?.reviewsData.stats;
   const [state, setState] = useState(false);
   const [stateTwo, setStateTwo] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
@@ -65,14 +71,36 @@ export default function ContactHost() {
     resolver: zodResolver(schema),
   });
 
-  function handleReservation(data: ContactHostInput) {
-    console.log('Data:', data);
-    closeModal();
+  async function handleReservation(data: ContactHostInput) {
+    if (!listing?.slug) {
+      setFormError(t('listingMissing'));
+      return;
+    }
+
+    setFormError(null);
+    setIsSubmitting(true);
+
+    try {
+      await submitHostInquiry(listing.slug, data, accessToken);
+      closeModal();
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setFormError(error.message);
+      } else {
+        setFormError(t('contactSubmitError'));
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   if (!vendor || !stats) {
     return null;
   }
+
+  const hostProfilePath = vendor.id
+    ? Routes.public.userID(vendor.id)
+    : Routes.public.explore;
 
   return (
     <div className="mx-auto w-full max-w-full rounded-lg bg-white p-4 xs:w-[480px] sm:w-[600px] sm:p-6 md:w-[648px] md:rounded-xl md:p-8 xl:p-12">
@@ -92,7 +120,7 @@ export default function ContactHost() {
       <div className="mt-3 flex items-center justify-between border-b border-gray-lighter pb-3 md:mt-7 md:pb-7">
         <div>
           <Text tag="h6" className="text-sm uppercase md:!text-base">
-            <Link href={Routes.private.inbox}>{vendor.name}</Link>
+            <Link href={hostProfilePath}>{vendor.name}</Link>
           </Text>
           <div className="mt-1 flex items-center md:mt-2">
             <Rate allowHalf allowClear defaultValue={stats.averageRating} />
@@ -101,7 +129,7 @@ export default function ContactHost() {
             </p>
           </div>
         </div>
-        <Link href={Routes.public.userID('user1')}>
+        <Link href={hostProfilePath}>
           <div className="relative h-12 w-12 overflow-hidden rounded-full md:h-[60px] md:w-[60px]">
             <Image
               src={vendor.img}
@@ -116,6 +144,11 @@ export default function ContactHost() {
         noValidate
         onSubmit={handleSubmit((data) => handleReservation(data))}
       >
+        {formError && (
+          <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
+            {formError}
+          </p>
+        )}
         <div className="grid grid-cols-2 gap-3 border-gray-lighter py-3 md:border-b md:py-6">
           <Controller
             name="startDate"
@@ -228,8 +261,9 @@ export default function ContactHost() {
             type="submit"
             size="lg"
             className="ml-auto !w-24 py-[9px] !font-bold"
+            disabled={isSubmitting}
           >
-            {t('send')}
+            {isSubmitting ? t('submitting') : t('send')}
           </Button>
         </div>
       </form>

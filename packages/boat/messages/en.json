@@ -390,7 +390,17 @@
     "scam": "It's a scam",
     "offensive": "It's offensive",
     "somethingElse": "It's something else",
-    "next": "Next"
+    "next": "Next",
+    "listingMissing": "Listing not found. Please refresh the page.",
+    "contactSubmitError": "Could not send your message. Please try again.",
+    "reportSubmitError": "Could not submit your report. Please try again.",
+    "reportReason": {
+      "INACCURATE": "It's inaccurate or incorrect",
+      "NOT_REAL_PLACE": "It's not a real place to stay",
+      "SCAM": "It's a scam",
+      "OFFENSIVE": "It's offensive",
+      "OTHER": "It's something else"
+    }
   },
   "addListing": {
     "welcomeBack": "Welcome back {name}",

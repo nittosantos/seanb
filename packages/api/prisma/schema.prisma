@@ -25,6 +25,14 @@ enum ReservationStatus {
   COMPLETED
 }
 
+enum ListingReportReason {
+  INACCURATE
+  NOT_REAL_PLACE
+  SCAM
+  OFFENSIVE
+  OTHER
+}
+
 // ============ MODELS ============
 
 model User {
@@ -60,6 +68,8 @@ model User {
   reservationsAsGuest Reservation[] @relation("ReservationGuest")
   reviews          Review[]
   wishlistItems    WishlistItem[]
+  hostInquiries    HostInquiry[]
+  listingReports   ListingReport[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -102,14 +112,50 @@ model Listing {
   user   User   @relation("ListingOwner", fields: [userId], references: [id], onDelete: Cascade)
 
   reservations Reservation[]
-  reviews      Review[]
+  reviews       Review[]
   wishlistItems WishlistItem[]
+  hostInquiries HostInquiry[]
+  listingReports ListingReport[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([userId])
   @@index([slug])
+}
+
+model HostInquiry {
+  id          String   @id @default(cuid())
+  listingId   String
+  listing     Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  startDate   DateTime
+  endDate     DateTime
+  firstName   String
+  lastName    String
+  email       String
+  phoneNumber String
+  message     String
+  createdAt   DateTime @default(now())
+
+  @@index([listingId])
+  @@index([userId])
+}
+
+model ListingReport {
+  id        String              @id @default(cuid())
+  listingId String
+  listing   Listing             @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
+  reason    ListingReportReason
+  email     String
+  message   String
+  createdAt DateTime            @default(now())
+
+  @@index([listingId])
+  @@index([userId])
 }
 
 model Reservation {

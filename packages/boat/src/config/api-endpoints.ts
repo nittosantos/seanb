@@ -25,6 +25,10 @@ export const API_ENDPOINTS = {
   RESERVATIONS_HOST: `${API_BASE_URL}/reservations/host`,
   RESERVATION: (id: string) => `${API_BASE_URL}/reservations/${id}`,
   REVIEWS: (slug: string) => `${API_BASE_URL}/listings/${slug}/reviews`,
+  LISTING_INQUIRIES: (slug: string) =>
+    `${API_BASE_URL}/listings/${slug}/inquiries`,
+  LISTING_REPORTS: (slug: string) =>
+    `${API_BASE_URL}/listings/${slug}/reports`,
   WISHLIST: `${API_BASE_URL}/wishlist`,
   WISHLIST_IDS: `${API_BASE_URL}/wishlist/ids`,
   WISHLIST_ITEM: (listingId: string) =>

@@ -10,6 +10,7 @@ import {
 } from '@/lib/auth-api';
 import type { RegisterInput } from '@seanb/shared';
 import { ApiError } from '@/lib/api-client';
+import { clearAuthCookie, setAuthCookie } from '@/config/auth-cookie';
 
 interface AuthState {
   isAuthorized: boolean;
@@ -31,14 +32,18 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       accessToken: null,
       isHydrating: true,
-      setSession: (user, accessToken) =>
-        set({ isAuthorized: true, user, accessToken }),
-      clearSession: () =>
+      setSession: (user, accessToken) => {
+        setAuthCookie(accessToken);
+        set({ isAuthorized: true, user, accessToken });
+      },
+      clearSession: () => {
+        clearAuthCookie();
         set({
           isAuthorized: false,
           user: null,
           accessToken: null,
-        }),
+        });
+      },
       setHydrating: (isHydrating) => set({ isHydrating }),
       login: async (email, password) => {
         const { user, accessToken } = await loginRequest(email, password);
@@ -82,6 +87,11 @@ export const useAuthStore = create<AuthState>()(
           useAuthStore.getState().setHydrating(false);
           return;
         }
+
+        if (state?.accessToken) {
+          setAuthCookie(state.accessToken);
+        }
+
         void state?.hydrateSession();
       },
     },

@@ -6,6 +6,7 @@ import { routing } from '@/i18n/routing';
 import GalleryCarouselView from '@/components/gallery/view';
 import DrawerContainer from '@/components/drawers/view';
 import ModalContainer from '@/components/modals/view';
+import AuthCookieSync from '@/components/auth/auth-cookie-sync';
 
 type Props = {
   children: React.ReactNode;
@@ -29,6 +30,7 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     <NextIntlClientProvider messages={messages}>
+      <AuthCookieSync />
       {children}
       <ModalContainer />
       <DrawerContainer />

@@ -11,7 +11,10 @@ export function mapExploreSearchToListingsQuery(params: {
   departureDate?: string | null;
   returnDate?: string | null;
 }): QueryListingsInput {
-  const query: QueryListingsInput = {};
+  const query: QueryListingsInput = {
+    page: 1,
+    limit: 12,
+  };
 
   if (params.location) {
     query.location = params.location;

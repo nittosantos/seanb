@@ -11,13 +11,31 @@ import Textarea from '@/components/ui/form-fields/textarea';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { reportListingFeedbackSchema } from '@seanb/shared';
+import {
+  listingReportReasonSchema,
+  reportListingFeedbackSchema,
+  type ListingReportReason,
+} from '@seanb/shared';
 import { useTranslations } from 'next-intl';
 import { useModal } from '@/components/modals/context';
+import { useListingDetailStore } from '@/stores/listing-detail-store';
+import useAuth from '@/hooks/use-auth';
+import { submitListingReport } from '@/lib/feedback-api';
+import { ApiError } from '@/lib/api-client';
 
-function ReportForm() {
+const REPORT_REASONS = listingReportReasonSchema.options;
+
+type ReportFormProps = {
+  reason: ListingReportReason;
+};
+
+function ReportForm({ reason }: ReportFormProps) {
   const t = useTranslations('modals');
   const { closeModal } = useModal();
+  const listing = useListingDetailStore((state) => state.listing);
+  const { accessToken } = useAuth();
+  const [formError, setFormError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const feedbackSchema = useMemo(
     () =>
@@ -40,16 +58,48 @@ function ReportForm() {
     resolver: zodResolver(feedbackSchema),
   });
 
-  function handleFeedback(data: any) {
-    console.log('Data:', data);
-    closeModal();
+  async function handleFeedback(data: FeedbackSchemaType) {
+    if (!listing?.slug) {
+      setFormError(t('listingMissing'));
+      return;
+    }
+
+    setFormError(null);
+    setIsSubmitting(true);
+
+    try {
+      await submitListingReport(
+        listing.slug,
+        {
+          reason,
+          email: data.email,
+          message: data.message,
+        },
+        accessToken,
+      );
+      closeModal();
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setFormError(error.message);
+      } else {
+        setFormError(t('reportSubmitError'));
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   }
+
   return (
     <form
       noValidate
       onSubmit={handleSubmit((data) => handleFeedback(data))}
       className="mt-8"
     >
+      {formError && (
+        <p className="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
+          {formError}
+        </p>
+      )}
       <Input
         type="email"
         size="lg"
@@ -72,8 +122,9 @@ function ReportForm() {
           size="lg"
           variant="solid"
           className="ml-auto !w-24 !font-bold"
+          disabled={isSubmitting}
         >
-          {t('submit')}
+          {isSubmitting ? t('submitting') : t('submit')}
         </Button>
       </div>
     </form>
@@ -84,16 +135,14 @@ export default function ReportListing() {
   const t = useTranslations('modals');
   const { closeModal } = useModal();
 
-  const report = [
-    { title: t('inaccurate') },
-    { title: t('notRealPlace') },
-    { title: t('scam') },
-    { title: t('offensive') },
-    { title: t('somethingElse') },
-  ];
+  const report = REPORT_REASONS.map((reason) => ({
+    reason,
+    title: t(`reportReason.${reason}`),
+  }));
 
-  const [selected, setSelected] = useState(report[0].title);
+  const [selected, setSelected] = useState<ListingReportReason>(REPORT_REASONS[0]);
   const [step, setStep] = useState(1);
+
   return (
     <div className="mx-auto w-full max-w-full overflow-hidden rounded-xl bg-white p-12 xs:w-[480px] sm:w-[520px]">
       <div className="flex items-center justify-between">
@@ -117,18 +166,18 @@ export default function ReportListing() {
           <div className="mt-8 grid grid-cols-1 gap-6 ">
             {report.map((item) => (
               <div
-                key={item.title}
+                key={item.reason}
                 className="flex cursor-pointer items-center justify-between"
-                onClick={() => setSelected(item.title)}
+                onClick={() => setSelected(item.reason)}
               >
                 <span>{item.title}</span>
                 <Radio
                   name="report"
                   readOnly
-                  checked={item.title === selected ? true : false}
+                  checked={item.reason === selected}
                   className="[&>div>div]:!p-0"
                   inputClassName={
-                    item.title === selected
+                    item.reason === selected
                       ? '!border-gray-lighter focus:!ring-1 focus:!ring-offset-0 focus:!ring-gray-dark ring-1 !ring-gray-dark !text-gray-dark'
                       : ''
                   }
@@ -148,7 +197,7 @@ export default function ReportListing() {
           </div>
         </>
       )}
-      {step === 2 && <ReportForm />}
+      {step === 2 && <ReportForm reason={selected} />}
     </div>
   );
 }

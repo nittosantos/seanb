@@ -390,7 +390,17 @@
     "scam": "É uma fraude",
     "offensive": "É ofensivo",
     "somethingElse": "É outra coisa",
-    "next": "Próximo"
+    "next": "Próximo",
+    "listingMissing": "Anúncio não encontrado. Atualize a página.",
+    "contactSubmitError": "Não foi possível enviar sua mensagem. Tente novamente.",
+    "reportSubmitError": "Não foi possível enviar a denúncia. Tente novamente.",
+    "reportReason": {
+      "INACCURATE": "Está impreciso ou incorreto",
+      "NOT_REAL_PLACE": "Não é um lugar real para ficar",
+      "SCAM": "É um golpe",
+      "OFFENSIVE": "É ofensivo",
+      "OTHER": "É outra coisa"
+    }
   },
   "addListing": {
     "welcomeBack": "Bem-vindo de volta, {name}",
